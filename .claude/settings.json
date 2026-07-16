@@ -1,11 +1,4 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(grep -nE '^#{1,5} ' skills/project-rules/SKILL.md)",
-      "Bash(git init *)",
-      "Bash(git add *)"
-    ]
-  },
   "hooks": {
     "PostToolUse": [
       {
