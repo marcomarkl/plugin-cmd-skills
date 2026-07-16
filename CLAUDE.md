@@ -91,7 +91,7 @@ claude plugin list                          # Ist-Zustand, bevor du einen Fehlsc
 
 ## 11. Fehler, Sicherung, Rückweg
 
-- **Kein Git in diesem Repo** — es gibt kein `git checkout` zurück. Sichere vor großflächigem Umschreiben einer `SKILL.md` oder eines Manifests eine `.bak`-Kopie, sonst ist ein Fehlversuch unwiederbringlich.
+- **Das Repo ist versioniert**, Remote `origin` → `marcomarkl/plugin-cmd-skills` (privat). Der Rückweg aus einem Fehlversuch ist `git restore <datei>` bzw. `git checkout` — committe deshalb einen funktionierenden Stand, bevor du großflächig umschreibst, statt `.bak`-Kopien anzulegen. **Für Dateien außerhalb des Repos gilt das nicht**: `~/.claude/settings.json` und die Plugin-Registrierung liegen in keinem Git, dort bleibt die `.bak`-Kopie vor dem Ändern Pflicht (siehe 12.).
 - Behandle einen Fehler als Information, nicht als Rauschen: nimm nicht an, dass eine Aktion gelungen ist, sondern lies das Ergebnis (etwa die `validate`-Ausgabe), bevor du darauf aufbaust.
 - Ursache vor Korrektur, und die Ursache behandeln, nicht das Symptom. Trenne vorübergehende Fehler (Zeitüberschreitung, Auslastung), die ein erneuter Versuch löst, von dauerhaften (falscher Key, falscher Pfad, falsche Annahme), die er nicht löst — nur die ersten wiederholen.
 - Scheitert derselbe Versuch zweimal gleich, ändere den Ansatz oder halte an, statt zu wiederholen. Zieht sich eine Aufgabe weit über das erwartete Maß, stoppe und bewerte neu.
