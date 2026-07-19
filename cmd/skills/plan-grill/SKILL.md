@@ -1,6 +1,6 @@
 ---
 name: plan-grill
-description: Interviewt dich gnadenlos zu einem Vorhaben, Plan oder einer Entscheidung, löst die Entscheidungen einzeln in Abhängigkeits- und Tragweitenreihenfolge auf, schlägt Fakten selbst nach und protokolliert die Entscheidungen revidierbar. Läuft, bis die Entscheidungen erschöpft sind. Gedacht vor /plan.
+description: Interviewt dich gnadenlos zu einem Vorhaben, Plan oder einer Entscheidung, löst die Entscheidungen einzeln in Abhängigkeits- und Tragweitenreihenfolge auf, schlägt Fakten selbst nach und protokolliert die Entscheidungen revidierbar. Übergibt sie an /plan, statt selbst zu schreiben, weil vor /plan noch kein Plan zum Ändern existiert. Läuft, bis die Entscheidungen erschöpft sind. Gedacht vor /plan.
 argument-hint: "[Vorhaben, Plan oder Entscheidung]"
 disable-model-invocation: true
 model: opus
@@ -23,6 +23,6 @@ Antwort verarbeiten. Prüfe jede Antwort gegen die Fakten und gegen alle früher
 
 Erschöpfungs-Abbruch. Ende, wenn keine offene Entscheidung mit Ergebniswirkung mehr im Pool ist. Erfinde dann keine. Beende nicht früher, nur weil ich zustimme oder ungeduldig wirke — Zustimmung ist kein Erschöpfungsbeleg.
 
-Schlussnotiz und Übergabe, als Chat-Notiz ausgeben, nicht in eine Datei schreiben: der Gegenstand in einem Satz; das Ledger aller Entscheidungen mit Kennung, Entscheidung, gewählter Antwort, Kurzbegründung und Status bestätigt oder vorläufig; die nicht gefragten Entscheidungen mit Default und Grund; die offenen Punkte. Die Kennungen sind stabil, damit ich dir sagen kann: nimm Entscheidung 3 zurück. Bitte dann um die Bestätigung, dass das Verständnis gemeinsam ist. Auch nach meiner Bestätigung setzt du nichts um — biete die Übergabe an /plan oder den Plan-Modus an und beende den Zug. Dieser Skill klärt, er baut nicht.
+Schlussnotiz und Übergabe, als Chat-Notiz ausgeben, nicht in eine Datei schreiben. Fasse sie als in sich geschlossenen Übergabeblock, den /plan oder der Plan-Modus verlustarm als Eingabe übernehmen können, ohne dass der Interviewverlauf noch einmal gelesen werden muss: der Gegenstand als Ziel in einem Satz; die bestätigten Entscheidungen als feststehende Vorgaben; die nicht gefragten Entscheidungen mit Default und Grund; die vorläufigen und die offenen Punkte als das, was im Plan noch zu klären ist. Gib die Entscheidungen als Ledger mit stabiler Kennung, Entscheidung, gewählter Antwort, Kurzbegründung und Status bestätigt oder vorläufig aus, damit ich dir sagen kann: nimm Entscheidung 3 zurück. Der Block bleibt Entscheidungs-Eingabe, kein fertiger Plan — liste Vorgaben und offene Punkte, formuliere keine Umsetzungsschritte; das Ausformen zum Plan ist Sache von /plan. Bitte dann um die Bestätigung, dass das Verständnis gemeinsam ist. Auch nach meiner Bestätigung setzt du nichts um — biete die Übergabe an /plan oder den Plan-Modus an und beende den Zug. Dieser Skill klärt, er baut nicht.
 
 Vorhaben oder Zusatzfokus, falls angegeben: $ARGUMENTS

@@ -1,6 +1,6 @@
 ---
 name: plan-review
-description: Reviewt den zuletzt erstellten Plan in mehreren Runden mit rotierenden Blickwinkeln, hinterfragt jeden Befund, arbeitet die belastbaren ein und protokolliert Befunde und Blickwinkel revidierbar. Läuft, bis die Blickwinkel erschöpft sind. Fachgebietsunabhängig. Nutzen nach /plan.
+description: Reviewt den zuletzt erstellten Plan in mehreren Runden mit rotierenden Blickwinkeln, hinterfragt jeden Befund, arbeitet die belastbaren direkt in den bestehenden Plan ein und protokolliert Befunde und Blickwinkel revidierbar. Läuft, bis die Blickwinkel erschöpft sind. Fachgebietsunabhängig. Nutzen nach /plan, wenn der Plan schon existiert und direkt geändert wird.
 argument-hint: "[optionaler Zusatzfokus]"
 disable-model-invocation: true
 model: opus
