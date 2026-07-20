@@ -1,6 +1,10 @@
 {
   "name": "cmd",
-  "version": "0.4.0",
-  "description": "Persönliches Planungs-Toolkit: Vorhaben klären (plan-grill), Plan reviewen (plan-review), umsetzen (plan-execute) und CLAUDE.md härten (project-rules).",
-  "author": { "name": "Marco Markl", "email": "marco.markl@me.com" }
+  "version": "0.5.0",
+  "description": "Persönliches Planungs-Toolkit: Vorhaben klären (plan-grill), Plan reviewen (plan-review), umsetzen (plan-execute), CLAUDE.md härten (project-rules) und aus der Session lernen (session-learn).",
+  "author": { "name": "Marco Markl" },
+  "homepage": "https://github.com/marcomarkl/plugin-cmd-skills#readme",
+  "repository": "https://github.com/marcomarkl/plugin-cmd-skills",
+  "license": "MIT",
+  "keywords": ["planning", "workflow", "claude-md", "review", "interview"]
 }

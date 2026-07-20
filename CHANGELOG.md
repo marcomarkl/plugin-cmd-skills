@@ -2,6 +2,13 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.5.0
+
+- **Neuer Skill `session-learn`:** reflektiert die laufende Session, leitet dauerhafte, belegbare Learnings für künftige Sessions ab, routet jedes an den passenden **projektlokalen** Ort (Projekt-CLAUDE.md / `references` / Repo, nie user-global; Memory-System unangetastet) und erzeugt daraus einen Plan, den `plan-review` härtet und `plan-execute` anwendet — schreibt selbst nichts an die Zielorte.
+- README: fünfter Skill in Liste/Pipeline/Struktur; Präfix-Logik (`plan-*`/`project-*`/`session-*`) notiert.
+- `examples/transcripts.md` und `scripts/smoke.sh` um `session-learn` erweitert.
+- **Vorbereitung der Veröffentlichung:** Root-`README.md` mit Installationsanleitung, `DESIGN.md` (ausgelagerte Entwurfsnotizen), `LICENSE` (MIT); `cmd/README.md` als reine Nutzerdoku neu geschrieben (Struktur-Block um die `references/` korrigiert); Manifeste um `homepage`, `repository`, `license` und `keywords` ergänzt, Autor-E-Mail entfernt; `.gitignore` um `.claude/settings.local.json`.
+
 ## 0.4.0
 
 - **plan-execute gehärtet:** Fallback für fehlendes Verifikationskriterium (schwächstes hinreichendes ableiten, sonst als erledigt-ohne-unabhängige-Verifikation melden); Fortschrittsliste tool-agnostisch; definierter End-/Commit-Zustand im Abschlussbericht; Auto-mode-Degradation klargestellt (läuft auch außerhalb Auto mode, dann mit Prompts).

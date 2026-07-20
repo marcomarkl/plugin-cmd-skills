@@ -2,8 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "marco-markl",
   "owner": {
-    "name": "Marco Markl",
-    "email": "marco.markl@me.com"
+    "name": "Marco Markl"
   },
   "metadata": {
     "description": "Persönliche Skills von Marco Markl für Claude Code."
@@ -12,11 +11,13 @@
     {
       "name": "cmd",
       "source": "./cmd",
-      "description": "Persönliches Planungs-Toolkit: Vorhaben klären (plan-grill), Plan reviewen (plan-review), umsetzen (plan-execute) und CLAUDE.md härten (project-rules).",
+      "description": "Persönliches Planungs-Toolkit: Vorhaben klären (plan-grill), Plan reviewen (plan-review), umsetzen (plan-execute), CLAUDE.md härten (project-rules) und aus der Session lernen (session-learn).",
       "author": {
-        "name": "Marco Markl",
-        "email": "marco.markl@me.com"
+        "name": "Marco Markl"
       },
+      "homepage": "https://github.com/marcomarkl/plugin-cmd-skills#readme",
+      "repository": "https://github.com/marcomarkl/plugin-cmd-skills",
+      "license": "MIT",
       "keywords": ["planning", "workflow", "claude-md", "review", "interview"],
       "category": "productivity"
     }

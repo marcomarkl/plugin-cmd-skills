@@ -26,12 +26,12 @@ Der Repo-Ordner heisst `plugin-cmd-skills` — er benennt das Repository, nicht 
 
 ## 3. Verhältnis zu README
 
-`CLAUDE.md` (diese Datei) = **im Repo arbeiten**. `cmd/README.md` = **Plugin nutzen/aufrufen**. Nutzungsdetails stehen im README; hier nicht duplizieren, sondern darauf verweisen.
+Vier Ebenen, nicht vermischen: `README.md` (Root) = **Einstieg und Installation** · `cmd/README.md` = **Plugin nutzen/aufrufen** · `DESIGN.md` = **Entwurfsnotizen** (Stellschrauben, geprüfte und verworfene Ansätze) · `CLAUDE.md` (diese Datei) = **im Repo arbeiten**. Nutzungsdetails gehören ins `cmd/README.md`, Begründungen ins `DESIGN.md`; hier nicht duplizieren, sondern darauf verweisen.
 
 ## 4. Plugin erweitern oder ergänzen
 
 - **Skill hinzufügen:** neuen Ordner `cmd/skills/<name>/SKILL.md` anlegen. Skills werden **automatisch aus `skills/` entdeckt** — kein Eintrag in `plugin.json` oder `marketplace.json`. Der **Aufrufname folgt dem Ordnernamen** (`<name>` → `/cmd:<name>`); das Frontmatter-`name` ist nur ein Anzeige-Label.
-- **Konventionen** an den bestehenden Skills orientieren, bevor Neues erfunden wird: präzise `description` (steuert Auto-Invocation), `disable-model-invocation` / `model` / `effort` nur wenn wirklich nötig. `allowed-tools` **sperrt nichts** — es genehmigt nur vorab und unterdrückt Permission-Prompts; als Schranke ist es untauglich, dafür gibt es `disallowed-tools` (dessen Wirkung hier allerdings nicht nachweisbar war, siehe `cmd/README.md`).
+- **Konventionen** an den bestehenden Skills orientieren, bevor Neues erfunden wird: präzise `description` (steuert Auto-Invocation), `disable-model-invocation` / `model` / `effort` nur wenn wirklich nötig. `allowed-tools` **sperrt nichts** — es genehmigt nur vorab und unterdrückt Permission-Prompts; als Schranke ist es untauglich, dafür gibt es `disallowed-tools` (dessen Wirkung hier allerdings nicht nachweisbar war, siehe `DESIGN.md`).
 - **Namespace ändern:** über `name` in `cmd/.claude-plugin/plugin.json` — **und** `plugins[].name` in `marketplace.json`, das `enabledPlugins` und `/plugin` steuert. Ein Namenswechsel **bricht jede bestehende Installation**, deshalb zwingend die top-level `renames`-Map im Marketplace pflegen (`{"alt": "neu"}`), die bestehende Installationen automatisch migriert. Die Map ist **append-only**: alte Einträge bleiben stehen, Ketten werden verfolgt — nie einen bestehenden Eintrag umschreiben, immer einen zweiten anhängen. Braucht Claude Code ≥ 2.1.193; ältere Versionen ignorieren die Map und melden `plugin-not-found`.
 - **Version nur in `cmd/.claude-plugin/plugin.json`** pflegen, nie zusätzlich in `marketplace.json`. Bei Konflikt gewinnt `plugin.json` kommentarlos, eine veraltete Marketplace-Version würde maskieren.
 
@@ -42,7 +42,7 @@ Der Repo-Ordner heisst `plugin-cmd-skills` — er benennt das Repository, nicht 
 
 ## 6. Installieren, aktualisieren, deinstallieren
 
-Als CLI (`claude plugin …`); die meisten Befehle gibt es auch als `/plugin …` in der Session. Die Sequenz unten gilt für den **noch nicht registrierten** Fall — auf dieser Maschine ist `marco-markl` bereits registriert und das Plugin installiert, dort genügt bei Repo-Änderungen `marketplace update`.
+Der **öffentliche** Installationsweg (für Fremde, über GitHub) steht im [Root-README](README.md); hier geht es um den lokalen Maintainer-Pfad. Als CLI (`claude plugin …`); die meisten Befehle gibt es auch als `/plugin …` in der Session. Die Sequenz unten gilt für den **noch nicht registrierten** Fall — auf dieser Maschine ist `marco-markl` bereits registriert und das Plugin installiert, dort genügt bei Repo-Änderungen `marketplace update`.
 
 **Bei totem Marketplace-Pfad (`cache-miss`) hilft `marketplace update` nicht** — es liest den Pfad aus `known_marketplaces.json` und scheitert mit `ENOENT`. Auch ein korrigierter `extraKnownMarketplaces`-Pfad in `~/.claude/settings.json` allein reicht nicht: er wird nicht in `known_marketplaces.json` nachgezogen. Dann neu registrieren — `marketplace remove` leert dabei `enabledPlugins`, deshalb ist `install` danach zwingend:
 
@@ -79,7 +79,7 @@ claude plugin list                          # Ist-Zustand, bevor du einen Fehlsc
 ## 9. Zerlegen und dosieren
 
 - Kläre Mehrdeutiges, bevor du zerlegst oder schreibst. Würde eine offene Frage das Ergebnis verändern, frag nach, statt sie mit einer Annahme zu schließen.
-- Ein neuer Skill oder ein Umbau berührt mehrere Dateien in Abhängigkeit: `cmd/skills/<name>/SKILL.md` (+ `references/`) → `cmd/README.md` → `description` in `marketplace.json` → Version in `plugin.json` (zuletzt, sie beschreibt den fertigen Stand). Erkläre Ansatz und Reihenfolge vorab, benenne die Abhängigkeiten und prüfe die Zerlegung auf Vollständigkeit, statt die Kette zu groß anzufassen und Glieder zu vergessen.
+- Ein neuer Skill oder ein Umbau berührt mehrere Dateien in Abhängigkeit: `cmd/skills/<name>/SKILL.md` (+ `references/`) → `cmd/README.md` (Nutzung) → ggf. `DESIGN.md` (Begründungen) und Root-`README.md` (Skill-Liste) → `description` in `plugin.json` **und** `marketplace.json` → `CHANGELOG.md` → Version in `plugin.json` (zuletzt, sie beschreibt den fertigen Stand). Erkläre Ansatz und Reihenfolge vorab, benenne die Abhängigkeiten und prüfe die Zerlegung auf Vollständigkeit, statt die Kette zu groß anzufassen und Glieder zu vergessen.
 - Dosiere nach Bedarf: eine einzelne Formulierung, ein Frontmatter-Key, ein Tippfehler wird direkt geändert — dort kostet Planung mehr, als sie bringt. Der Aufwand steigt erst bei mehreren Dateien, echten Designentscheidungen oder mehrdeutigem Umfang.
 
 ## 10. Verifizieren vor „fertig"
@@ -91,7 +91,7 @@ claude plugin list                          # Ist-Zustand, bevor du einen Fehlsc
 
 ## 11. Fehler, Sicherung, Rückweg
 
-- **Das Repo ist versioniert**, Remote `origin` → `marcomarkl/plugin-cmd-skills` (privat). Der Rückweg aus einem Fehlversuch ist `git restore <datei>` bzw. `git checkout` — committe deshalb einen funktionierenden Stand, bevor du großflächig umschreibst, statt `.bak`-Kopien anzulegen. **Für Dateien außerhalb des Repos gilt das nicht**: `~/.claude/settings.json` und die Plugin-Registrierung liegen in keinem Git, dort bleibt die `.bak`-Kopie vor dem Ändern Pflicht (siehe 12.).
+- **Das Repo ist versioniert**, Remote `origin` → `marcomarkl/plugin-cmd-skills`. Der Rückweg aus einem Fehlversuch ist `git restore <datei>` bzw. `git checkout` — committe deshalb einen funktionierenden Stand, bevor du großflächig umschreibst, statt `.bak`-Kopien anzulegen. **Für Dateien außerhalb des Repos gilt das nicht**: `~/.claude/settings.json` und die Plugin-Registrierung liegen in keinem Git, dort bleibt die `.bak`-Kopie vor dem Ändern Pflicht (siehe 12.).
 - Behandle einen Fehler als Information, nicht als Rauschen: nimm nicht an, dass eine Aktion gelungen ist, sondern lies das Ergebnis (etwa die `validate`-Ausgabe), bevor du darauf aufbaust.
 - Ursache vor Korrektur, und die Ursache behandeln, nicht das Symptom. Trenne vorübergehende Fehler (Zeitüberschreitung, Auslastung), die ein erneuter Versuch löst, von dauerhaften (falscher Key, falscher Pfad, falsche Annahme), die er nicht löst — nur die ersten wiederholen.
 - Scheitert derselbe Versuch zweimal gleich, ändere den Ansatz oder halte an, statt zu wiederholen. Zieht sich eine Aufgabe weit über das erwartete Maß, stoppe und bewerte neu.

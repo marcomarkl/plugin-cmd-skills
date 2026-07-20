@@ -6,6 +6,8 @@ description: >-
   Konflikte vorlegen, ohne Bedeutungsverlust verdichten.
 argument-hint: "[optional: Pfad zur CLAUDE.md/AGENTS.md]"
 disable-model-invocation: true
+model: opus
+effort: xhigh
 ---
 
 Argument (optional, i. d. R. der Pfad zur Zieldatei): $ARGUMENTS — in Schritt 1 als Zieldatei-Hinweis auflösen, bei Prosa/Unklarheit dort normal die Datei bestimmen; leer → ganz nach Schritt 1.
