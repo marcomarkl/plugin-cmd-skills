@@ -11,7 +11,7 @@
     {
       "name": "cmd",
       "source": "./cmd",
-      "description": "Persönliches Planungs-Toolkit: Vorhaben klären (plan-grill), Plan reviewen (plan-review), umsetzen (plan-execute), CLAUDE.md härten (project-rules) und aus der Session lernen (session-learn).",
+      "description": "Persönliches Planungs-Toolkit: Vorhaben klären (plan-grill), Plan reviewen (plan-review), umsetzen (plan-execute), CLAUDE.md härten (project-rules), aus der Session lernen (session-learn) und den Arbeitsstand übergeben (session-handoff).",
       "author": {
         "name": "Marco Markl"
       },

@@ -1,6 +1,6 @@
 # plugin-cmd-skills
 
-Ein Claude-Code-Plugin mit fünf Skills rund um **Klären, Planen, Reviewen, Umsetzen und Lernen** — plus dem Marketplace, über den es sich installieren lässt.
+Ein Claude-Code-Plugin mit sechs Skills rund um **Klären, Planen, Reviewen, Umsetzen, Lernen und Übergeben** — plus dem Marketplace, über den es sich installieren lässt.
 
 Das ist ein **persönliches Toolkit, öffentlich geteilt**: gebaut für meine eigene Arbeitsweise, aber ohne projektspezifische Annahmen — wer ähnlich arbeitet, kann es direkt nutzen oder als Vorlage nehmen.
 
@@ -39,6 +39,7 @@ Alle werden mit dem Namespace-Präfix aufgerufen und laden **nur auf deinen Aufr
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan um, jeden Schritt gegen ein beobachtbares Kriterium verifiziert | nach dem Plan-Modus |
 | `/cmd:project-rules` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit fünf Disziplin-Katalogen | eigenständig |
 | `/cmd:session-learn` | Reflektiert die Session und macht Learnings zu einem Plan | am Sessionende |
+| `/cmd:session-handoff` | Verdichtet den Arbeitsstand in eine kurze `HANDOFF.md` fürs nächste Fenster | wenn der Kontext knapp wird |
 
 Details, Pipeline und Voraussetzungen: **[`cmd/README.md`](cmd/README.md)**.
 

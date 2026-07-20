@@ -14,7 +14,7 @@ Laden/testen: `claude --plugin-dir ./cmd`, nach Änderungen `/reload-plugins`. M
 
 ## Frontmatter und Stellschrauben je Skill
 
-Alle fünf Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows.
+Alle sechs Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows.
 
 ### plan-execute
 
@@ -46,6 +46,31 @@ Die Retrospektive läuft, bis kein tragfähiges Learning mehr offen ist. Zu beac
 - **End-of-Session gedacht:** der erzeugte Plan belegt die Plandatei und ersetzt den aktuellen Plan-Kontext — erst laufende Aufgaben abschließen und committen.
 - **Frontmatter:** `model: opus`, `effort: high`.
 
+### session-handoff
+
+Verdichtet den laufenden Arbeitsstand in eine `HANDOFF.md`, damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeitet.
+
+- **Der Zweck liegt in der Erkenntnisdisziplin, nicht in der Dateibuchhaltung.** Wohin schreiben, wie kürzen, patchen statt neu anlegen — das macht ein fähiges Modell ohnehin brauchbar; solche Regeln bleiben deshalb knapp. Tragend ist das Gegenteil des Defaults: Der Skill läuft definitionsgemäß auf einem gekürzten Verlauf, Zusammenfassen glättet, und je weniger im Kontext steht, desto glatter wird es. Der Text ist entsprechend gewichtet — mehr als die Hälfte gilt dem belegten Stand, der Kontextgrenze und dem, was nicht mehr rekonstruierbar ist.
+- **Abschnitt „Unsicher" statt bloßer Ermahnung.** Die Kontextgrenze hat einen festen Ort in der Datei: Vermutung, Quelle, Prüfweg. Der Abschnitt darf leer bleiben, aber sein Fehlen ist selbst eine Behauptung („nichts war unsicher"), die nach einem gekürzten Verlauf selten stimmt. Dorthin fließt auch der Wirkungsfilter: Was aus Unsicherheit wegbliebe, geht nicht in den Papierkorb, sondern unter „Unsicher".
+- **Der einzige Skill, der ohne Plan und ohne Rückfrage schreibt.** `plan-execute` schreibt Projektdateien, aber auf Basis eines freigegebenen Plans; `plan-grill` und `session-learn` schreiben gar nicht. Vertretbar, weil die Zieldatei neu ist, nichts Bestehendes angefasst wird und der Rückweg trivial bleibt. Die Zusage „schreib ohne zu fragen" steht ausdrücklich im Body: Ohne sie legt das Modell den Stand ersatzweise in den Chat und bittet um Erlaubnis — im Kontextnotstand die teuerste mögliche Rückfrage. Gegengewicht: Der Skill nennt den Rückweg, sobald er angelegt oder überschrieben hat, und sichert eine untrackte Datei vorher als `.bak`.
+- **Kein Fenster, keine Session, kein Skript.** Der Skill endet bei der Datei. `cmd/` enthält bewusst **keine** Nicht-Markdown-Dateien außer dem Manifest, und ein Skill, der ungefragt ein Fenster öffnet oder eine Session startet, verletzt die Freigabe-Regel aus `CLAUDE.md` §12. Ein Verbot dagegen steht **nicht** im Body: Nichts im Skill führt dorthin, und in einem kurzen Prompt kostet jede tote Regel Aufmerksamkeit.
+- **Kein „Einstiegssatz" als Pflicht.** Naheliegend wäre, nach dem Wegfall des Fenster-Öffnens einen kopierfertigen Satz für das nächste Fenster zu verlangen. Die Kaltstart-Probe zeigt, dass er entbehrlich ist: Die Datei allein genügt, um den nächsten Schritt ohne Rückfrage auszuführen. Ein solcher Satz dupliziert sie also — die Schlussnotiz verlangt nur Pfad, nächsten Schritt und gegebenenfalls den Rückweg. Die tragende Anforderung steht stattdessen bei den Abschnitten: **Die Datei muss für sich stehen.**
+- **Abschnitte als Richtschnur, nicht als Schema.** Das Modell passt Überschriften situationsgerecht an, und das Patchen trägt trotzdem, weil es semantisch abgleicht statt wörtlich. Stabile Überschriften bleiben erwünscht, aber als Vergleichbarkeit über mehrere Übergaben — nicht als Bedingung fürs Patchen.
+- **Kommandos sind Beispiele, keine Vorschrift.** `git log`/`git status` stehen unter „etwa", der Nicht-Git-Zweig ist gleichrangig formuliert. Der Bestand enthält sonst genau ein konkretes Kommando (`git restore` in `session-learn`, als Rückweg-Hinweis), und `plan-execute` formuliert Verifikation bewusst generisch. Auch die Zeilenprüfung schreibt kein Werkzeug vor — der Agent hat die Datei selbst geschrieben.
+- **Frontmatter:** `model: opus`, `effort: high`. `high` ist vorläufig — der Lauf ist kurz und weitgehend mechanisch, die Urteilslast steckt allein in der Auswahl. Beobachtbares Kriterium zum Senken auf `medium`: Bleibt die Datei über mehrere Läufe knapp und relevant, ist `high` überzahlt; schreibt der Skill dagegen Erledigtes und Verlauf mit, fehlt Auswahlurteil und `high` trägt.
+
+**Testbarkeit, abweichend vom Rest der Suite.** `session-handoff` ist der einzige Skill, dessen voller Flow in *einem* Zug endet — er ließe sich anders als grill/review/execute vollständig headless prüfen. Zwei Hürden stehen dem entgegen und sind in `scripts/smoke.sh` berücksichtigt:
+
+- Ein `claude -p`-Lauf hat **keinen Gesprächsverlauf**. Der Skill verweigert dann korrekt die Datei („kein tragfähiger Stand"), womit sich der Hauptpfad nur mit synthetischem Verlauf im Prompt testen lässt.
+- `claude -p` erlaubt standardmäßig **kein `Write`**. Ohne `--permission-mode acceptEdits` schlägt das Schreiben fehl — ein Smoke-Test ohne dieses Flag meldet einen falschen FAIL.
+
+**Ob ein Plugin geladen ist, objektiv prüfen — nicht das Modell fragen.** Im Headless-Modus bekommt das Modell keine Skill-Liste in den Kontext und meldet einen geladenen Skill deshalb als „existiert nicht". Diese Selbstauskunft ist wertlos; belastbar ist das `system/init`-Event:
+
+```
+claude --plugin-dir ./cmd -p "hi" --output-format stream-json --verbose
+# → plugins: [{"name":"cmd","version":"0.6.0",...}], plugin_errors, slash_commands
+```
+
 ### project-rules
 
 Wendet fünf Disziplin-Kataloge gemeinsam auf eine bestehende `CLAUDE.md`/`AGENTS.md` an und verdichtet die Datei zuletzt in einem Token-Effizienz-Pass. Die Kataloge liegen in `references/` und werden **bedarfsgeladen** — der Body liest sie erst in Schritt 4 bzw. 7, nicht beim Aufruf.
@@ -70,7 +95,7 @@ Bis 0.2.0 stand bei `plan-review` eine Liste lesender Tools mit der Begründung 
 Die Skills teilen Vokabular. Diese Begriffe wortgleich halten, damit die Suite nicht auseinanderläuft:
 
 - **Steelman** — den Gegenstand in einem Satz *wohlwollend* wiedergeben, bevor man ihn belastet (grill, review).
-- **Erschöpfungs-Abbruch** — die Schleife endet erst, wenn nichts Neues mehr trägt (Entscheidungen bei grill, Blickwinkel bei review, Learnings bei session-learn), nie auf Zustimmung oder Ungeduld hin.
+- **Erschöpfungs-Abbruch** — die Schleife endet erst, wenn nichts Neues mehr trägt (Entscheidungen bei grill, Blickwinkel bei review, Learnings bei session-learn), nie auf Zustimmung oder Ungeduld hin. **Nicht** bei `session-handoff`: Der Skill hat keine Schleife über einen Pool, sondern schreibt einmal. Dort steht stattdessen der **Wirkungsfilter** (aus grill), der auf eine einmalige Auswahl passt. Den Begriff nicht ausdehnen — er ist über den leerlaufenden Pool definiert.
 - **beobachtbares Kriterium** — ein prüfbarer Beleg (Testlauf, Exit-Code, Datei-/Lesezustand), kein „fehlerfrei"-Versprechen (execute; verwandt reviews „Befund am konkreten Schritt belegen").
 - **stabile Kennung / revidierbar** — jedem eingearbeiteten Punkt eine über den Lauf stabile Kennung geben, damit gezielt zurückgenommen werden kann.
 

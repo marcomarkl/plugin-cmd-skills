@@ -2,6 +2,15 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.6.0
+
+- **Neuer Skill `session-handoff`:** verdichtet den laufenden Arbeitsstand in eine kurze `HANDOFF.md` (Obergrenze 60 Zeilen), damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeiten kann. Belegt den Stand am beobachteten Projektzustand statt am Gedächtnis und nennt uncommittete, ungetestete und nebenläufige Stände ausdrücklich. Gibt es keinen tragfähigen Stand, schreibt er **keine** Datei.
+- **Eigener Abschnitt „Unsicher"** in der Übergabedatei (Vermutung, Quelle, Prüfweg). Der Skill läuft definitionsgemäß auf einem gekürzten Verlauf; sein gefährlichster Fehler ist die glatte Übergabe, deren Lücken das nächste Fenster nicht bemerken kann. Sein Fehlen behauptet, es sei nichts unsicher gewesen.
+- **Schreibt ohne Plan und ohne Rückfrage** — der Aufruf ist die Freigabe, weil eine Rückfrage genau den Zug kostet, für den der Kontext nicht mehr reicht. Als Gegengewicht nennt er den Rückweg, sobald er eine Datei angelegt oder überschrieben hat, und sichert eine untrackte Datei vorher als `.bak`. Abgrenzung zu `plan-execute` in `DESIGN.md`.
+- **Endet bei der Datei:** kein neues Fenster, keine neue Session, kein Shell-Skript, keine IDE-Annahme.
+- **Headless-Testgrenzen dokumentiert:** `claude -p` hat keinen Gesprächsverlauf und erlaubt ohne `--permission-mode acceptEdits` kein `Write`. `scripts/smoke.sh` prüft deshalb nur den nebenwirkungsfreien Zweig, damit der Test keine Datei ins Arbeitsverzeichnis legt. Ob ein Plugin geladen ist, gehört objektiv geprüft (`--output-format stream-json`, `system/init`); die Selbstauskunft des Modells über seine Skill-Liste ist headless unzuverlässig.
+- README (Root und `cmd/`), `DESIGN.md`, `examples/transcripts.md` und beide Manifest-`description`s um den sechsten Skill erweitert; Arbeitsteilung der beiden `session-*`-Skills nach Haltbarkeit (dauerhaft vs. flüchtig) in `cmd/README.md` beschrieben.
+
 ## 0.5.0
 
 - **Neuer Skill `session-learn`:** reflektiert die laufende Session, leitet dauerhafte, belegbare Learnings für künftige Sessions ab, routet jedes an den passenden **projektlokalen** Ort (Projekt-CLAUDE.md / `references` / Repo, nie user-global; Memory-System unangetastet) und erzeugt daraus einen Plan, den `plan-review` härtet und `plan-execute` anwendet — schreibt selbst nichts an die Zielorte.

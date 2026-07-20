@@ -1,6 +1,6 @@
-# Beispiel-Transkripte — erwartete Ausgabeform der plan-Skills
+# Beispiel-Transkripte — erwartete Ausgabeform der Skills
 
-Dokumentiert die erwartete Form der **vollen, mehrschrittigen** Flows, die `scripts/smoke.sh` nicht erreicht (ein `claude -p`-Einzelaufruf sieht nur den Eröffnungszug). Kein Test, sondern Referenz: So soll die Ausgabe strukturiert sein.
+Dokumentiert die erwartete Form der Flows, die `scripts/smoke.sh` nicht erreicht: Bei den mehrschrittigen Skills sieht ein `claude -p`-Einzelaufruf nur den Eröffnungszug, bei `session-handoff` nur den Zweig ohne Gesprächsverlauf. Kein Test, sondern Referenz: So soll die Ausgabe strukturiert sein.
 
 ## plan-grill
 
@@ -54,3 +54,39 @@ Learnings:
 Verworfen: <Kandidat> — <Grund>
 ```
 Dann das Angebot, den Plan über `plan-review` zu härten und `plan-execute` anzuwenden. Übersteht kein Kandidat den Filter: Hinweis „keine dauerhaften Learnings", kein Plan.
+
+## session-handoff
+
+Der einzige Skill, dessen **voller Flow in einem Zug endet** — Eröffnungszug und Ergebnis fallen zusammen.
+
+**Ohne Gesprächsverlauf** (was ein `claude -p`-Einzelaufruf zeigt): keine Datei, sondern die Feststellung, dass es keinen übergebbaren Stand gibt, samt dem, was aus dem Dateisystem *doch* belegbar war. Genau diesen Zweig prüft `scripts/smoke.sh`.
+
+**Mit Verlauf:** eine geschriebene oder gepatchte `HANDOFF.md` (Obergrenze 60 Zeilen) plus die Schlussnotiz im Chat. Erwartete Form der Datei —
+
+```
+# Session-Handoff — <Thema>
+
+## Ziel
+<ein bis drei Zeilen>
+
+## Harte Randbedingungen
+<nur echte Constraints>
+
+## Fertig
+<Stichpunkte mit Commit-Hashes, keine Details>
+
+## Offen — nächster Schritt zuerst
+1. <konkret, ausführbar>
+
+## Unsicher
+- <Vermutung> — Quelle: <woher> — prüfbar an: <woran>
+
+## Wichtige Dateien und Befehle
+<Pfade, Testbefehle; Verweis auf Plandatei statt Nacherzählung>
+```
+
+Die Überschriften sind **Richtschnur, kein Schema**: Ein Abschnitt, der für das Projekt nichts trägt, bleibt weg; einmal gewählte Überschriften bleiben über Läufe hinweg stehen. Ohne Git-Repo tritt der Datei- und Ausgabezustand an die Stelle des Commit-Stands, und die Datei vermerkt das ausdrücklich.
+
+**„Unsicher" ist der Abschnitt, der diesen Skill von einer Zusammenfassung unterscheidet.** Dorthin gehört, was der gekürzte Verlauf verschluckt hat — Entscheidungen ohne erkennbare Begründung, vage erinnerte Absprachen, aus dem Diff rekonstruierter Zweck. Er darf leer bleiben, aber nur wenn das stimmt: Sein Fehlen behauptet, dass nichts unsicher war, und das ist nach einem gekürzten Verlauf selten wahr.
+
+**Schlussnotiz** (Chat-Notiz, nicht in die Datei): der Pfad der Datei und der nächste Schritt in einem Satz. Mehr ist nicht verlangt — die Übergabe trägt die Datei, das nächste Fenster startet mit „lies `<pfad>` und arbeite dort weiter". Dazu der Rückweg (löschen / `git restore` / `.bak`), aber nur, wenn die Datei neu angelegt oder ganz überschrieben wurde. Ein fertiger Einstiegssatz zum Kopieren wird **nicht** verlangt: Er dupliziert die Datei, die ohnehin für sich stehen muss.

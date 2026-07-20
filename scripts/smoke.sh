@@ -45,6 +45,15 @@ run "plan-review"  "/cmd:plan-review" "plan|blickwinkel|einordnung|kein plan"
 run "plan-execute" "/cmd:plan-execute" "plan|freigegeben|exitplanmode|umsetz"
 # session-learn: reflektiert die Session (headless kaum Historie -> nur Laden/Eroeffnung)
 run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
+# session-handoff: Sonderfall. Der Skill SCHREIBT normalerweise eine HANDOFF.md —
+# genau das wird hier bewusst NICHT geprueft, weil der Test sonst eine Datei ins
+# aktuelle Verzeichnis legt. Geprueft wird der nebenwirkungsfreie Zweig: Ein
+# "claude -p"-Lauf hat keinen Gespraechsverlauf, also keinen uebergebbaren Stand,
+# und der Skill muss das sagen statt einen Stand zu erfinden.
+# Fuer den Schreibpfad braucht es zwei Dinge, die hier fehlen: synthetischen
+# Verlauf im Prompt und "--permission-mode acceptEdits" (ohne das erlaubt -p kein
+# Write, und der Test meldete einen falschen FAIL). Siehe DESIGN.md.
+run "session-handoff" "/cmd:session-handoff" "kein.{0,30}(stand|verlauf|uebergabe|übergabe)|keine (datei|uebergabe|übergabe)|nichts zu uebergeben"
 
 echo
 if [ "$fail" -eq 0 ]; then echo "SMOKE: alle Eroeffnungszuege OK"; else echo "SMOKE: mind. ein Skill FAIL"; fi
