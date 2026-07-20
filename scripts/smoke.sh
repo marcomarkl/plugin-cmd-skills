@@ -43,6 +43,8 @@ run "plan-grill"   "/cmd:plan-grill Beispiel: soll ich Feature X bauen" "steelma
 run "plan-review"  "/cmd:plan-review" "plan|blickwinkel|einordnung|kein plan"
 # execute: braucht freigegebenen Plan -> ExitPlanMode/Bitte um Plan
 run "plan-execute" "/cmd:plan-execute" "plan|freigegeben|exitplanmode|umsetz"
+# session-learn: reflektiert die Session (headless kaum Historie -> nur Laden/Eroeffnung)
+run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
 
 echo
 if [ "$fail" -eq 0 ]; then echo "SMOKE: alle Eroeffnungszuege OK"; else echo "SMOKE: mind. ein Skill FAIL"; fi

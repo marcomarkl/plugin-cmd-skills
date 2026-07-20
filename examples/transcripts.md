@@ -39,3 +39,18 @@ Der Plan selbst wurde in den Runden direkt geändert. Rücknahme per Kennung: �
 **Eröffnungszug:** ruft `ExitPlanMode` auf, um den freigegebenen Plan umzusetzen; ohne freigegebenen Plan die Bitte, erst einen bereitzustellen.
 
 **Abschlussbericht** (Chat-Notiz, nach Umsetzung): je Planschritt was umgesetzt und **womit verifiziert** (beobachtetes Kriterium + Ergebnis); aufgetretene Abweichungen samt Korrektur; Klassifikator-Blockaden und Reaktion; substanzielle Funde außerhalb des Plans und Nutzer-Entscheid; offene Blocker; abschließend der Commit-Status plus Angebot und nächster Schritt.
+
+## session-learn
+
+**Eröffnungszug:** beginnt die Reflexion der Session — Einordnung, was zu betrachten ist. Bei leerer/kurzer Session der Hinweis, dass (noch) nichts Dauerhaftes zu lernen ist.
+
+**Schlussnotiz** (nach erschöpften Learnings), als Chat-Notiz, plus der erzeugte Plan:
+
+```
+Learnings:
+  L1  <Learning>  → Ziel: Projekt-CLAUDE.md            Beleg: <woran es sich zeigte>  Nutzen: <künftig>
+  L2  <Learning>  → Ziel: cmd/skills/<x>/references/…  …
+  L3  <Learning>  → Ziel: Repo-Edit                    …
+Verworfen: <Kandidat> — <Grund>
+```
+Dann das Angebot, den Plan über `plan-review` zu härten und `plan-execute` anzuwenden. Übersteht kein Kandidat den Filter: Hinweis „keine dauerhaften Learnings", kein Plan.
