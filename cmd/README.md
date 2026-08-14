@@ -14,7 +14,7 @@ Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsn
 | `/cmd:plan-review` | Reviewt den zuletzt erstellten Plan in rotierenden Blickwinkeln und arbeitet die belastbaren Befunde direkt ein. | Sobald ein Plan steht — von `plan-grill` oder `/plan` —, bevor du freigibst. |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan vollständig um und verifiziert jeden Schritt gegen ein beobachtbares Kriterium; hält bei einem Fund außerhalb des Plans oder einer Klassifikator-Blockade an und fragt nach. | **Nach** dem Verlassen des Plan-Modus. |
 | `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit fünf Disziplin-Katalogen und verdichtet sie token-effizient. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
-| `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon, entdoppelt die Permission-Listen und legt ein Kommunikationsprotokoll für parallele Sessions ab. | **Einmal** beim Einrichten eines Projekts, danach bei Bedarf erneut. |
+| `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon und entdoppelt die Permission-Listen. | **Einmal** beim Einrichten eines Projekts, danach bei Bedarf erneut. |
 | `/cmd:session-learn` | Reflektiert die laufende Session, leitet dauerhafte Learnings ab und übergibt sie als Plan an `plan-review`/`plan-execute`. | Am **Ende** einer Session. |
 | `/cmd:session-handoff` | Verdichtet den laufenden Arbeitsstand in eine kurze `HANDOFF.md`, damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeiten kann. | Wenn das **Kontextfenster knapp** wird. |
 
@@ -63,8 +63,7 @@ Auto mode aktivieren (einmaliges Opt-in):
 
 - **`plan-grill` schreibt während des Interviews nichts** und legt nach deiner Bestätigung genau eine Datei an: den Plan. Umgesetzt wird auch danach nichts — dafür ist `plan-execute` da.
 - **`session-learn` schreibt nichts.** Es reflektiert und übergibt sein Ergebnis; angewendet wird es erst über den Plan.
-- **`project-settings` holt in zwei Freigabestufen.** Alles innerhalb des Repos kommt gesammelt in einer Vorschau; `~/.claude/settings.json` ist ein eigener Schritt mit `.bak`-Kopie, weil diese Datei außerhalb jeder Versionierung liegt. Lehnst du die zweite Stufe ab, ist das Kommunikationsprotokoll zwar installiert, die Zustellung eingehender Nachrichten aber ungeregelt — der Skill sagt dir das vorher.
-- **Kommt eine Nachricht zwischen zwei Sessions nicht an, gibt es zwei Ursachen** — das Protokoll nennt beide. Ohne `crossSessionInbound: "accept"` (Freigabestufe 2) wird sie je nach Permission-Modus gehalten statt zugestellt; das ist die erste Prüfung. Ist der Wert gesetzt, liegt sie in der Warteschlange des Empfängers: Nachrichten werden dort erst beim nächsten Tool-Zug verarbeitet, und eine Session, die auf deine Antwort wartet (Freigabedialog, Permission-Prompt), macht keinen. Warten beide Sessions gleichzeitig auf eine Freigabe, kommt keine weiter, bis du eine davon auflöst — Werkzeugverhalten, das kein Protokolltext behebt.
+- **`project-settings` holt genau eine Freigabe.** Alle Änderungen kommen gesammelt in einer Vorschau, mit dem Rückweg je Datei (`git restore` bei getrackten, `.bak` bei untrackten). Die Nutzer-Settings fasst der Skill nicht an.
 - **`project-settings` ist wiederholbar.** Ein zweiter Lauf ohne zwischenzeitliche Änderung erzeugt keinen Diff. Fremde Einstellungen und fremde Permission-Einträge bleiben unangetastet; nur die Kanon-Werte werden gesetzt.
 - **Nach `project-settings` greifen die `allow`-Regeln erst nach dem Workspace-Trust-Dialog** für den Ordner — `deny` und `ask` sofort. Direkt nach dem Lauf sind also die Einschränkungen aktiv und die Erleichterungen noch nicht; das ist erwartet, kein Fehlschlag.
 - **`session-learn` belegt die Plandatei** und ersetzt damit den aktuellen Plan-Kontext — schließe laufende Aufgaben erst ab, bevor du es startest.
@@ -91,9 +90,7 @@ cmd/
     │   └── references/                     # fünf Disziplin-Kataloge plus Token-Effizienz-Pass
     ├── project-settings/
     │   ├── SKILL.md
-    │   └── references/
-    │       ├── permission-kanon.md         # die zu setzenden Werte samt Belegen
-    │       └── kommunikationsprotokoll.md  # Vorlage, wird ins Zielprojekt kopiert
+    │   └── references/permission-kanon.md  # die zu setzenden Werte samt Belegen
     ├── session-handoff/SKILL.md
     └── session-learn/SKILL.md
 ```

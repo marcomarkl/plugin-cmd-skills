@@ -2,6 +2,13 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.10.0
+
+- **Das Kommunikationsprotokoll ist ersatzlos entfernt.** Es funktionierte in der Praxis nicht wie beabsichtigt. Weg sind: die Vorlage `references/kommunikationsprotokoll.md`, Schritt 7 von `project-settings` (Kopie nach `.claude/skills/session-protocol/SKILL.md` samt `SessionStart`-Hook) und der Nutzer-Settings-Block des Kanons (`crossSessionInbound`, `isolatePeerMachines`). Der Permission-Kanon selbst, Auto-Memory-Übernahme und `plansDirectory` bleiben unverändert.
+- **`project-settings` hat dadurch nur noch eine Freigabestufe und kein Argument mehr.** Die zweite Stufe existierte allein für `~/.claude/settings.json`; der Skill schreibt jetzt nur noch im Projekt (einzige Ausnahme wie bisher: das Verschieben übernommener Auto-Memory-Einträge nach `imported/`). Das Frontmatter verliert `argument-hint`, der Body die `$ARGUMENTS`-Zeile — `settings` bzw. `protokoll` als Aufrufargument entfallen.
+- **Bereits eingerichtete Projekte räumt der Skill nicht auf.** Wo ein früherer Lauf Hook und `session-protocol/SKILL.md` hinterlassen hat, bleiben beide liegen und laden das Protokoll weiter bei jedem Sessionstart, bis sie von Hand entfernt werden. Ein neuer Lauf entfernt sie nicht — er kennt sie nicht mehr.
+- `cmd/README.md`, `DESIGN.md`, `README.md` (Root), `examples/transcripts.md` und der Kommentarblock in `scripts/smoke.sh` nachgezogen. Das Prüfmuster in `smoke.sh` und beide Manifest-`description`s bleiben unverändert gültig: Der Eröffnungszug des Skills ändert sich nicht, und die `description`s zählen nur Skill-Namen auf.
+
 ## 0.9.0
 
 - **Das Kommunikationsprotokoll hatte einen unerreichbaren Ladeweg.** Die Kurzfassung verwies auf „Volltext über `/session-protocol`", aber der Skill trägt `disable-model-invocation: true` und erscheint damit im Skill-Listing einer Session nicht — der Slash-Command ist ein Weg für den Nutzer, keiner für das Modell. Zwei parallel laufende Sessions haben den Volltext deshalb nie geladen. Er wird jetzt per `Read` auf `.claude/skills/session-protocol/SKILL.md` geladen, **beim ersten Kontakt** statt beim ersten Senden: Eingehende Nachrichten kommen unangekündigt, und die Empfangsregeln sind gerade die, die ohne Volltext fehlen. Fehlt die Datei, gilt die Kurzfassung, und das ist kein Fehler.

@@ -54,7 +54,7 @@ run "project-rules" "/cmd:project-rules" "zieldatei|claude\.md|agents\.md|projek
 # session-learn: reflektiert die Session (headless kaum Historie -> nur Laden/Eroeffnung)
 run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
 # project-settings: Sonderfall wie session-handoff. Der Skill SCHREIBT normalerweise
-# .claude/settings.json, .gitignore und einen projektlokalen Skill — hier laeuft er im
+# .claude/settings.json und .gitignore — hier laeuft er im
 # Repo selbst, also wird bewusst NUR der nebenwirkungsfreie Eroeffnungszug geprueft:
 # Bestandsaufnahme und Vorschau vor der Freigabe. Zwei Dinge schuetzen zusaetzlich:
 # "-p" erlaubt ohne "--permission-mode acceptEdits" kein Write, und der Skill holt vor

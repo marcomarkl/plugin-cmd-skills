@@ -1,6 +1,6 @@
 {
   "name": "cmd",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Persönliches Planungs-Toolkit: Vorhaben klären (plan-grill), Plan reviewen (plan-review), umsetzen (plan-execute), CLAUDE.md härten (project-rules), Projekt-Settings einrichten (project-settings), aus der Session lernen (session-learn) und den Arbeitsstand übergeben (session-handoff).",
   "author": { "name": "Marco Markl" },
   "homepage": "https://github.com/marcomarkl/plugin-cmd-skills#readme",

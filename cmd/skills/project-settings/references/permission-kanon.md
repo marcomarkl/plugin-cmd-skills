@@ -48,27 +48,12 @@ Adressatenhinweis: Diese Datei ist Nachschlagewerk für dich beim Ausführen von
 }
 ```
 
-## Nutzer: `~/.claude/settings.json`
-
-Getrennte Freigabestufe, `.bak`-Kopie vorher.
-
-```jsonc
-{
-  "crossSessionInbound": "accept",
-  "isolatePeerMachines": true
-}
-```
-
-## Warum die Aufteilung
-
-`crossSessionInbound` muss in die Nutzer-Settings: Ein Projektwert gilt nur, wenn er auf der Leiter `accept < hold < refuse` **strenger** ist als der Wert aus managed, `--settings` oder Nutzer-Settings — `accept` wäre dort also wirkungslos. `isolatePeerMachines` steht daneben, weil das Verhalten maschinenweit ist; ein `true` gilt zwar aus jedem Scope, aber projektweise gesetzt hinge es davon ab, in welchem Ordner die Session gestartet wurde.
-
 ## Was bewusst nicht gesetzt wird
 
 | Key | Grund |
 |---|---|
 | `autoMode` | Wird aus Projekt- und Local-Settings nicht gelesen. Ein Eintrag dort wäre stumm wirkungslos. |
-| `dialogExpiry` | Wird nur aus Nutzer-, managed- und `--settings`-Quellen gelesen. Bei `crossSessionInbound: "accept"` ohnehin gegenstandslos, weil kein Freigabedialog entsteht. |
+| `dialogExpiry` | Wird nur aus Nutzer-, managed- und `--settings`-Quellen gelesen. Ein Eintrag in den Projekt-Settings wäre stumm wirkungslos. |
 | `language` | Steht bereits in den Nutzer-Settings und wirkt. Ein Projektwert wäre die Doppelung, die dieser Skill vermeiden soll. |
 | Lesende git-Formen | `git status`, `git log`, `git diff` gehören zum eingebauten Read-only-Satz und laufen in jedem Modus prompt-frei. Eine Allow-Regel wäre wirkungslose Redundanz. |
 | `Read(**)` fürs Projekt | Lesen innerhalb des Working Directory braucht ohnehin keine Permission. |

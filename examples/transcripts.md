@@ -65,9 +65,9 @@ Die letzte Zeile ist der Vollständigkeitsbeleg: Jede Katalogregel muss in genau
 
 ## project-settings
 
-**Eröffnungszug:** Bestandsaufnahme statt Schreiben — welche der Zieldateien existieren, welche von git getrackt werden, was im Auto-Memory dieses Projekts liegt. Danach die Vorschau für Freigabestufe 1, zusammen mit dem Hinweis, dass Stufe 2 (`~/.claude/settings.json`) getrennt folgt und das Kommunikationsprotokoll ohne sie unvollständig wirkt. Nicht parsebares JSON in einer Zieldatei bricht hier ab, ohne etwas zu überschreiben.
+**Eröffnungszug:** Bestandsaufnahme statt Schreiben — welche der Zieldateien existieren, welche von git getrackt werden, was im Auto-Memory dieses Projekts liegt. Danach die gesammelte Vorschau aller Änderungen zur Freigabe. Nicht parsebares JSON in einer Zieldatei bricht hier ab, ohne etwas zu überschreiben.
 
-**Zwischenschritte, die eine Rückfrage erzeugen:** übernehmbare Kandidaten aus `.claude/settings.local.json`; jede Wildcard-Zusammenfassung, die mehr freigäbe als die Summe der Einzeleinträge (mit benanntem Zugewinn); jeder Auto-Memory-Eintrag mit Zielvorschlag; eine vorhandene, vom Vorlagenstand abweichende `session-protocol/SKILL.md`.
+**Zwischenschritte, die eine Rückfrage erzeugen:** übernehmbare Kandidaten aus `.claude/settings.local.json`; jede Wildcard-Zusammenfassung, die mehr freigäbe als die Summe der Einzeleinträge (mit benanntem Zugewinn); jeder Auto-Memory-Eintrag mit Zielvorschlag.
 
 **Abschlussbericht** (Chat-Notiz): angelegt, geändert, übersprungen, abgelehnt — je mit Rückweg (`git restore <datei>` bei getrackten, `.bak`-Pfad bei untrackten). Dazu drei Punkte, die sonst als Fehlschlag gelesen werden:
 
@@ -76,7 +76,7 @@ Wirkt erst nach dem Workspace-Trust-Dialog: permissions.allow (deny/ask sofort)
 Nicht abgedeckt: deny schützt das Read-Tool, nicht die Shell (cat & Co.)
 Bewusst offen:   git restore / git checkout -- laufen ungefragt
 ```
-Bei ausgebliebener Stufe 2 zusätzlich der ausdrückliche Hinweis darauf. Ein zweiter Lauf ohne zwischenzeitliche Änderung meldet, dass nichts zu tun war, und erzeugt keinen Diff.
+Ein zweiter Lauf ohne zwischenzeitliche Änderung meldet, dass nichts zu tun war, und erzeugt keinen Diff.
 
 ## session-learn
 
