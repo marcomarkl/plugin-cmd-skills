@@ -11,7 +11,7 @@ Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsn
 | Skill | Was er tut | Wann |
 |---|---|---|
 | `/cmd:plan-grill` | Interviewt dich zu einem Vorhaben, löst die Entscheidungen einzeln in Abhängigkeits- und Tragweitenreihenfolge auf, protokolliert sie revidierbar und legt sie nach deiner Bestätigung als Plan an. | **Am Anfang**, wenn das Vorhaben noch unscharf ist. |
-| `/cmd:plan-review` | Reviewt den zuletzt erstellten Plan in rotierenden Blickwinkeln und arbeitet die belastbaren Befunde direkt ein. | **Nach** `/plan`, bevor du freigibst. |
+| `/cmd:plan-review` | Reviewt den zuletzt erstellten Plan in rotierenden Blickwinkeln und arbeitet die belastbaren Befunde direkt ein. | Sobald ein Plan steht — von `plan-grill` oder `/plan` —, bevor du freigibst. |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan vollständig um und verifiziert jeden Schritt gegen ein beobachtbares Kriterium; hält bei einem Fund außerhalb des Plans oder einer Klassifikator-Blockade an und fragt nach. | **Nach** dem Verlassen des Plan-Modus. |
 | `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit fünf Disziplin-Katalogen und verdichtet sie token-effizient. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon, entdoppelt die Permission-Listen und legt ein Kommunikationsprotokoll für parallele Sessions ab. | **Einmal** beim Einrichten eines Projekts, danach bei Bedarf erneut. |
@@ -37,7 +37,7 @@ plan-grill        →  plan-review  →  ExitPlanMode  →  plan-execute
 
 Jeder Skill ist einzeln nutzbar; die Kette ist die Kür, nicht die Pflicht.
 
-`session-learn` steht **quer** zu dieser Kette: es reflektiert eine ganze Session und erzeugt selbst einen Plan — aber über die *Arbeitsweise* (Learnings für künftige Sessions), nicht über eine Aufgabe. Es betritt die Pipeline wieder bei `/plan`.
+`session-learn` steht **quer** zu dieser Kette: es reflektiert eine ganze Session und erzeugt selbst einen Plan — aber über die *Arbeitsweise* (Learnings für künftige Sessions), nicht über eine Aufgabe. Weil der Plan damit schon existiert, tritt es bei `plan-review` in die Kette ein, nicht bei `/plan`.
 
 `session-handoff` steht **quer zur Zeitachse**: Es unterbricht die Kette an beliebiger Stelle — typischerweise mitten in `plan-execute`, dem einzigen langlaufenden Skill — und reicht den Stand an ein frisches Fenster weiter, wo die Kette dort fortgesetzt wird, wo sie abbrach.
 
@@ -87,7 +87,7 @@ cmd/
     ├── plan-review/SKILL.md
     ├── project-rules/
     │   ├── SKILL.md
-    │   └── references/                     # sechs Disziplin-Kataloge
+    │   └── references/                     # fünf Disziplin-Kataloge plus Token-Effizienz-Pass
     ├── project-settings/
     │   ├── SKILL.md
     │   └── references/

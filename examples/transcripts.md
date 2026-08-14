@@ -42,6 +42,27 @@ Der Plan selbst wurde in den Runden direkt geändert. Rücknahme per Kennung: �
 
 **Abschlussbericht** (Chat-Notiz, nach Umsetzung): je Planschritt was umgesetzt und **womit verifiziert** (beobachtetes Kriterium + Ergebnis); aufgetretene Abweichungen samt Korrektur; Klassifikator-Blockaden und Reaktion; substanzielle Funde außerhalb des Plans und Nutzer-Entscheid; offene Blocker; abschließend der Commit-Status plus Angebot und nächster Schritt.
 
+## project-rules
+
+**Eröffnungszug:** Auflösung der Zieldatei — welche `CLAUDE.md`/`AGENTS.md` gehärtet wird, und bei mehreren Kandidaten oder fehlendem Pfad die Rückfrage statt einer Annahme. Direkt danach das erkannte **Projektprofil** als Vorschlag zur Bestätigung, weil es die Relevanzschwelle jeder Regel setzt. Existieren `CLAUDE.md` und `AGENTS.md` als getrennte echte Dateien mit überlappendem Inhalt, wird das Drift-Risiko benannt und eine Symlink-Konsolidierung angeboten.
+
+**Eine Rückfragerunde in der Mitte:** alle Konflikte aus dem Abdeckungs-Register gebündelt — je vorhandene Regel wörtlich, Katalogregel wörtlich, Empfehlung. Bewusst **eine** Runde, nicht fünf Unterbrechungen. Ohne Aufsicht gilt der Fallback „strengere oder spezifischere Fassung", vermerkt im Protokoll.
+
+**Änderungsprotokoll** (Chat-Notiz, nach dem Token-Effizienz-Pass):
+
+```
+## Gehärtet: <Pfad zur maßgeblichen Datei>
+Projektprofil: <Profil> (bestätigt: ja/nein)
+Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschlagen / n/a>
+
+### Ergänzt / Geschärft / Bereits vorhanden / Bewusst weggelassen / Konflikte / Verdichtet
+- <Werkzeug> → <Abschnitt>: <Regel in Kurzform, im Projekt verankert>
+
+### Abdeckung
+<X von Y Katalogregeln verbucht> — alle fünf Inhalts-Kataloge durchgegangen, Token-Effizienz-Pass angewendet.
+```
+Die letzte Zeile ist der Vollständigkeitsbeleg: Jede Katalogregel muss in genau einer Kategorie gelandet sein.
+
 ## project-settings
 
 **Eröffnungszug:** Bestandsaufnahme statt Schreiben — welche der Zieldateien existieren, welche von git getrackt werden, was im Auto-Memory dieses Projekts liegt. Danach die Vorschau für Freigabestufe 1, zusammen mit dem Hinweis, dass Stufe 2 (`~/.claude/settings.json`) getrennt folgt und das Kommunikationsprotokoll ohne sie unvollständig wirkt. Nicht parsebares JSON in einer Zieldatei bricht hier ab, ohne etwas zu überschreiben.

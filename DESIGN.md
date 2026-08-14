@@ -10,11 +10,13 @@ Willst du das Präfix ändern, passe `name` in `cmd/.claude-plugin/plugin.json` 
 
 ## Lokaler Entwicklungs-Loop
 
-Laden/testen: `claude --plugin-dir ./cmd`, nach Änderungen `/reload-plugins`. Manifeste prüfen: `claude plugin validate .` (vom Repo-Root). Verhaltens-Rauchtest: `bash scripts/smoke.sh` — startet echte Modell-Läufe, prüft nur den Eröffnungszug je Skill. Die erwartete Form der vollen Flows steht in [`examples/transcripts.md`](examples/transcripts.md).
+Laden/testen: `claude --plugin-dir ./cmd`, nach Änderungen `/reload-plugins`. Manifeste prüfen: `claude plugin validate . --strict` **und** `claude plugin validate ./cmd --strict` — der Root-Aufruf erfasst nur das Marketplace-Manifest, das Plugin-Manifest braucht den zweiten. Verhaltens-Rauchtest: `bash scripts/smoke.sh` — startet echte Modell-Läufe, prüft nur den Eröffnungszug je Skill. Die erwartete Form der vollen Flows steht in [`examples/transcripts.md`](examples/transcripts.md).
+
+**Ausrollen ist etwas anderes als Testen.** `--plugin-dir` ist der einzige Weg, der den Arbeitsverzeichnis-Stand zeigt; der Marketplace-Weg geht über GitHub und braucht drei Schritte (`git push`, `marketplace update`, `plugin update`) — `marketplace update` allein hebt die installierte Version nicht an, es legt sie nur in den Cache. Ablauf und Belege in `.claude/skills/marketplace-verwaltung/SKILL.md`.
 
 ## Frontmatter und Stellschrauben je Skill
 
-Alle sechs Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows.
+Alle sieben Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows.
 
 ### plan-execute
 
@@ -48,7 +50,7 @@ Frontmatter: `model: opus`, `effort: xhigh`.
 
 Die Retrospektive läuft, bis kein tragfähiges Learning mehr offen ist. Zu beachten:
 
-- **Schreibt selbst nichts an die Zielorte** — die einzige Ausgabe ist ein Plan, den `plan-review` härtet und `plan-execute` anwendet. Die Ziele sind **projektlokal** (Projekt-CLAUDE.md/`references`/Repo, nie user-global; das Memory-System bleibt unangetastet) und damit git-reversibel. Wie bei `plan-grill` trägt diese Nicht-Schreiben-Regel allein die Body-Prosa, kein Frontmatter-Schutz.
+- **Schreibt selbst nichts an die Zielorte** — die einzige Ausgabe ist ein Plan, den `plan-review` härtet und `plan-execute` anwendet. Die Ziele sind **projektlokal** (Projekt-CLAUDE.md/`references`/Repo, nie user-global; das Memory-System bleibt unangetastet) und damit git-reversibel. Wie bei `plan-grill` trägt auch diese Regel allein die Body-Prosa, kein Frontmatter-Schutz — dort in ihrer zeitlichen Fassung (während des Interviews nichts, danach nur die Plandatei), hier als vollständiges Nicht-Schreiben.
 - **End-of-Session gedacht:** der erzeugte Plan belegt die Plandatei und ersetzt den aktuellen Plan-Kontext — erst laufende Aufgaben abschließen und committen.
 - **Frontmatter:** `model: opus`, `effort: high`.
 
@@ -58,7 +60,7 @@ Verdichtet den laufenden Arbeitsstand in eine `HANDOFF.md`, damit ein frisches F
 
 - **Der Zweck liegt in der Erkenntnisdisziplin, nicht in der Dateibuchhaltung.** Wohin schreiben, wie kürzen, patchen statt neu anlegen — das macht ein fähiges Modell ohnehin brauchbar; solche Regeln bleiben deshalb knapp. Tragend ist das Gegenteil des Defaults: Der Skill läuft definitionsgemäß auf einem gekürzten Verlauf, Zusammenfassen glättet, und je weniger im Kontext steht, desto glatter wird es. Der Text ist entsprechend gewichtet — mehr als die Hälfte gilt dem belegten Stand, der Kontextgrenze und dem, was nicht mehr rekonstruierbar ist.
 - **Abschnitt „Unsicher" statt bloßer Ermahnung.** Die Kontextgrenze hat einen festen Ort in der Datei: Vermutung, Quelle, Prüfweg. Der Abschnitt darf leer bleiben, aber sein Fehlen ist selbst eine Behauptung („nichts war unsicher"), die nach einem gekürzten Verlauf selten stimmt. Dorthin fließt auch der Wirkungsfilter: Was aus Unsicherheit wegbliebe, geht nicht in den Papierkorb, sondern unter „Unsicher".
-- **Der einzige Skill, der ohne Plan und ohne Rückfrage schreibt.** `plan-execute` schreibt Projektdateien, aber auf Basis eines freigegebenen Plans; `plan-grill` und `session-learn` schreiben gar nicht. Vertretbar, weil die Zieldatei neu ist, nichts Bestehendes angefasst wird und der Rückweg trivial bleibt. Die Zusage „schreib ohne zu fragen" steht ausdrücklich im Body: Ohne sie legt das Modell den Stand ersatzweise in den Chat und bittet um Erlaubnis — im Kontextnotstand die teuerste mögliche Rückfrage. Gegengewicht: Der Skill nennt den Rückweg, sobald er angelegt oder überschrieben hat, und sichert eine untrackte Datei vorher als `.bak`.
+- **Der einzige Skill, der ohne Plan und ohne Rückfrage schreibt.** `plan-execute` schreibt Projektdateien, aber auf Basis eines freigegebenen Plans; `plan-grill` schreibt ausschliesslich die Plandatei und erst nach der bestätigten Schlussnotiz; `session-learn` schreibt gar nicht. Vertretbar, weil die Zieldatei neu ist, nichts Bestehendes angefasst wird und der Rückweg trivial bleibt. Die Zusage „schreib ohne zu fragen" steht ausdrücklich im Body: Ohne sie legt das Modell den Stand ersatzweise in den Chat und bittet um Erlaubnis — im Kontextnotstand die teuerste mögliche Rückfrage. Gegengewicht: Der Skill nennt den Rückweg, sobald er angelegt oder überschrieben hat, und sichert eine untrackte Datei vorher als `.bak`.
 - **Kein Fenster, keine Session, kein Skript.** Der Skill endet bei der Datei. `cmd/` enthält bewusst **keine** Nicht-Markdown-Dateien außer dem Manifest, und ein Skill, der ungefragt ein Fenster öffnet oder eine Session startet, verletzt die Freigabe-Regel aus `CLAUDE.md` §12. Ein Verbot dagegen steht **nicht** im Body: Nichts im Skill führt dorthin, und in einem kurzen Prompt kostet jede tote Regel Aufmerksamkeit.
 - **Kein „Einstiegssatz" als Pflicht.** Naheliegend wäre, nach dem Wegfall des Fenster-Öffnens einen kopierfertigen Satz für das nächste Fenster zu verlangen. Die Kaltstart-Probe zeigt, dass er entbehrlich ist: Die Datei allein genügt, um den nächsten Schritt ohne Rückfrage auszuführen. Ein solcher Satz dupliziert sie also — die Schlussnotiz verlangt nur Pfad, nächsten Schritt und gegebenenfalls den Rückweg. Die tragende Anforderung steht stattdessen bei den Abschnitten: **Die Datei muss für sich stehen.**
 - **Abschnitte als Richtschnur, nicht als Schema.** Das Modell passt Überschriften situationsgerecht an, und das Patchen trägt trotzdem, weil es semantisch abgleicht statt wörtlich. Stabile Überschriften bleiben erwünscht, aber als Vergleichbarkeit über mehrere Übergaben — nicht als Bedingung fürs Patchen.
@@ -74,7 +76,7 @@ Verdichtet den laufenden Arbeitsstand in eine `HANDOFF.md`, damit ein frisches F
 
 ```
 claude --plugin-dir ./cmd -p "hi" --output-format stream-json --verbose
-# → plugins: [{"name":"cmd","version":"0.7.0",...}], plugin_errors, slash_commands
+# → plugins: [{"name":"cmd","version":"<aktuell>","path":"…",...}], plugin_errors, slash_commands
 ```
 
 ### project-rules

@@ -5,24 +5,18 @@
 Kein Anwendungscode, sondern ein **Claude-Code-Plugin-Repo mit eigenem lokalem Marketplace**. Es gibt keinen Build und keine Runtime — die Artefakte sind Manifeste (JSON) und Skills (Markdown mit Frontmatter), die Claude Code direkt lädt. Diese Datei ist Guidance fürs **Arbeiten im Repo** und **nicht Bestandteil des ausgelieferten Plugins** (das steckt in `cmd/`); beim Installieren reist sie nicht mit.
 
 Zwei getrennte Manifest-Ebenen, nicht vermischen:
-- **Marketplace:** `.claude-plugin/marketplace.json` (Repo-Root) — definiert den Marketplace `marco-markl` (Source `directory`) und listet das Plugin `cmd` mit `source: "./cmd"`.
+- **Marketplace:** `.claude-plugin/marketplace.json` (Repo-Root) — definiert den Marketplace `marco-markl` und listet das Plugin `cmd` mit `source: "./cmd"`, also relativ zum Marketplace-Wurzelverzeichnis.
 - **Plugin:** `cmd/.claude-plugin/plugin.json` — Plugin `cmd`; der Name `cmd` ist der Aufruf-Namespace.
+
+**Registriert ist der Marketplace als GitHub-Source, nicht als `directory`** — geprüft in `~/.claude/settings.json` und `~/.claude/plugins/known_marketplaces.json`, beide führen `{"source": "github", "repo": "marcomarkl/plugin-cmd-skills"}`. Der lokale Klon liegt unter `~/.claude/plugins/marketplaces/marco-markl` und wird bei jedem Update neu gezogen. Praktische Folge, die alles Weitere bestimmt: **`marketplace update` liest von GitHub, nicht aus diesem Arbeitsverzeichnis** — ein lokaler Commit reicht nicht, es muss gepusht sein (siehe 5.).
 
 Installiert als `cmd@marco-markl`. Skills werden qualifiziert als `/cmd:<skill>` aufgerufen; nutze in Doku und Aufrufen konsequent diese Form — die unqualifizierte Kurzform funktioniert nur, solange der Name systemweit eindeutig ist, darauf ist kein Verlass.
 
 ## 2. Struktur
 
-```
-plugin-cmd-skills/                   # Repo-Root = Marketplace-Root
-├── .claude-plugin/marketplace.json  # Marketplace "marco-markl"
-├── CLAUDE.md                        # diese Datei
-└── cmd/                             # das Plugin (source: "./cmd")
-    ├── .claude-plugin/plugin.json   # Plugin-Manifest; name "cmd" = Namespace
-    ├── README.md
-    └── skills/<skill>/SKILL.md      # je Skill ein Ordner, autoentdeckt
-```
+Der Repo-Ordner heisst `plugin-cmd-skills` — er benennt das Repository, nicht das Plugin, und ist vom Namespace `cmd` unabhängig. **Solange der Marketplace als GitHub-Source registriert ist (siehe 1.), bricht ein Umbenennen oder Verschieben des Ordners die Installation nicht** — die Registrierung kennt keinen lokalen Pfad, sondern das Remote. Verloren geht dabei nur der schnelle Dev-Loop über `--plugin-dir ./cmd`, der relativ zum Arbeitsverzeichnis auflöst.
 
-Der Repo-Ordner heisst `plugin-cmd-skills` — er benennt das Repository, nicht das Plugin, und ist vom Namespace `cmd` unabhängig. **Ein Umbenennen des Ordners bricht die Installation**: der Marketplace ist bei `source: directory` mit dem absoluten Pfad registriert (in `~/.claude/settings.json` unter `extraKnownMarketplaces` **und** abgeleitet in `~/.claude/plugins/known_marketplaces.json`), und ein toter Pfad äussert sich als `cache-miss` in `claude plugin list` — nicht als Datei- oder Namensfehler. Wird der Ordner verschoben oder umbenannt, muss der Marketplace neu registriert werden (siehe 6.); die `renames`-Map hilft dabei nicht, sie deckt nur Plugin-Namen ab.
+Anders bei einer Registrierung mit `source: directory`: dort steht der **absolute Pfad** in `~/.claude/settings.json` unter `extraKnownMarketplaces` und abgeleitet in `~/.claude/plugins/known_marketplaces.json`, und ein toter Pfad äussert sich als `cache-miss` in `claude plugin list` — nicht als Datei- oder Namensfehler. Nur dann ist nach einem Verschieben eine Neuregistrierung nötig (Ablauf in `.claude/skills/marketplace-verwaltung/SKILL.md`). Prüfe im Zweifel `known_marketplaces.json`, statt den Fall zu raten; die `renames`-Map hilft in keinem der beiden Fälle, sie deckt nur Plugin-Namen ab.
 
 ## 3. Verhältnis zu README
 
@@ -37,31 +31,20 @@ Vier Ebenen, nicht vermischen: `README.md` (Root) = **Einstieg und Installation*
 
 ## 5. Arbeitsweise / Dev-Loop
 
-- **Schnell (empfohlen beim Bauen):** `claude --plugin-dir ./cmd`, nach Änderungen in der Session `/reload-plugins`.
-- **Über den Marketplace:** bei `source: directory` liegt eine Kopie im Cache; Repo-Änderungen greifen erst nach `claude plugin marketplace update marco-markl` — kein uninstall/reinstall.
+- **Schnell (empfohlen beim Bauen):** `claude --plugin-dir ./cmd`, nach Änderungen in der Session `/reload-plugins`. Nur dieser Weg zeigt den Arbeitsverzeichnis-Stand; alles andere geht über GitHub.
+- **Über den Marketplace: zwei Befehle, nicht einer.** `marketplace update` allein genügt **nicht** — es aktualisiert den Marketplace-Klon und legt die neue Version in den Cache, hebt aber die *installierte* Version nicht an. Gemessen am `system/init`-Event lud eine neue Session danach weiterhin die alte Version. Vollständig ist:
+
+  ```
+  git push                                       # marketplace update liest von GitHub, nicht lokal
+  claude plugin marketplace update marco-markl   # Marketplace holen, neue Version in den Cache
+  claude plugin update cmd@marco-markl           # installierte Version anheben ("restart required")
+  ```
+
+  Danach greift es erst nach `/reload-plugins` oder in einer neuen Session. Kein uninstall/reinstall nötig. Prüfe das Ergebnis objektiv am `system/init`-Event (`plugins[].version` und `path`), nicht an `claude plugin list` allein und nie an der Selbstauskunft des Modells.
 
 ## 6. Installieren, aktualisieren, deinstallieren
 
-Der **öffentliche** Installationsweg (für Fremde, über GitHub) steht im [Root-README](README.md); hier geht es um den lokalen Maintainer-Pfad. Als CLI (`claude plugin …`); die meisten Befehle gibt es auch als `/plugin …` in der Session. Die Sequenz unten gilt für den **noch nicht registrierten** Fall — auf dieser Maschine ist `marco-markl` bereits registriert und das Plugin installiert, dort genügt bei Repo-Änderungen `marketplace update`.
-
-**Bei totem Marketplace-Pfad (`cache-miss`) hilft `marketplace update` nicht** — es liest den Pfad aus `known_marketplaces.json` und scheitert mit `ENOENT`. Auch ein korrigierter `extraKnownMarketplaces`-Pfad in `~/.claude/settings.json` allein reicht nicht: er wird nicht in `known_marketplaces.json` nachgezogen. Dann neu registrieren — `marketplace remove` leert dabei `enabledPlugins`, deshalb ist `install` danach zwingend:
-
-```
-claude plugin marketplace remove marco-markl
-claude plugin marketplace add /absoluter/pfad/zum/repo --scope user
-claude plugin install cmd@marco-markl        # stellt enabledPlugins wieder her
-```
-
-```
-claude plugin marketplace add /absoluter/pfad/zum/repo   # absoluter Pfad; ein relativer bindet an das Arbeitsverzeichnis; optional --scope user|project|local
-claude plugin install   cmd@marco-markl
-claude plugin marketplace update marco-markl   # Repo-Änderungen in den Cache ziehen
-claude plugin disable   cmd@marco-markl     # aus-/einschalten ohne Deinstall
-claude plugin enable    cmd@marco-markl
-claude plugin uninstall cmd@marco-markl     # Alias: remove / rm
-claude plugin marketplace remove marco-markl
-claude plugin list                          # Ist-Zustand, bevor du einen Fehlschlag wiederholst
-```
+Der lokale Maintainer-Pfad — Befehlsübersicht, Neuregistrierung bei totem Pfad (`cache-miss`), Freigabepflicht — steht in `.claude/skills/marketplace-verwaltung/SKILL.md` und wird bei Bedarf dort nachgelesen, statt in jeder Session mitzuladen. Der **öffentliche** Installationsweg (für Fremde, über GitHub) steht im [Root-README](README.md).
 
 ## 7. Prämissen, Belege, Annahmen
 
@@ -79,19 +62,26 @@ claude plugin list                          # Ist-Zustand, bevor du einen Fehlsc
 ## 9. Zerlegen und dosieren
 
 - Kläre Mehrdeutiges, bevor du zerlegst oder schreibst. Würde eine offene Frage das Ergebnis verändern, frag nach, statt sie mit einer Annahme zu schließen.
-- Ein neuer Skill oder ein Umbau berührt mehrere Dateien in Abhängigkeit: `cmd/skills/<name>/SKILL.md` (+ `references/`) → `cmd/README.md` (Nutzung) → ggf. `DESIGN.md` (Begründungen) und Root-`README.md` (Skill-Liste) → `description` in `plugin.json` **und** `marketplace.json` → `CHANGELOG.md` → Version in `plugin.json` (zuletzt, sie beschreibt den fertigen Stand). Erkläre Ansatz und Reihenfolge vorab, benenne die Abhängigkeiten und prüfe die Zerlegung auf Vollständigkeit, statt die Kette zu groß anzufassen und Glieder zu vergessen.
+- Ein neuer Skill oder ein Umbau berührt mehrere Dateien in Abhängigkeit: `cmd/skills/<name>/SKILL.md` (+ `references/`) → `cmd/README.md` (Nutzung) → ggf. `DESIGN.md` (Begründungen) und Root-`README.md` (Skill-Liste) → `examples/transcripts.md` (erwartete Ausgabeform) **und** `scripts/smoke.sh` (Eröffnungszug) → `description` in `plugin.json` **und** `marketplace.json` → `CHANGELOG.md` → Version in `plugin.json` (zuletzt, sie beschreibt den fertigen Stand). Erkläre Ansatz und Reihenfolge vorab, benenne die Abhängigkeiten und prüfe die Zerlegung auf Vollständigkeit, statt die Kette zu groß anzufassen und Glieder zu vergessen. Die beiden Testartefakte standen bis 0.8.0 nicht in dieser Kette — genau deshalb fehlte `project-rules` dort über mehrere Versionen unbemerkt.
 - Dosiere nach Bedarf: eine einzelne Formulierung, ein Frontmatter-Key, ein Tippfehler wird direkt geändert — dort kostet Planung mehr, als sie bringt. Der Aufwand steigt erst bei mehreren Dateien, echten Designentscheidungen oder mehrdeutigem Umfang.
 
 ## 10. Verifizieren vor „fertig"
 
-- Es gibt keinen Build, keine Tests, keinen Lint — der einzige maschinelle Check ist `claude plugin validate .` (vom Root; prüft Marketplace und Plugin). Nach jeder Manifest- oder Skill-Änderung und vor jeder Weitergabe laufen lassen, die Ausgabe lesen und ihr Ergebnis nennen.
+- Es gibt keinen Build, keine Tests, keinen Lint — der einzige maschinelle Check ist `claude plugin validate`. Er braucht **zwei Aufrufe**: der Root-Aufruf prüft ausschliesslich das Marketplace-Manifest und lässt das Plugin-Manifest ungeprüft (nachweisbar an der Ausgabe, die genau eine Datei nennt).
+
+  ```
+  claude plugin validate . --strict        # Marketplace-Manifest
+  claude plugin validate ./cmd --strict    # Plugin-Manifest
+  ```
+
+  `--strict` wertet Warnungen als Fehler (unbekannte Felder, fehlende Metadaten) — ohne das Flag toleriert die Runtime sie stillschweigend, und genau die stille Toleranz ist hier das Risiko. Beide nach jeder Manifest- oder Skill-Änderung und vor jeder Weitergabe laufen lassen, die Ausgaben lesen und beide Ergebnisse nennen.
 - `validate` prüft nur die Manifeste, nicht ob ein Skill wirkt. Bei geändertem Skill-Verhalten zusätzlich `claude --plugin-dir ./cmd`, `/reload-plugins`, Skill aufrufen (siehe 5.).
 - Prüfe den Entwurf gegen den ursprünglichen Auftrag: jeder geforderte Punkt adressiert, jede ergebnisrelevante Annahme benannt, jede Sachaussage belegt oder als unsicher markiert.
 - Behaupte keinen Lauf, keine Prüfung und keinen Schritt, den du nicht tatsächlich durchgeführt hast.
 
 ## 11. Fehler, Sicherung, Rückweg
 
-- **Das Repo ist versioniert**, Remote `origin` → `marcomarkl/plugin-cmd-skills`. Der Rückweg aus einem Fehlversuch ist `git restore <datei>` bzw. `git checkout` — committe deshalb einen funktionierenden Stand, bevor du großflächig umschreibst, statt `.bak`-Kopien anzulegen. **Für Dateien außerhalb des Repos gilt das nicht**: `~/.claude/settings.json` und die Plugin-Registrierung liegen in keinem Git, dort bleibt die `.bak`-Kopie vor dem Ändern Pflicht (siehe 12.).
+- **Das Repo ist versioniert**, Remote `origin` → `marcomarkl/plugin-cmd-skills`. Der Rückweg aus einem Fehlversuch ist `git restore <datei>` bzw. `git checkout` — committe deshalb einen funktionierenden Stand, bevor du großflächig umschreibst, statt `.bak`-Kopien anzulegen. **Die Grenze verläuft nicht am Repo-Rand, sondern dort, wo git keinen Rückweg bietet**: bei Dateien außerhalb des Repos (`~/.claude/settings.json`, die Plugin-Registrierung) **und bei untrackten Dateien darin**. In beiden Fällen ist die `.bak`-Kopie vor dem Ändern Pflicht — `git restore` stellt eine nie eingecheckte Datei nicht wieder her. Genau so verfahren `session-handoff` und `project-settings` (siehe 12.).
 - Behandle einen Fehler als Information, nicht als Rauschen: nimm nicht an, dass eine Aktion gelungen ist, sondern lies das Ergebnis (etwa die `validate`-Ausgabe), bevor du darauf aufbaust.
 - Ursache vor Korrektur, und die Ursache behandeln, nicht das Symptom. Trenne vorübergehende Fehler (Zeitüberschreitung, Auslastung), die ein erneuter Versuch löst, von dauerhaften (falscher Key, falscher Pfad, falsche Annahme), die er nicht löst — nur die ersten wiederholen.
 - Scheitert derselbe Versuch zweimal gleich, ändere den Ansatz oder halte an, statt zu wiederholen. Zieht sich eine Aufgabe weit über das erwartete Maß, stoppe und bewerte neu.
@@ -100,7 +90,7 @@ claude plugin list                          # Ist-Zustand, bevor du einen Fehlsc
 
 ## 12. Freigaben und Grenzen
 
-- Lesen und Editieren im Repo ist frei. Die Befehle aus 6. wirken dagegen **außerhalb** des Repos in die Nutzer-Konfiguration (`marketplace add/remove`, `install/uninstall`, `enable/disable`, `--scope user`) — nicht ungefragt ausführen; nenne vorher Ziel, Umfang und Wirkung und hol die Freigabe ein. Je schwerer umkehrbar, desto höher die Hürde; bevorzuge den umkehrbaren Schritt (`marketplace update` statt uninstall/reinstall) — ausser der Pfad selbst ist tot, dann führt nur remove/add zum Ziel (siehe 6.).
+- Lesen und Editieren im Repo ist frei. Die Marketplace- und Plugin-Befehle (siehe 6.) wirken dagegen **außerhalb** des Repos in die Nutzer-Konfiguration (`marketplace add/remove`, `install/uninstall`, `enable/disable`, `--scope user`) — nicht ungefragt ausführen; nenne vorher Ziel, Umfang und Wirkung und hol die Freigabe ein. Je schwerer umkehrbar, desto höher die Hürde; bevorzuge den umkehrbaren Schritt (`marketplace update` plus `plugin update` statt uninstall/reinstall, siehe 5.) — ausser der Pfad selbst ist tot, dann führt nur remove/add zum Ziel.
 - Diese Befehle sind nicht gefahrlos wiederholbar: prüfe nach einem Fehlschlag erst den tatsächlichen Zustand (`claude plugin list`), statt sie ein zweites Mal auszulösen.
 - `.claude/settings.json` führt per Hook Shell-Kommandos aus und vergibt Permissions — nur nach ausdrücklicher Freigabe ändern.
 - Nutze nur die Rechte und Werkzeuge, die die Aufgabe braucht, und überschreite den erteilten Umfang nicht; stößt du an seine Grenze, halte an und frag.

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in *SKILL.md) echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Eine SKILL.md wurde geaendert. Pruefe, ob die Version in cmd/.claude-plugin/plugin.json angehoben werden muss.\"}}';; esac"
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in */cmd/skills/*|cmd/skills/*) echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Ausgelieferter Plugin-Inhalt unter cmd/skills/ wurde geaendert. Pruefe, ob die Version in cmd/.claude-plugin/plugin.json angehoben werden muss.\"}}';; esac"
           }
         ]
       }

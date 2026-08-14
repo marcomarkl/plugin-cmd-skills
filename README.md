@@ -20,10 +20,16 @@ Oder in einer laufenden Session:
 /plugin install cmd@marco-markl
 ```
 
-Aktualisieren und entfernen:
+Aktualisieren braucht **zwei** Befehle — `marketplace update` allein legt die neue Version nur in den Cache und hebt die installierte Version nicht an:
 
 ```bash
 claude plugin marketplace update marco-markl   # neue Version holen
+claude plugin update cmd@marco-markl           # installierte Version anheben
+```
+
+Danach `/reload-plugins` oder eine neue Session starten. Entfernen:
+
+```bash
 claude plugin uninstall cmd@marco-markl        # Plugin entfernen
 claude plugin marketplace remove marco-markl   # Marketplace abmelden
 ```
@@ -35,7 +41,7 @@ Alle werden mit dem Namespace-Präfix aufgerufen und laden **nur auf deinen Aufr
 | Skill | Kurz | Wann |
 |---|---|---|
 | `/cmd:plan-grill` | Interviewt dich zum Vorhaben, löst die Entscheidungen einzeln auf und legt sie als Plan an | am Anfang, wenn das Vorhaben unscharf ist |
-| `/cmd:plan-review` | Reviewt den Plan in rotierenden Blickwinkeln und arbeitet Befunde ein | nach `/plan` |
+| `/cmd:plan-review` | Reviewt den Plan in rotierenden Blickwinkeln und arbeitet Befunde ein | sobald ein Plan steht |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan um, jeden Schritt gegen ein beobachtbares Kriterium verifiziert | nach dem Plan-Modus |
 | `/cmd:project-rules` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit fünf Disziplin-Katalogen | eigenständig |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon und legt ein Session-Kommunikationsprotokoll ab | beim Einrichten eines Projekts |
@@ -52,7 +58,7 @@ Details, Pipeline und Voraussetzungen: **[`cmd/README.md`](cmd/README.md)**.
 
 ## Hinweise zum Repo
 
-- Das Repo enthält ein committetes **`.claude/settings.json`** mit einem harmlosen Entwickler-Hook: Er erinnert nach Änderungen an einer `SKILL.md` daran, die Version zu prüfen. Wer das Repo in Claude Code öffnet, bekommt diesen Hook mit. Er führt keine Änderungen aus, sondern gibt nur einen Hinweis aus.
+- Das Repo enthält ein committetes **`.claude/settings.json`** mit einem harmlosen Entwickler-Hook: Er erinnert nach Änderungen an ausgeliefertem Plugin-Inhalt unter `cmd/skills/` daran, die Version zu prüfen. Wer das Repo in Claude Code öffnet, bekommt diesen Hook mit. Er führt keine Änderungen aus, sondern gibt nur einen Hinweis aus.
 - `scripts/smoke.sh` startet **echte Modell-Läufe** und kostet entsprechend Tokens.
 
 ## Weiterlesen
