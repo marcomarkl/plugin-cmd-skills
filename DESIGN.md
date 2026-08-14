@@ -30,6 +30,12 @@ Das Interview läuft, bis keine offene Entscheidung mit Ergebniswirkung mehr im 
 
 Frontmatter: `model: opus`, `effort: high` (nicht `xhigh` wie `plan-review`: interaktiv, viele kurze Züge). Beobachtbares Kriterium zum Nachschärfen auf `xhigh`: Der Skill stellt Fragen, deren Antwort im Faktenvorlauf auffindbar gewesen wäre, oder ordnet den Pool erkennbar nicht nach Abhängigkeit.
 
+**Warum grill den Plan seit 0.8.0 selbst schreibt.** Die alte Begründung („übergibt an `/plan`, weil vor `/plan` noch kein Plan zum Ändern existiert") war **zirkulär**: Sie begründet, warum grill nichts *ändert*, nicht, warum es nichts *erstellt* — der Plan fehlte ja nur, weil grill ihn nicht anlegte. Der Gewinn ist dabei weniger der gesparte Zug als der **Faktenvorlauf**: Er ist der teuerste Teil des Interviews, und der Übergabeblock sah für Belege gar keinen Platz vor. Ein frischer `/plan`-Lauf musste sie also glauben oder neu erheben. Jetzt wandern sie mit Quelle in den Plan, ebenso das Entscheidungs-Ledger — der Chat ist flüchtig, nach einer Kürzung fehlte sonst die Begründung jeder Entscheidung.
+
+Das Gegenargument, die Schreibsperre werde dadurch weich, ist **am eigenen Bestand widerlegt**: `plan-review` schreibt längst in die Plandatei und hält dabei „Implementiere nichts" über viele Runden. „Nur die Plandatei, sonst nichts" trägt als Prosa-Regel. Der gefährliche Fall ist ohnehin ein anderer — grill fängt mitten im Interview an umzusetzen —, und den schließen ein definierter Zeitpunkt (nach der bestätigten Schlussnotiz) plus genau eine erlaubte Datei aus. Die Bestätigung bleibt als Kontrollpunkt erhalten; sie wird nicht vorweggenommen.
+
+**Warum `EnterPlanMode` statt einer frei abgelegten Datei.** `plan-review` arbeitet auf dem zuletzt erstellten Plan, `plan-execute` auf dem über `ExitPlanMode` freigegebenen. Eine Datei irgendwo im Projekt wäre für beide nicht dasselbe Artefakt, und die Kette bräche. Das Tool verlangt laut eigener Beschreibung ohnehin die Zustimmung des Nutzers — der Moduswechsel ist also kein Alleingang des Skills. Läuft grill bereits im Plan-Modus, entfällt der Schritt ersatzlos.
+
 ### plan-review
 
 Der Review läuft rundenweise mit rotierenden Blickwinkeln, bis die Blickwinkel erschöpft sind (kein vorzeitiger Ruhe-Abbruch). Anpassbar:
@@ -68,7 +74,7 @@ Verdichtet den laufenden Arbeitsstand in eine `HANDOFF.md`, damit ein frisches F
 
 ```
 claude --plugin-dir ./cmd -p "hi" --output-format stream-json --verbose
-# → plugins: [{"name":"cmd","version":"0.6.0",...}], plugin_errors, slash_commands
+# → plugins: [{"name":"cmd","version":"0.7.0",...}], plugin_errors, slash_commands
 ```
 
 ### project-rules
@@ -77,9 +83,23 @@ Wendet fünf Disziplin-Kataloge gemeinsam auf eine bestehende `CLAUDE.md`/`AGENT
 
 Frontmatter: `model: opus`, `effort: xhigh` — der Skill plant alle Kataloge in *einem* Durchgang und schreibt die Datei einmal kohärent; das ist der aufwendigste Einzelschritt der Suite.
 
+### project-settings
+
+Frontmatter: `model: opus`, `effort: high`. Zwei `references/` werden bedarfsgeladen: `permission-kanon.md` (die zu setzenden Werte samt Belegen) und `kommunikationsprotokoll.md` (die Vorlage, die ins Zielprojekt kopiert wird).
+
+**Warum die Werte auf zwei Scopes verteilt sind.** Der Skill schreibt fast alles in die Projekt-`.claude/settings.json`, aber `crossSessionInbound` und `isolatePeerMachines` in die Nutzer-Settings. Das ist keine Inkonsequenz, sondern erzwungen: Ein `crossSessionInbound`-Wert aus Projekt- oder Local-Settings gilt nur, wenn er auf der Leiter `accept < hold < refuse` **strenger** ist als der Wert aus den vertrauenswürdigen Quellen — ein `accept` wäre dort also wirkungslos. `isolatePeerMachines` steht daneben, weil Cross-Session-Messaging maschinenweit wirkt und nicht projektweise: Die Erreichbarkeit hängt an Maschine und Account, `ListAgents` listet Sessions aus allen Projekten. Projektweise gesetzt hinge das Nachrichtenverhalten davon ab, in welchem Ordner die Session gestartet wurde.
+
+Aus demselben Grund fasst der Skill `autoMode` und `dialogExpiry` gar nicht an: beide werden aus Projekt- und Local-Settings **nicht gelesen**. Ein Eintrag dort erzeugt keinen Fehler, er wird stillschweigend ignoriert — genau die Fehlerklasse, gegen die dieses Repo sonst mit `claude plugin validate` arbeitet und die hier kein Werkzeug abfängt.
+
+**Warum der Permission-Kanon so aussieht.** `Read(//**)` mit einer deny-Liste für Schlüssel, Cloud-Credentials und Keychain ist eine Entscheidung für **eine** Maschine und **ein** Arbeitsprofil, keine allgemeine Empfehlung — der Block liegt in einem öffentlichen Repo und wird sonst als Vorlage gelesen. Zwei Grenzen sind bewusst in Kauf genommen und im Kanon dokumentiert: Die deny-Liste schützt das Read-Tool, nicht die Shell (`cat` und Verwandte gehören zum eingebauten Read-only-Satz und laufen prompt-frei; die sechs `Bash(cat …)`-Einträge decken nur den naheliegendsten Umweg), und `git restore` bleibt ungefragt, obwohl es uncommittete Arbeit löscht — eine ask-Regel unterbräche den dokumentierten Rückweg aus einem Fehlversuch bei jedem Gebrauch.
+
+**Warum ein Hook und nicht nur ein Skill.** Das Kommunikationsprotokoll soll in jeder Session gelten, aber ein Skill kann sich nicht selbst auslösen, und `disable-model-invocation: true` verhindert zusätzlich das automatische Laden. Der einzige Auslöser, der bei jedem Sessionstart feuert, ist ein `SessionStart`-Hook. Er gibt die markierte Kurzfassung auf stdout aus, was bei diesem Event als Kontext übernommen wird; `jq` braucht er nur für `sessionTitle` und fällt ohne es sauber auf den reinen Text zurück. Nicht möglich ist eine Handlung **vor** dem ersten Prompt: `initialUserMessage` erzeugt zwar einen Turn, gilt aber nur im Non-Interactive-Modus mit `-p`. Das Protokoll wirkt daher ab dem ersten Turn — das ist die Grenze des Mechanismus, nicht der Umsetzung.
+
+Der Hook trägt in seiner ersten Zeile die Marke `# cmd:project-settings:session-protocol`. Sie ist der Wiedererkennungsanker für spätere Läufe: Claude Code dedupliziert gleiche Handler nur über verschiedene Settings-Dateien hinweg, nicht innerhalb eines Arrays — ein Vergleich über den vollständigen Kommandotext legte nach jeder Textänderung einen zweiten Eintrag an.
+
 ## Kein Frontmatter- oder Hook-Schutz gegen Schreibzugriffe
 
-`plan-grill` und `session-learn` dürfen nichts schreiben. Diese Regel trägt **allein die Body-Prosa** — nicht das Frontmatter und kein Hook. Alle Kandidaten wurden geprüft und verworfen:
+`session-learn` darf nichts schreiben, `plan-grill` während des Interviews nichts und danach ausschließlich die Plandatei. Diese Regeln tragen **allein die Body-Prosa** — nicht das Frontmatter und kein Hook. Alle Kandidaten wurden geprüft und verworfen:
 
 - `allowed-tools` **sperrt nichts**. Laut Doku „does not restrict which tools are available: every tool remains callable" — Vorab-Genehmigung gegen Permission-Prompts, keine Whitelist.
 - `disallowed-tools` ist dokumentiert, taugt aber für einen **mehrschrittigen** Skill prinzipiell nicht: die Einschränkung „clears when you send your next message" — im Interview fiele sie schon nach der ersten Antwort weg. Unabhängig davon blieb der Key im headless-Test (`-p`) wirkungslos (`Write`/`Edit` im Pool). Beides zusammen: als Sperre unbrauchbar.
@@ -101,6 +121,6 @@ Die Skills teilen Vokabular. Diese Begriffe wortgleich halten, damit die Suite n
 
 Drei Divergenzen sind **absichtlich** — nicht angleichen:
 
-- **„als Chat-Notiz ausgeben, nicht …"** — grill: *nicht in eine Datei* (grill schreibt nichts); review: *nicht in den Plan* (review schreibt in den Plan, nur die Schlussnotiz nicht); execute schreibt Projektdateien, nur der Abschlussbericht bleibt im Chat. Der Zusatz kodiert, was der Skill *sonst* darf.
+- **„als Chat-Notiz ausgeben, nicht …"** — grill und review: *nicht in den Plan*, aber aus verschiedenen Gründen. Bei review, weil es den Plan laufend ändert und nur die Schlussnotiz draußen bleiben soll; bei grill, weil die Schlussnotiz **vor** der Plandatei kommt und der Kontrollpunkt ist, an dem bestätigt wird. Execute schreibt Projektdateien, nur der Abschlussbericht bleibt im Chat. Der Zusatz kodiert, was der Skill *sonst* darf.
 - **Ledger vs. Protokoll** — grill/review führen ein **Ledger** (Register mit Rücknahme-Kennung); execute führt ein **laufendes Protokoll** (Abweichungen/Ursachen/Korrekturen, ohne Kennung). Verschiedene Dinge, verschiedene Wörter — nicht gleichsetzen.
 - **Kennungs-Schema** — grill flach („Entscheidung 3", rundenlos), review rundenbasiert („2.3"). Folgt der Struktur des jeweiligen Laufs.

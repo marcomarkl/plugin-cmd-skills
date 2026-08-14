@@ -37,7 +37,9 @@ run() {
   fi
 }
 
-# grill: Steelman + genau eine Frage
+# grill: Steelman + genau eine Frage. Der Skill SCHREIBT seit 0.8.0 am Ende die
+# Plandatei — dieser Pfad wird headless nicht erreicht, weil er die Bestaetigung der
+# Schlussnotiz voraussetzt, die ein "-p"-Lauf nicht liefert (wie bei session-handoff).
 run "plan-grill"   "/cmd:plan-grill Beispiel: soll ich Feature X bauen" "steelman|wohlwollend|\\?"
 # review: braucht einen Plan -> Einordnung oder Bitte um einen Plan
 run "plan-review"  "/cmd:plan-review" "plan|blickwinkel|einordnung|kein plan"
@@ -45,6 +47,15 @@ run "plan-review"  "/cmd:plan-review" "plan|blickwinkel|einordnung|kein plan"
 run "plan-execute" "/cmd:plan-execute" "plan|freigegeben|exitplanmode|umsetz"
 # session-learn: reflektiert die Session (headless kaum Historie -> nur Laden/Eroeffnung)
 run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
+# project-settings: Sonderfall wie session-handoff. Der Skill SCHREIBT normalerweise
+# .claude/settings.json, .gitignore und einen projektlokalen Skill — hier laeuft er im
+# Repo selbst, also wird bewusst NUR der nebenwirkungsfreie Eroeffnungszug geprueft:
+# Bestandsaufnahme und Vorschau vor der Freigabe. Zwei Dinge schuetzen zusaetzlich:
+# "-p" erlaubt ohne "--permission-mode acceptEdits" kein Write, und der Skill holt vor
+# jeder Aenderung eine Freigabe, die es headless nicht gibt.
+# Die Permission-WIRKUNG ist headless grundsaetzlich nicht pruefbar: permissions.allow
+# greift erst nach dem Workspace-Trust-Dialog, und der erscheint in "-p" nie.
+run "project-settings" "/cmd:project-settings" "settings\.json|bestandsaufnahme|vorschau|kanon|freigabe"
 # session-handoff: Sonderfall. Der Skill SCHREIBT normalerweise eine HANDOFF.md —
 # genau das wird hier bewusst NICHT geprueft, weil der Test sonst eine Datei ins
 # aktuelle Verzeichnis legt. Geprueft wird der nebenwirkungsfreie Zweig: Ein

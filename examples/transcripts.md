@@ -6,7 +6,7 @@ Dokumentiert die erwartete Form der Flows, die `scripts/smoke.sh` nicht erreicht
 
 **Eröffnungszug** (was ein Einzelaufruf zeigt): Gegenstand in einem Satz wohlwollend wiedergegeben (Steelman) plus **genau eine** offene Frage — bei abzählbaren Optionen via `AskUserQuestion`, sonst als Prosa. Keine Datei wird geschrieben.
 
-**Schlussnotiz** (nach erschöpften Entscheidungen): ein selbsttragender Übergabeblock, den `/plan` verlustarm übernimmt —
+**Schlussnotiz** (nach erschöpften Entscheidungen), als Chat-Notiz —
 
 ```
 Gegenstand: <ein Satz>
@@ -16,7 +16,9 @@ Ledger:
 Nicht gefragt (Default): <Entscheidung> → <Default> (<Grund>)
 Offen: <noch im Plan zu klären>
 ```
-Danach die Bitte um Bestätigung des gemeinsamen Verständnisses und das Angebot der Übergabe an `/plan` oder den Plan-Modus. Rücknahme per Kennung: „nimm Entscheidung 2 zurück".
+Danach die Bitte um Bestätigung des gemeinsamen Verständnisses — und hier endet der Zug. Rücknahme per Kennung: „nimm Entscheidung 2 zurück".
+
+**Nach der Bestätigung** — der zweite und letzte Schreibzug: Ist der Plan-Modus nicht aktiv, wird zuerst `EnterPlanMode` angeboten; ist er aktiv, entfällt das. Dann entsteht die Plandatei mit **Context** (Ziel und Anlass), den zu Umsetzungsschritten ausgeformten Vorgaben, dem **Entscheidungs-Ledger** als eigenem Abschnitt und den **Belegen aus dem Faktenvorlauf** samt Quelle, dazu die offenen Punkte. Abschließend der Verweis auf `plan-review`. Umgesetzt wird nichts — auch nicht auf Bitte.
 
 ## plan-review
 
@@ -39,6 +41,21 @@ Der Plan selbst wurde in den Runden direkt geändert. Rücknahme per Kennung: �
 **Eröffnungszug:** ruft `ExitPlanMode` auf, um den freigegebenen Plan umzusetzen; ohne freigegebenen Plan die Bitte, erst einen bereitzustellen.
 
 **Abschlussbericht** (Chat-Notiz, nach Umsetzung): je Planschritt was umgesetzt und **womit verifiziert** (beobachtetes Kriterium + Ergebnis); aufgetretene Abweichungen samt Korrektur; Klassifikator-Blockaden und Reaktion; substanzielle Funde außerhalb des Plans und Nutzer-Entscheid; offene Blocker; abschließend der Commit-Status plus Angebot und nächster Schritt.
+
+## project-settings
+
+**Eröffnungszug:** Bestandsaufnahme statt Schreiben — welche der Zieldateien existieren, welche von git getrackt werden, was im Auto-Memory dieses Projekts liegt. Danach die Vorschau für Freigabestufe 1, zusammen mit dem Hinweis, dass Stufe 2 (`~/.claude/settings.json`) getrennt folgt und das Kommunikationsprotokoll ohne sie unvollständig wirkt. Nicht parsebares JSON in einer Zieldatei bricht hier ab, ohne etwas zu überschreiben.
+
+**Zwischenschritte, die eine Rückfrage erzeugen:** übernehmbare Kandidaten aus `.claude/settings.local.json`; jede Wildcard-Zusammenfassung, die mehr freigäbe als die Summe der Einzeleinträge (mit benanntem Zugewinn); jeder Auto-Memory-Eintrag mit Zielvorschlag; eine vorhandene, vom Vorlagenstand abweichende `session-protocol/SKILL.md`.
+
+**Abschlussbericht** (Chat-Notiz): angelegt, geändert, übersprungen, abgelehnt — je mit Rückweg (`git restore <datei>` bei getrackten, `.bak`-Pfad bei untrackten). Dazu drei Punkte, die sonst als Fehlschlag gelesen werden:
+
+```
+Wirkt erst nach dem Workspace-Trust-Dialog: permissions.allow (deny/ask sofort)
+Nicht abgedeckt: deny schützt das Read-Tool, nicht die Shell (cat & Co.)
+Bewusst offen:   git restore / git checkout -- laufen ungefragt
+```
+Bei ausgebliebener Stufe 2 zusätzlich der ausdrückliche Hinweis darauf. Ein zweiter Lauf ohne zwischenzeitliche Änderung meldet, dass nichts zu tun war, und erzeugt keinen Diff.
 
 ## session-learn
 
