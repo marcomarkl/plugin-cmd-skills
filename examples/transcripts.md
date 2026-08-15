@@ -67,6 +67,8 @@ Die letzte Zeile ist der Vollständigkeitsbeleg: Jede Katalogregel muss in genau
 
 **Eröffnungszug:** Bestandsaufnahme statt Schreiben — welche der Zieldateien existieren, welche von git getrackt werden, was im Auto-Memory dieses Projekts liegt. Danach die gesammelte Vorschau aller Änderungen zur Freigabe. Nicht parsebares JSON in einer Zieldatei bricht hier ab, ohne etwas zu überschreiben.
 
+**In der Vorschau steht auch das Anlegen von `plans/`**, sofern der Ordner fehlt — mit `rmdir plans` als Rückweg. Existiert er schon, taucht er dort gar nicht auf; liegt unter `plans` eine Datei statt eines Verzeichnisses, steht dort stattdessen der Konflikt, und der Ordner wird nicht angelegt.
+
 **Zwischenschritte, die eine Rückfrage erzeugen:** übernehmbare Kandidaten aus `.claude/settings.local.json`; jede Wildcard-Zusammenfassung, die mehr freigäbe als die Summe der Einzeleinträge (mit benanntem Zugewinn); jeder Auto-Memory-Eintrag mit Zielvorschlag.
 
 **Abschlussbericht** (Chat-Notiz): angelegt, geändert, übersprungen, abgelehnt — je mit Rückweg (`git restore <datei>` bei getrackten, `.bak`-Pfad bei untrackten). Dazu drei Punkte, die sonst als Fehlschlag gelesen werden:

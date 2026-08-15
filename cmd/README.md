@@ -65,6 +65,7 @@ Auto mode aktivieren (einmaliges Opt-in):
 - **`session-learn` schreibt nichts.** Es reflektiert und übergibt sein Ergebnis; angewendet wird es erst über den Plan.
 - **`project-settings` holt genau eine Freigabe.** Alle Änderungen kommen gesammelt in einer Vorschau, mit dem Rückweg je Datei (`git restore` bei getrackten, `.bak` bei untrackten). Die Nutzer-Settings fasst der Skill nicht an.
 - **`project-settings` ist wiederholbar.** Ein zweiter Lauf ohne zwischenzeitliche Änderung erzeugt keinen Diff. Fremde Einstellungen und fremde Permission-Einträge bleiben unangetastet; nur die Kanon-Werte werden gesetzt.
+- **`project-settings` legt neben `.claude/settings.json` und `.gitignore` auch den Ordner `plans/` an**, falls er fehlt — leer und unversioniert, weil `plansDirectory` auf ihn zeigt. Bestehende Pläne aus `~/.claude/plans/` zieht der Skill nicht um; sie tragen keine Projektzuordnung. Rückweg für einen neu angelegten Ordner ist `rmdir plans`.
 - **Nach `project-settings` greifen die `allow`-Regeln erst nach dem Workspace-Trust-Dialog** für den Ordner — `deny` und `ask` sofort. Direkt nach dem Lauf sind also die Einschränkungen aktiv und die Erleichterungen noch nicht; das ist erwartet, kein Fehlschlag.
 - **`session-learn` belegt die Plandatei** und ersetzt damit den aktuellen Plan-Kontext — schließe laufende Aufgaben erst ab, bevor du es startest.
 - **`session-learn` schreibt ausschließlich projektlokal** (Projekt-`CLAUDE.md`, `references/`, Repo) — nie in user-globale Ablagen.

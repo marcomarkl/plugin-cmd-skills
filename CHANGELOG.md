@@ -2,6 +2,13 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.11.0
+
+- **`project-settings` legt den Ordner `plans/` an, wenn er fehlt.** Bisher setzte Schritt 6 nur `plansDirectory: "./plans"` und den `.gitignore`-Eintrag — die Konfiguration zeigte danach auf einen Pfad, den es im Projekt nicht gab. Ob die Runtime ihn beim ersten Plan selbst erzeugt, ist nicht verifiziert; der Skill legt ihn deshalb explizit an. Eine Existenzprüfung davor hält den zweiten Lauf diff-frei. Das Anlegen steht in derselben gesammelten Vorschau wie alles andere, eine zusätzliche Freigabe gibt es nicht.
+- **Zwei Randfälle sind ausformuliert.** Liegt unter `plans` eine *Datei* statt eines Verzeichnisses, wird sie nicht überschrieben: Der Konflikt geht in die Vorschau und bleibt im Bericht als offener Punkt stehen, `plansDirectory` wird trotzdem gesetzt. Ohne git-Repo entfällt nur die `.gitignore`, der Ordner wird weiterhin angelegt.
+- **Rückweg für ein neu angelegtes `plans/` ist `rmdir plans`**, nicht `git restore` (untrackt und ignoriert, greift dort nicht) und nicht `rm -rf` (löschte inzwischen abgelegte Pläne kommentarlos mit; `rmdir` scheitert stattdessen).
+- `cmd/README.md`, `DESIGN.md`, `examples/transcripts.md` und der Kommentarblock in `scripts/smoke.sh` nachgezogen — dort mit dem Hinweis, dass das Anlegen über Bash liefe und headless deshalb allein die Freigabe schützt, nicht die fehlende Write-Berechtigung. Das Prüfmuster in `smoke.sh`, das Root-`README.md` und beide Manifest-`description`s bleiben unverändert gültig: Der Eröffnungszug ändert sich nicht, und die `description`s zählen nur Skill-Namen auf.
+
 ## 0.10.0
 
 - **Das Kommunikationsprotokoll ist ersatzlos entfernt.** Es funktionierte in der Praxis nicht wie beabsichtigt. Weg sind: die Vorlage `references/kommunikationsprotokoll.md`, Schritt 7 von `project-settings` (Kopie nach `.claude/skills/session-protocol/SKILL.md` samt `SessionStart`-Hook) und der Nutzer-Settings-Block des Kanons (`crossSessionInbound`, `isolatePeerMachines`). Der Permission-Kanon selbst, Auto-Memory-Übernahme und `plansDirectory` bleiben unverändert.

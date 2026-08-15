@@ -54,11 +54,14 @@ run "project-rules" "/cmd:project-rules" "zieldatei|claude\.md|agents\.md|projek
 # session-learn: reflektiert die Session (headless kaum Historie -> nur Laden/Eroeffnung)
 run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
 # project-settings: Sonderfall wie session-handoff. Der Skill SCHREIBT normalerweise
-# .claude/settings.json und .gitignore — hier laeuft er im
+# .claude/settings.json und .gitignore und legt den Ordner plans/ an — hier laeuft er im
 # Repo selbst, also wird bewusst NUR der nebenwirkungsfreie Eroeffnungszug geprueft:
 # Bestandsaufnahme und Vorschau vor der Freigabe. Zwei Dinge schuetzen zusaetzlich:
 # "-p" erlaubt ohne "--permission-mode acceptEdits" kein Write, und der Skill holt vor
 # jeder Aenderung eine Freigabe, die es headless nicht gibt.
+# Achtung, ungleicher Schutz: Das Anlegen von plans/ liefe ueber Bash, nicht ueber Write —
+# dort traegt allein die Freigabe. Bleibt nach dem Lauf ein plans/ im Repo zurueck, ist
+# das ein Befund am Skill, kein Testartefakt: dann haelt er die Freigabe nicht ein.
 # Die Permission-WIRKUNG ist headless grundsaetzlich nicht pruefbar: permissions.allow
 # greift erst nach dem Workspace-Trust-Dialog, und der erscheint in "-p" nie.
 run "project-settings" "/cmd:project-settings" "settings\.json|bestandsaufnahme|vorschau|kanon|freigabe"

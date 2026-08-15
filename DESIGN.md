@@ -91,6 +91,10 @@ Frontmatter: `model: opus`, `effort: high`. Ein `references/` wird bedarfsgelade
 
 **Warum `autoMode` und `dialogExpiry` gar nicht angefasst werden:** beide werden aus Projekt- und Local-Settings **nicht gelesen**. Ein Eintrag dort erzeugt keinen Fehler, er wird stillschweigend ignoriert — genau die Fehlerklasse, gegen die dieses Repo sonst mit `claude plugin validate` arbeitet und die hier kein Werkzeug abfängt.
 
+**Warum der Skill `plans/` selbst anlegt.** `plansDirectory: "./plans"` zu setzen, ohne den Ordner anzulegen, hinterlässt eine Konfiguration, die auf einen nicht existierenden Pfad zeigt. Ob die Runtime ihn beim Schreiben des ersten Plans selbst erzeugt, ist **nicht verifiziert** — der Skill legt ihn deshalb explizit an, und die Existenzprüfung davor macht den Schritt folgenlos, falls er redundant ist. Sie ist ohnehin nötig, damit der zweite Lauf diff-frei bleibt.
+
+**Warum der Rückweg `rmdir` heißt.** Ein neu angelegtes `plans/` ist untrackt und steht zugleich in der `.gitignore`, `git restore` greift dort also nicht. `rm -rf plans` wäre der naheliegende Ersatz und genau deshalb falsch: Es löscht kommentarlos die Pläne mit, die inzwischen darin liegen. `rmdir` scheitert in dem Fall — der einzige Rückweg, der nur das rückgängig macht, was der Skill tatsächlich angelegt hat.
+
 **Warum der Permission-Kanon so aussieht.** `Read(//**)` mit einer deny-Liste für Schlüssel, Cloud-Credentials und Keychain ist eine Entscheidung für **eine** Maschine und **ein** Arbeitsprofil, keine allgemeine Empfehlung — der Block liegt in einem öffentlichen Repo und wird sonst als Vorlage gelesen. Zwei Grenzen sind bewusst in Kauf genommen und im Kanon dokumentiert: Die deny-Liste schützt das Read-Tool, nicht die Shell (`cat` und Verwandte gehören zum eingebauten Read-only-Satz und laufen prompt-frei; die sechs `Bash(cat …)`-Einträge decken nur den naheliegendsten Umweg), und `git restore` bleibt ungefragt, obwohl es uncommittete Arbeit löscht — eine ask-Regel unterbräche den dokumentierten Rückweg aus einem Fehlversuch bei jedem Gebrauch.
 
 ## Kein Frontmatter- oder Hook-Schutz gegen Schreibzugriffe

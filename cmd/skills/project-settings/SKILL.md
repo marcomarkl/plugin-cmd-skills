@@ -31,17 +31,19 @@ Sie tragen die eigentliche Anforderung — nichts doppelt, Bestehendes überschr
 4. **Entdoppeln**, erst jetzt und über den Stand aus Kanon **und** übernommenen Kandidaten — vorher liefe ein Kandidat an der Prüfung vorbei. Automatisch entfernst du nur, was exakt doppelt oder von einer breiteren Regel vollständig gedeckt ist. Jede Zusammenfassung, die *mehr* freigäbe als die Summe der Einzeleinträge, legst du mit dem konkreten Zugewinn vor („diese fünf Skripte werden zu: jedes Python-Kommando") und wendest sie nie von dir aus an. Eine Ablehnung merkst du dir nicht; sag beim Vorlegen dazu, dass der nächste Lauf erneut fragt.
 5. **Auto-Memory.** Bevor du es abschaltest: Lies `MEMORY.md` und alle Einträge, zeig sie im Chat mit Typ und Inhalt und schlag je Eintrag ein Ziel vor — `feedback` und `project` in die Projekt-`CLAUDE.md`, `reference` in eine Repo-Datei, `user` gar nicht. Schreib erst nach Freigabe, dann setze `autoMemoryEnabled: false`.
    **Reinholen heißt verschieben, nicht löschen.** Einen übernommenen Eintrag schiebst du nach dem Schreiben in einen Unterordner `imported/` des Memory-Verzeichnisses und streichst seine Zeile aus `MEMORY.md`. Sonst findest du ihn beim nächsten Lauf wieder: `autoMemoryEnabled: false` schaltet nur das Auto-Memory ab, nicht deinen Lesezugriff auf das Verzeichnis. Löschen kommt nicht in Frage, die Dateien liegen außerhalb jeder Versionierung. Verschiebe erst, wenn der Zieltext steht. Nicht übernommene Einträge lässt du liegen.
-6. **Pläne.** Setze `plansDirectory` auf `"./plans"` und nimm `plans/` in die `.gitignore` auf. Prüfe vorher zeilenweise nach Trimmen gegen `plans/`, `/plans/` und `plans`, nicht per Substring — sonst gilt ein vorhandenes `myplans/` fälschlich als Treffer. Bestehende Pläne ziehst du **nicht** um: Die Dateinamen in `~/.claude/plans/` leiten sich vom Prompt ab und tragen keine Projektzuordnung, eine Zuordnung wäre geraten.
+6. **Pläne.** Setze `plansDirectory` auf `"./plans"`, lege den Ordner `plans/` im Projekt-Root an, falls er fehlt, und nimm `plans/` in die `.gitignore` auf. Prüfe vorher zeilenweise nach Trimmen gegen `plans/`, `/plans/` und `plans`, nicht per Substring — sonst gilt ein vorhandenes `myplans/` fälschlich als Treffer. Beim Anlegen prüfst du erst auf Vorhandensein: Ein vorhandener Ordner wird nicht angefasst, sonst wäre der zweite Lauf nicht diff-frei. Liegt unter `plans` eine **Datei** statt eines Verzeichnisses, überschreibst du sie nicht — der Konflikt kommt in die Vorschau und bleibt im Bericht als offener Punkt stehen; `plansDirectory` setzt du trotzdem. Bestehende Pläne ziehst du **nicht** um: Die Dateinamen in `~/.claude/plans/` leiten sich vom Prompt ab und tragen keine Projektzuordnung, eine Zuordnung wäre geraten. Der neue Ordner bleibt also leer.
 7. **Freigabe** (unten).
 8. **Bericht** (unten).
 
-**Ohne git-Repo** entfällt in Schritt 6 die `.gitignore`; melde, dass der plans-Ordner unversioniert bleibt. Projekt-Root ist dann das Startverzeichnis.
+**Ohne git-Repo** entfällt in Schritt 6 nur die `.gitignore` — den Ordner legst du trotzdem an; melde, dass der plans-Ordner unversioniert bleibt. Projekt-Root ist dann das Startverzeichnis.
 
 ## Freigabe
 
 **Gesammelt:** eine Vorschau aller Änderungen, eine Freigabe. Die Nutzer-Settings fasst der Skill nicht an; das einzige Schreiben außerhalb des Projekts ist das Verschieben übernommener Auto-Memory-Einträge nach `imported/` aus Schritt 5, und das erst nach der dortigen Freigabe.
 
 **Rückweg je Datei, nicht pauschal.** Für eine getrackte Datei ist `git restore <datei>` der Rückweg, und du nennst ihn so. Eine untrackte Zieldatei sicherst du vorher als `.bak`, weil `git restore` dort nichts wiederherstellt. Ein pauschales restore schlägst du nie vor: In einem Projekt mit anderen uncommitteten Änderungen verwürfe es fremde Arbeit.
+
+**Rückweg für ein neu angelegtes `plans/`** ist `rmdir plans`. Kein `.bak` — ein leeres Verzeichnis hat keinen zu sichernden Inhalt — und kein `git restore`, das greift bei einem untrackten, obendrein ignorierten Pfad nicht. `rmdir` und nicht `rm -rf`: Es scheitert, sobald Pläne darin liegen, statt sie zu löschen.
 
 ## Bericht
 
