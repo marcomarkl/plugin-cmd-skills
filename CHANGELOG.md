@@ -2,6 +2,15 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.14.0
+
+- **`session-learn` holt eine Freigabe statt zwei.** Der Skill legte die Learnings zur Bestätigung vor und schrieb den Plan erst danach. Nur die zweite Stufe, der Wechsel in den Plan-Modus, war je entworfen: Der Body verlangte nirgends eine Vorab-Bestätigung — er erlaubte das Schreiben aber auch nicht ausdrücklich, und ohne diese Erlaubnis legt das Modell das Ergebnis ersatzweise in den Chat und bittet um sie. Dieselbe Beobachtung steht seit 0.6.0 bei `session-handoff`, wo die Zusage von Anfang an im Body stand. Sie steht jetzt auch hier.
+- **Die gestrichene Stufe sicherte nichts ab.** An die Zielorte schreibt der Skill weiterhin nichts, der Plan ist eine Datei, und über die stabile Kennung nimmt der Nutzer jedes einzelne Learning gezielt zurück („nimm L2 zurück"). Die inhaltliche Kontrolle liegt damit am Plan, nicht davor — eine Rückfrage davor kostete einen Zug und verschob nichts.
+- **Die verbleibende Zustimmung bleibt bewusst stehen.** Sie ist der Moduswechsel, derselbe Mechanismus wie bei `plan-grill`: `plan-review` arbeitet auf dem zuletzt erstellten Plan, `plan-execute` auf dem über `ExitPlanMode` freigegebenen. Ein Skill, der die Learnings in eine frei abgelegte Datei schriebe, spart die Zustimmung und verliert die Kette. Übersteht kein Kandidat den Filter, entfällt der Moduswechsel ohnehin.
+- **Nebenbefund derselben Untersuchung, mitbehoben:** `EnterPlanMode` kam im Body überhaupt nicht vor, obwohl der Skill laut erster Zeile im Plan-Modus in die Plandatei schreiben soll. `plan-grill` hatte den Schritt ausformuliert, `session-learn` nicht — der Moduswechsel war damit dem Modell überlassen. Er steht jetzt mit derselben Begründung im Text.
+- **Eine Ungenauigkeit im `cmd/README.md` korrigiert:** Dort stand „`session-learn` schreibt nichts". Es schreibt die Plandatei, und seit dieser Version tut es das ungefragt; gemeint war immer „nichts an die Zielorte".
+- `DESIGN.md`, `examples/transcripts.md` und der Kommentarblock in `scripts/smoke.sh` nachgezogen. Das Prüfmuster in `smoke.sh`, das Root-`README.md` und beide Manifest-`description`s bleiben unverändert gültig: Der Eröffnungszug ist weiterhin die Reflexion, und der Schreibpfad wird headless nicht erreicht — er setzt einen Gesprächsverlauf und die `EnterPlanMode`-Zustimmung voraus, die ein `-p`-Lauf beide nicht liefert.
+
 ## 0.13.0
 
 Drei Folgearbeiten, die seit 0.10.0 bzw. 0.12.1 offenstanden: eine entfernte Funktion, die weiterlief; ein nie nachrecherchierter Kanon; ein Skill ohne Testlauf am echten Projekt.

@@ -54,6 +54,10 @@ Die Retrospektive läuft, bis kein tragfähiges Learning mehr offen ist. Zu beac
 - **End-of-Session gedacht:** der erzeugte Plan belegt die Plandatei und ersetzt den aktuellen Plan-Kontext — erst laufende Aufgaben abschließen und committen.
 - **Frontmatter:** `model: opus`, `effort: high`.
 
+**Warum die Learnings nicht vorab bestätigt werden.** Der Skill lief bis 0.13.0 faktisch mit zwei Freigaben: erst die Learnings absegnen, dann den Plan-Modus. Nur die zweite war je entworfen — der Body verlangte nirgends eine Bestätigung, aber er erlaubte das Schreiben auch nicht ausdrücklich, und ohne diese Erlaubnis legt das Modell das Ergebnis ersatzweise in den Chat und bittet um sie. Dieselbe Beobachtung steht bei `session-handoff`; dort war die Zusage von Anfang an im Body. Die Vorab-Bestätigung sicherte auch nichts: An die Zielorte schreibt der Skill ohnehin nichts, der Plan ist eine Datei, und über die stabile Kennung nimmt der Nutzer jedes einzelne Learning gezielt zurück. Die inhaltliche Kontrolle liegt damit am Plan, nicht davor.
+
+**Warum die zweite Freigabe bleibt.** Sie ist der Wechsel in den Plan-Modus, und der ist derselbe Mechanismus, der bei `plan-grill` ausformuliert steht: `plan-review` arbeitet auf dem zuletzt erstellten Plan, `plan-execute` auf dem über `ExitPlanMode` freigegebenen. Ein Skill, der die Learnings in eine frei abgelegte Datei schriebe, spart die Zustimmung und verliert die Kette — er stünde dann allein da, statt in `plan-review` einzutreten. Nebenbefund derselben Untersuchung: `EnterPlanMode` fehlte im Body ganz, obwohl der Skill im Plan-Modus schreiben soll; `plan-grill` hatte den Schritt, `session-learn` nicht.
+
 ### session-handoff
 
 Verdichtet den laufenden Arbeitsstand in eine `HANDOFF.md`, damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeitet.

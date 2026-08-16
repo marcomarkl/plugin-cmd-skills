@@ -28,12 +28,12 @@ Routing, jedes Learning an seinen projektlokalen Ort — nie user-global; das Me
 - Ein rein user-globales Learning ohne Projektbezug (eine reine Personen-Präferenz) ist außerhalb des Scopes: zwäng es nicht in eine Projektdatei, vermerke es in der Schlussnotiz als außerhalb des Projekt-Scopes und route es nicht.
 - Hat ein Learning keinen dauerhaften projektlokalen Ort, lass es fallen.
 
-Plan erzeugen, oder ehrlich leer bleiben. Fasse die belastbaren Learnings mit Ziel-Ort, Beleg, konkreter Maßnahme und stabiler Kennung in einen Plan. Übersteht kein Kandidat den Filter, sag das und erzeuge keinen Plan — erfinde keine Learnings, nur damit etwas dasteht.
+Plan erzeugen, ohne vorher zu fragen, oder ehrlich leer bleiben. Fasse die belastbaren Learnings mit Ziel-Ort, Beleg, konkreter Maßnahme und stabiler Kennung in einen Plan und schreib ihn, ohne dir die Learnings vorher bestätigen zu lassen. Diese Zusage steht hier, weil du sonst das Ergebnis ersatzweise in den Chat legst und um Erlaubnis bittest — eine Rückfrage, die nichts absichert: An die Zielorte schreibst du ohnehin nichts, der Plan ist eine Datei, und über die stabile Kennung nimmt der Nutzer jedes einzelne Learning gezielt zurück. Die inhaltliche Kontrolle liegt am Plan, nicht davor. Ist der Plan-Modus nicht aktiv, ruf EnterPlanMode auf und warte die Zustimmung ab; ist er aktiv, entfällt der Schritt. Der Umweg über den Plan-Modus ist kein Formalismus: plan-review arbeitet auf dem zuletzt erstellten Plan und plan-execute auf dem über ExitPlanMode freigegebenen — eine frei abgelegte Datei wäre für beide nicht dasselbe Artefakt. Übersteht kein Kandidat den Filter, sag das und erzeuge keinen Plan — erfinde keine Learnings, nur damit etwas dasteht; dann entfällt auch der Moduswechsel.
 
 Übergabe. Biete an, den Plan über plan-review zu härten und über plan-execute anzuwenden, und beende den Zug. Die Ziele liegen projektlokal im Projekt; ist es versioniert, ist der Rückweg `git restore` — zusätzlich erlaubt die stabile Kennung die gezielte logische Rücknahme.
 
 Erschöpfungs-Abbruch. Ende, wenn kein tragfähiges neues Learning mehr offen ist; erfinde dann keins.
 
-Schlussnotiz, als Chat-Notiz ausgeben, nicht in eine Datei schreiben: die behaltenen Learnings mit Ziel-Ort und Kennung, die verworfenen mit Begründung, und die offenen Punkte. Über die Kennung kannst du im erzeugten Plan gezielt zurücknehmen.
+Schlussnotiz, nach dem geschriebenen Plan und im selben Zug, als Chat-Notiz ausgeben, nicht in eine Datei schreiben: die behaltenen Learnings mit Ziel-Ort und Kennung, die verworfenen mit Begründung, und die offenen Punkte. Über die Kennung kannst du im erzeugten Plan gezielt zurücknehmen.
 
 Fokus für die Retrospektive, falls angegeben: $ARGUMENTS

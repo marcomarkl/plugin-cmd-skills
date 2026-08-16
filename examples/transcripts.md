@@ -135,6 +135,8 @@ Verworfen: <Kandidat> — <Grund>
 ```
 Dann das Angebot, den Plan über `plan-review` zu härten und `plan-execute` anzuwenden. Übersteht kein Kandidat den Filter: Hinweis „keine dauerhaften Learnings", kein Plan.
 
+**Keine Rückfrage vor dem Plan.** Schlussnotiz und geschriebener Plan kommen im selben Zug — die Learnings werden nicht vorab zur Bestätigung vorgelegt. Die einzige Zustimmung ist der Wechsel in den Plan-Modus, und die entfällt, wenn er schon aktiv ist oder wenn kein Learning den Filter übersteht. Zurückgenommen wird am Plan: „nimm L2 zurück".
+
 ## session-handoff
 
 Der einzige Skill, dessen **voller Flow in einem Zug endet** — Eröffnungszug und Ergebnis fallen zusammen.
