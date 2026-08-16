@@ -55,6 +55,7 @@ Nutzerweite Regeln liegen in `~/.claude/rules/` und laden vor den Projektregeln;
 ## Anlegen — Mindestanforderungen
 
 - Jedes Artefakt braucht einen belegten Anlass aus **diesem** Projekt. Eines, das sich unverändert in ein beliebiges anderes Repo kopieren ließe, wird nicht angelegt.
+- **Bestand und Anlass zählen nur unter `.claude/`.** Liefert das Projekt selbst Skills, Subagents oder Regeln aus (Plugin- oder Agent-Repo), liegen die in einem Produktordner, steuern fremde Sessions und decken keinen Anlass hier ab. Der gleiche Ordnername ist Namensgleichheit, keine Überschneidung.
 - Die `description` entscheidet über das Auffinden. Sie nennt den Anlass, nicht den Inhalt: wann eingesetzt wird, nicht was drinsteht.
 - Kein Artefakt auf Vorrat. Ein veraltetes ist schlechter als keines.
 - Projektlokal und eingecheckt, damit die Änderung im Diff sichtbar und per `git restore` rückholbar ist. Genau darauf stützt sich die Freigabe-Ausnahme für die Selbstpflege.
