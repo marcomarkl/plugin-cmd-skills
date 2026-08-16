@@ -105,11 +105,15 @@ Geht die Bilanz nicht auf, meldet der Skill den Lauf als fehlerhaft, statt die D
 
 **In der Vorschau steht auch das Anlegen von `plans/`**, sofern der Ordner fehlt — mit `rmdir plans` als Rückweg. Existiert er schon, taucht er dort gar nicht auf; liegt unter `plans` eine Datei statt eines Verzeichnisses, steht dort stattdessen der Konflikt, und der Ordner wird nicht angelegt.
 
+**In Projekten, die vor 0.10.0 eingerichtet wurden, steht in der Vorschau zusätzlich die Räumung** des Kommunikationsprotokolls — der `SessionStart`-Hook mit der Marke `# cmd:project-settings:session-protocol` und `.claude/skills/session-protocol/SKILL.md`, erst der Hook, dann die Datei. Dabei der Hinweis, dass der Skill nicht prüfen kann, ob die Datei noch dem ausgelieferten Stand entspricht. Findet er keine Spur, kommt der Punkt in Vorschau und Bericht nicht vor.
+
 **Zwischenschritte, die eine Rückfrage erzeugen:** übernehmbare Kandidaten aus `.claude/settings.local.json`; jede Wildcard-Zusammenfassung, die mehr freigäbe als die Summe der Einzeleinträge (mit benanntem Zugewinn); jeder Auto-Memory-Eintrag mit Zielvorschlag.
 
 **Abschlussbericht** (Chat-Notiz): angelegt, geändert, übersprungen, abgelehnt — je mit Rückweg (`git restore <datei>` bei getrackten, `.bak`-Pfad bei untrackten). Dazu drei Punkte, die sonst als Fehlschlag gelesen werden:
 
 ```
+Entfernt:        SessionStart-Hook + .claude/skills/session-protocol/ (nur wenn vorhanden)
+Befund:          crossSessionInbound / isolatePeerMachines in ~/.claude/settings.json — nicht angefasst
 Wirkt erst nach dem Workspace-Trust-Dialog: permissions.allow (deny/ask sofort)
 Nicht abgedeckt: deny schützt das Read-Tool, nicht die Shell (cat & Co.)
 Bewusst offen:   git restore / git checkout -- laufen ungefragt

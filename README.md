@@ -57,7 +57,9 @@ Details, Pipeline und Voraussetzungen: **[`cmd/README.md`](cmd/README.md)**.
 
 `project-settings` schreibt **Permission-Regeln**, darunter ein weit gefasstes `Read(//**)` mit einer deny-Liste für Schlüssel und Credentials. Dieser Kanon ist eine Entscheidung für meine Maschine und mein Arbeitsprofil, **keine allgemeine Empfehlung**. Lies `cmd/skills/project-settings/references/permission-kanon.md`, bevor du ihn übernimmst — dort steht zu jeder Regel, was sie leistet und was sie ausdrücklich nicht leistet.
 
-`project-structure` **verschiebt und benennt Dateien um** — als einziger Skill der Suite bewegt er Bestand, statt nur zu schreiben. Er tut das erst nach einer gesammelten Freigabe, per `git mv` (die Historie bleibt erhalten), mit einem Verlagerungs-Register und einer Zeilenbilanz als Verlustnachweis, und er nennt den Rückweg je Datei. Ohne git-Repo ist der Umzug schlechter reversibel; der Skill sagt das und sichert dann jede Quelle vorher als `.bak`. Sieh dir die Vorschau an, bevor du freigibst.
+`project-settings` **entfernt in Projekten, die vor Version 0.10.0 eingerichtet wurden, eine Altlast**: den `SessionStart`-Hook und `.claude/skills/session-protocol/SKILL.md` des inzwischen gestrichenen Kommunikationsprotokolls, das dort sonst bei jedem Sessionstart weiterlädt. Erkannt wird beides an einer festen Marke, fremde `SessionStart`-Hooks bleiben stehen, und die Entfernung steht in derselben Vorschau wie alles andere. In einem Projekt ohne diese Spuren passiert nichts.
+
+`project-structure` **verschiebt und benennt Dateien um** — er bewegt Bestand in großem Umfang, wo die übrigen Skills schreiben. Er tut das erst nach einer gesammelten Freigabe, per `git mv` (die Historie bleibt erhalten), mit einem Verlagerungs-Register und einer Zeilenbilanz als Verlustnachweis, und er nennt den Rückweg je Datei. Ohne git-Repo ist der Umzug schlechter reversibel; der Skill sagt das und sichert dann jede Quelle vorher als `.bak`. Sieh dir die Vorschau an, bevor du freigibst.
 
 ## Hinweise zum Repo
 

@@ -64,6 +64,11 @@ run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
 # das ein Befund am Skill, kein Testartefakt: dann haelt er die Freigabe nicht ein.
 # Die Permission-WIRKUNG ist headless grundsaetzlich nicht pruefbar: permissions.allow
 # greift erst nach dem Workspace-Trust-Dialog, und der erscheint in "-p" nie.
+# Seit 0.13.0 raeumt der Skill zusaetzlich die Altlast des Kommunikationsprotokolls und
+# ENTFERNT dabei Dateien ("git rm", "rmdir") — ueber Bash, also traegt auch hier allein die
+# Freigabe. Dieses Repo hat keine solche Spur (kein SessionStart-Hook mit der Marke, kein
+# .claude/skills/session-protocol/), der Zweig laeuft hier also ohnehin ins Leere. Faende
+# der Lauf trotzdem etwas zu entfernen, waere das ein Befund am Skill.
 run "project-settings" "/cmd:project-settings" "settings\.json|bestandsaufnahme|vorschau|kanon|freigabe"
 # project-structure: Eroeffnungszug ist die Inventur — was das Projekt an Ablageorten schon
 # hat. Der Skill VERSCHIEBT und BENENNT normalerweise Dateien um und legt Ordner an; dieser
