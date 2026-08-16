@@ -1,6 +1,6 @@
 # Projekteigene Artefakte — Teil 2
 
-Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie regeln, wann das Projekt einen eigenen Skill, Subagent oder eine pfad-bezogene Regel bekommt und wer sie pflegt. Pfade und Frontmatter-Keys stehen im Kanon `../../project-structure/references/artefakt-kanon.md`.
+Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie regeln, wann das Projekt einen eigenen Skill, Subagent oder eine pfad-bezogene Regel bekommt und wer sie pflegt. Pfade und Frontmatter-Keys stehen nicht hier, sondern im Artefakt-Kanon, den der Skill-Body in Schritt 4 direkt lädt.
 
 ## Welches Artefakt wofür
 Die drei werden verwechselt und dann doppelt angelegt. Sie unterscheiden sich im Kontext, den sie belegen, und im Zeitpunkt, zu dem sie laden:

@@ -2,6 +2,15 @@
 
 Adressatenhinweis: Diese Datei ist Nachschlagewerk für dich beim Ausführen von `project-settings`. Die JSON-Blöcke wandern in die Zieldateien, der Fließtext nicht.
 
+## Inhalt
+- Projekt: `.claude/settings.json` — die zu setzenden Werte
+- Was bewusst nicht gesetzt wird — und warum
+- Pfad-Präfixe — `//`, `~/`, `/`, `./` und stumme Mischformen
+- Workspace-Trust — wann `allow` greift
+- Was die deny-Liste nicht abdeckt — Read-Tool statt Shell
+- Bewusst offene Lücke bei git
+- Regelsyntax, kurz
+
 ## Projekt: `.claude/settings.json`
 
 ```jsonc

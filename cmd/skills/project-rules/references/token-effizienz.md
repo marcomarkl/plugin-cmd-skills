@@ -8,7 +8,8 @@ Die folgenden Regeln richten sich an dich als einsetzende KI und steuern, wie du
 
 ### Die richtige Datei zuerst
 - Verdichte zuerst die permanent geladene Root-CLAUDE.md, da dort jede Zeile auf jedem Turn zählt. An bedarfsgeladenen Dateien und selten gelesener Doku bringt aggressive Kürzung wenig.
-- Halte die Root-Datei unter der Schwelle von rund 200 Zeilen. Darüber steigt der Verbrauch, und die Befolgung der Regeln kann sinken. Ist die Datei länger, lagere situatives oder selten gebrauchtes Wissen aus, statt es zu quetschen.
+- Halte die Root-Datei unter der Schwelle von rund 200 Zeilen; ist sie länger, lagere situatives oder selten gebrauchtes Wissen aus, statt es zu quetschen. Diese Schwelle ist die Herstellerempfehlung und eine Konvention, kein gemessener Schwellwert: Belegt trägt sie das **Token-Argument** (jede Zeile kostet auf jedem Turn). Die zusätzlich verbreitete Begründung, längere Dateien senkten die Befolgung, ist nicht belastbar — eine kontrollierte Studie über 1.650 Claude-Code-Sitzungen fand zwischen 25 und 500 Zeilen keinen Unterschied und stützt den Null-Effekt für Dateigröße sogar positiv. Kürze also, weil Kontext knapp ist, nicht weil Länge angeblich ungehorsam macht.
+- **Zähle Regeln, nicht nur Zeilen.** Für die *Anzahl* gleichzeitig geltender Instruktionen ist Degradation dagegen gemessen: Bei mehreren hundert Einzelanweisungen fällt die Befolgungsgenauigkeit auch bei Spitzenmodellen deutlich ab. Zwei knappe Regeln, die dasselbe Thema zerlegen, sind darum schlechter als eine tragende — Zusammenführen schlägt Kürzen.
 
 ### Dichter formulieren, nicht Inhalt streichen
 - Schreib wie eine knappe Fachnotiz: Floskeln und Höflichkeitsrahmen raus, überflüssige Qualifizierer und Füllwörter streichen, Verben statt Nominalisierungen.
@@ -22,7 +23,7 @@ Die folgenden Regeln richten sich an dich als einsetzende KI und steuern, wie du
 - Verlass dich nicht auf eine bestimmte Formatwahl als Leistungshebel. Ihre Wirkung ist modell- und versionsabhängig; setz auf Klarheit, die über Modelle hinweg trägt.
 
 ### Anordnung
-- Das Wichtigste nach oben, nicht in die Mitte einer langen Datei, da Inhalt in der Mitte am unzuverlässigsten genutzt wird. Teile lange Dateien an thematischen Grenzen, statt sie wachsen zu lassen.
+- Das Wichtigste nach oben, nicht in die Mitte einer langen Datei, da Inhalt in der Mitte am unzuverlässigsten genutzt wird. Teile lange Dateien an thematischen Grenzen, statt sie wachsen zu lassen. Für die Wirkung der Position auf die Befolgung gibt es allerdings keinen Nachweis in beide Richtungen — behandle die Reihenfolge als Lesbarkeitsfrage, nicht als Steuerhebel, und begründe damit keine Umbauten.
 
 ### Bedeutung bewahren (die Grenze)
 - Lass Vorbehalte bei korrektheitskritischer Arbeit, nötige Disambiguierung und die entscheidende Ausnahme stehen, auch wenn sie Tokens kosten. Ein weggelassener Vorbehalt oder eine zweideutige Anweisung kostet über Fehlversuche und Rework mehr, als die Kürzung spart.
