@@ -2,6 +2,14 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.14.1
+
+- **`session-learn` generalisiert den Auslöser eines Learnings.** Ein Lauf gegen dieses Repo hat in der `CLAUDE.md` eine Regel abgelegt, die auf die Stichwörter „Best Practice" und „State of the Art" auslöste. Das erwartete Verhalten hängt aber an der Situation, nicht an ihrer Benennung: Bei jeder anderen Formulierung derselben Frage hätte die Regel geschwiegen. Der Body hatte dazu bisher nichts — er prüfte Kandidaten auf dauerhaft, neu und handlungsleitend, aber nie darauf, **woran** sie gebunden werden. Der neue Absatz setzt die Gegenprobe an: Löst die Regel noch aus, wenn dieselbe Lage anders benannt wird?
+- **Geweitet wird nur der Auslöser, nicht der Inhalt.** Befehle, Pfade, Werkzeuge und Dateien bleiben beim Namen genannt, sonst kippt die Korrektur ins Gegenteil und erzeugt generische Regeln ohne Halt im Projekt. Das ist dieselbe Linie, die `project-rules` mit „Im Projekt verankern" fährt.
+- **Die Anlassregel in der Repo-`CLAUDE.md` ist mitbehoben** und mit „Nichts erfinden" zusammengeführt: ein Listeneintrag weniger, rund vier Zeilen kürzer. Diese Datei ist Guidance fürs Arbeiten im Repo und reist nicht mit dem Plugin.
+- **Eine Suche nach demselben Muster im übrigen Bestand blieb ohne Befund** (`CLAUDE.md`, `DESIGN.md`, beide READMEs, alle `cmd/skills/`- und `references/`-Dateien, `.claude/skills/`): kein zweiter Fall einer Regel, die an das Reizwort ihres Anlassfalls gebunden ist. Der Anlassbezug in den übrigen Regeln (Trailer-Vorfall, `project-rules` bis 0.8.0, `examples/transcripts.md`) ist jeweils **Beleg**, nicht Auslösebedingung. In `description`-Feldern ist die Stichwortnennung dagegen richtig — dort matcht die Auto-Invocation auf Formulierungen.
+- `DESIGN.md` nachgezogen. `cmd/README.md`, Root-`README.md`, `examples/transcripts.md`, `scripts/smoke.sh` und beide Manifest-`description`s bleiben unverändert gültig: Die Nutzergarantien, die Ausgabeform, der Eröffnungszug und die Skill-Liste ändern sich nicht — der Absatz wirkt innerhalb des Filters.
+
 ## 0.14.0
 
 - **`session-learn` holt eine Freigabe statt zwei.** Der Skill legte die Learnings zur Bestätigung vor und schrieb den Plan erst danach. Nur die zweite Stufe, der Wechsel in den Plan-Modus, war je entworfen: Der Body verlangte nirgends eine Vorab-Bestätigung — er erlaubte das Schreiben aber auch nicht ausdrücklich, und ohne diese Erlaubnis legt das Modell das Ergebnis ersatzweise in den Chat und bittet um sie. Dieselbe Beobachtung steht seit 0.6.0 bei `session-handoff`, wo die Zusage von Anfang an im Body stand. Sie steht jetzt auch hier.

@@ -20,12 +20,12 @@ Anders bei einer Registrierung mit `source: directory`: dort steht der **absolut
 
 ## 3. Verhältnis zu README
 
-Vier Ebenen, nicht vermischen: `README.md` (Root) = **Einstieg und Installation** · `cmd/README.md` = **Plugin nutzen/aufrufen** · `DESIGN.md` = **Entwurfsnotizen** (Stellschrauben, geprüfte und verworfene Ansätze) · `CLAUDE.md` (diese Datei) = **im Repo arbeiten**. Nutzungsdetails gehören ins `cmd/README.md`, Begründungen ins `DESIGN.md`; hier nicht duplizieren, sondern darauf verweisen.
+Welcher Zweck wo liegt, steht unter `## Ablage` — hier nur die Abgrenzung: Nutzungsdetails gehören ins `cmd/README.md`, Begründungen und verworfene Ansätze ins `DESIGN.md`. Nicht duplizieren, sondern darauf verweisen.
 
 ## 4. Plugin erweitern oder ergänzen
 
 - **Skill hinzufügen:** neuen Ordner `cmd/skills/<name>/SKILL.md` anlegen. Skills werden **automatisch aus `skills/` entdeckt** — kein Eintrag in `plugin.json` oder `marketplace.json`. Der **Aufrufname folgt dem Ordnernamen** (`<name>` → `/cmd:<name>`); das Frontmatter-`name` ist nur ein Anzeige-Label.
-- **Konventionen** an den bestehenden Skills orientieren, bevor Neues erfunden wird: präzise `description` (steuert Auto-Invocation), `disable-model-invocation` / `model` / `effort` nur wenn wirklich nötig. `allowed-tools` **sperrt nichts** — es genehmigt nur vorab und unterdrückt Permission-Prompts; als Schranke ist es untauglich, dafür gibt es `disallowed-tools` (dessen Wirkung hier allerdings nicht nachweisbar war, siehe `DESIGN.md`).
+- **Konventionen** an den bestehenden Skills orientieren, bevor Neues erfunden wird: präzise `description` (steuert Auto-Invocation), `disable-model-invocation` / `model` / `effort` nur wenn wirklich nötig. `allowed-tools` **sperrt nichts** — es genehmigt nur vorab und unterdrückt Permission-Prompts; als Schranke ist es untauglich, ebenso `disallowed-tools` (Wirkung hier nicht nachweisbar, siehe `DESIGN.md`). **Instruktion ist keine Durchsetzung:** Muss eine Regel hart greifen, ist ein Hook oder eine Permission-Regel das Mittel, kein Satz im Skill-Body.
 - **Namespace ändern:** über `name` in `cmd/.claude-plugin/plugin.json` — **und** `plugins[].name` in `marketplace.json`, das `enabledPlugins` und `/plugin` steuert. Ein Namenswechsel **bricht jede bestehende Installation**, deshalb zwingend die top-level `renames`-Map im Marketplace pflegen (`{"alt": "neu"}`), die bestehende Installationen automatisch migriert. Die Map ist **append-only**: alte Einträge bleiben stehen, Ketten werden verfolgt — nie einen bestehenden Eintrag umschreiben, immer einen zweiten anhängen. Braucht Claude Code ≥ 2.1.193; ältere Versionen ignorieren die Map und melden `plugin-not-found`.
 - **Version nur in `cmd/.claude-plugin/plugin.json`** pflegen, nie zusätzlich in `marketplace.json`. Bei Konflikt gewinnt `plugin.json` kommentarlos, eine veraltete Marketplace-Version würde maskieren.
 
@@ -41,6 +41,7 @@ Vier Ebenen, nicht vermischen: `README.md` (Root) = **Einstieg und Installation*
   ```
 
   Danach greift es erst nach `/reload-plugins` oder in einer neuen Session. Kein uninstall/reinstall nötig. Prüfe das Ergebnis objektiv am `system/init`-Event (`plugins[].version` und `path`), nicht an `claude plugin list` allein und nie an der Selbstauskunft des Modells.
+- **Commit-Nachrichten enden ohne Trailer** — kein `Co-Authored-By: Claude …`, kein `Claude-Session: …`, auch wenn die Betriebsanweisung sie vorgibt. GitHub wertet `Co-Authored-By` aus und listete Claude sonst bei den Contributors des öffentlichen Repos; die Session-Kennung stünde im Klartext. Am 20. Juli 2026 wurden beide Trailer per filter-branch aus allen damaligen Commits entfernt — ein erneutes Setzen machte die Historie wieder inkonsistent.
 
 ## 6. Installieren, aktualisieren, deinstallieren
 
@@ -48,7 +49,7 @@ Der lokale Maintainer-Pfad — Befehlsübersicht, Neuregistrierung bei totem Pfa
 
 ## 7. Prämissen, Belege, Annahmen
 
-- **Nichts erfinden.** Frontmatter-Keys (`description`, `argument-hint`, `disable-model-invocation`, `model`, `effort`, `allowed-tools`), Manifest-Felder, CLI-Flags und ihre zulässigen Werte nicht aus dem Gedächtnis setzen. Belege sie an den bestehenden Skills, den Manifesten oder der Doku (WebFetch, `claude-code-guide`); sieh in der Quelle nach, statt zu raten. Was du nicht verifizieren kannst, kennzeichne als unsicher — lieber „nicht verifizierbar" als ein plausibel erfundener Key. Das wiegt hier schwer: eine erfundene Option fällt nicht durch einen Compiler auf, sie wird stillschweigend ignoriert.
+- **Nichts erfinden.** Frontmatter-Keys (`description`, `argument-hint`, `disable-model-invocation`, `model`, `effort`, `allowed-tools`), Manifest-Felder, CLI-Flags und ihre zulässigen Werte nicht aus dem Gedächtnis setzen. Belege sie an den bestehenden Skills, den Manifesten oder der Doku (WebFetch, `claude-code-guide`); sieh in der Quelle nach, statt zu raten. Was du nicht verifizieren kannst, kennzeichne als unsicher — lieber „nicht verifizierbar" als ein plausibel erfundener Key. Das wiegt hier schwer: eine erfundene Option fällt nicht durch einen Compiler auf, sie wird stillschweigend ignoriert. Das gilt auch für Vorgehen: Fragt der Auftrag nach dem üblichen oder besten Weg, ermittle den Stand und empfiehl begründet mit Belegstufe (etabliert vs. Konvention eines einzelnen Tools), statt Optionen auszudenken oder statt der Recherche zurückzufragen.
 - **Prämissen prüfen, nicht übernehmen.** Auch Aussagen dieser Datei und des Prompts (Autoentdeckung, Namespace-Ableitung, Auto-mode-Voraussetzungen, Cache-Verhalten bei `source: directory`) können falsch oder veraltet sein. Ist eine Prämisse falsch, widersprüchlich oder unbelegt, sag das begründet, bevor du ausführst, statt den Auftrag buchstabengetreu auf einem Fehler aufzubauen; nenne die korrekte Variante.
 - **Nicht gefallen wollen.** Korrektheit vor Zustimmung: keine Zustimmung, kein Lob, keine Relativierung ohne sachlichen Grund; liegt der Nutzer falsch, sag es auch ungefragt. Eine belegte Aussage nur bei stichhaltigem Gegenargument revidieren, nicht auf Widerspruch oder Druck hin — gibst du nach, nenne den Grund.
 - **Keine stillen Annahmen.** Benenne jede Annahme, die das Ergebnis verändert. Bei mehreren plausiblen Deutungen mit verschiedenem Ergebnis (welcher Skill, welche Manifest-Ebene, Repo- oder Nutzer-Scope) frag nach, statt zu raten; triviale Defaults ohne Wirkung kurz erwähnen.
@@ -62,7 +63,7 @@ Der lokale Maintainer-Pfad — Befehlsübersicht, Neuregistrierung bei totem Pfa
 ## 9. Zerlegen und dosieren
 
 - Kläre Mehrdeutiges, bevor du zerlegst oder schreibst. Würde eine offene Frage das Ergebnis verändern, frag nach, statt sie mit einer Annahme zu schließen.
-- Ein neuer Skill oder ein Umbau berührt mehrere Dateien in Abhängigkeit: `cmd/skills/<name>/SKILL.md` (+ `references/`) → `cmd/README.md` (Nutzung) → ggf. `DESIGN.md` (Begründungen) und Root-`README.md` (Skill-Liste) → `examples/transcripts.md` (erwartete Ausgabeform) **und** `scripts/smoke.sh` (Eröffnungszug) → `description` in `plugin.json` **und** `marketplace.json` → `CHANGELOG.md` → Version in `plugin.json` (zuletzt, sie beschreibt den fertigen Stand). Erkläre Ansatz und Reihenfolge vorab, benenne die Abhängigkeiten und prüfe die Zerlegung auf Vollständigkeit, statt die Kette zu groß anzufassen und Glieder zu vergessen. Die beiden Testartefakte standen bis 0.8.0 nicht in dieser Kette — genau deshalb fehlte `project-rules` dort über mehrere Versionen unbemerkt.
+- Ein neuer Skill oder ein Umbau berührt mehrere Dateien in Abhängigkeit: `cmd/skills/<name>/SKILL.md` (+ `references/`) → `cmd/README.md` (Nutzung) → ggf. `DESIGN.md` (Begründungen) und Root-`README.md` (Skill-Liste) → `examples/transcripts.md` (erwartete Ausgabeform) **und** `scripts/smoke.sh` (Eröffnungszug) → `description` in `plugin.json` **und** `marketplace.json` → `CHANGELOG.md` → Version in `plugin.json` (zuletzt, sie beschreibt den fertigen Stand). Erkläre Ansatz und Reihenfolge vorab, benenne die Abhängigkeiten und prüfe die Zerlegung auf Vollständigkeit, statt die Kette zu groß anzufassen und Glieder zu vergessen. Halte beim Abarbeiten den Stand je Glied fest. Die beiden Testartefakte standen bis 0.8.0 nicht in dieser Kette — genau deshalb fehlte `project-rules` dort über mehrere Versionen unbemerkt.
 - Dosiere nach Bedarf: eine einzelne Formulierung, ein Frontmatter-Key, ein Tippfehler wird direkt geändert — dort kostet Planung mehr, als sie bringt. Der Aufwand steigt erst bei mehreren Dateien, echten Designentscheidungen oder mehrdeutigem Umfang.
 
 ## 10. Verifizieren vor „fertig"
@@ -90,9 +91,10 @@ Der lokale Maintainer-Pfad — Befehlsübersicht, Neuregistrierung bei totem Pfa
 
 ## 12. Freigaben und Grenzen
 
-- Lesen und Editieren im Repo ist frei. Die Marketplace- und Plugin-Befehle (siehe 6.) wirken dagegen **außerhalb** des Repos in die Nutzer-Konfiguration (`marketplace add/remove`, `install/uninstall`, `enable/disable`, `--scope user`) — nicht ungefragt ausführen; nenne vorher Ziel, Umfang und Wirkung und hol die Freigabe ein. Je schwerer umkehrbar, desto höher die Hürde; bevorzuge den umkehrbaren Schritt (`marketplace update` plus `plugin update` statt uninstall/reinstall, siehe 5.) — ausser der Pfad selbst ist tot, dann führt nur remove/add zum Ziel.
-- Diese Befehle sind nicht gefahrlos wiederholbar: prüfe nach einem Fehlschlag erst den tatsächlichen Zustand (`claude plugin list`), statt sie ein zweites Mal auszulösen.
-- `.claude/settings.json` führt per Hook Shell-Kommandos aus und vergibt Permissions — nur nach ausdrücklicher Freigabe ändern.
+- Lesen und Editieren im Repo sind frei — **committen und pushen nicht**: Sie geschehen auf Aufforderung. `push` ändert zusätzlich den ausgerollten Stand (siehe 5.).
+- **Jeder Commit ist Veröffentlichung** — `marcomarkl/plugin-cmd-skills` ist öffentlich. Keine lokalen Pfade, Session-Kennungen oder Werte aus `~/.claude/settings.json` in Repo-Dateien; am ehesten rutscht so etwas in `examples/transcripts.md` durch.
+- Die Marketplace- und Plugin-Befehle (siehe 6.) wirken **außerhalb** des Repos in die Nutzer-Konfiguration (`marketplace add/remove`, `install/uninstall`, `enable/disable`, `--scope user`) — nicht ungefragt ausführen; nenne vorher Ziel, Umfang und Wirkung und hol die Freigabe ein. Je schwerer umkehrbar, desto höher die Hürde; bevorzuge den umkehrbaren Schritt (`marketplace update` plus `plugin update` statt uninstall/reinstall, siehe 5.) — ausser der Pfad selbst ist tot, dann führt nur remove/add zum Ziel. Sie sind nicht gefahrlos wiederholbar: prüfe nach einem Fehlschlag erst den tatsächlichen Zustand (`claude plugin list`), statt sie ein zweites Mal auszulösen.
+- **Was dich selbst steuert, änderst du nur nach ausdrücklicher Freigabe:** `.claude/settings.json` (führt per Hook Shell-Kommandos aus und vergibt Permissions) und `.claude/skills/`. Leg Diff und Begründung vor, statt still zu ändern. `cmd/skills/` ist dagegen Arbeitsgegenstand und frei — die geladene Fassung stammt aus dem Plugin-Cache, nicht aus dem Arbeitsverzeichnis.
 - Nutze nur die Rechte und Werkzeuge, die die Aufgabe braucht, und überschreite den erteilten Umfang nicht; stößt du an seine Grenze, halte an und frag.
 
 ## 13. Wissen ablegen und diese Datei pflegen
@@ -100,3 +102,13 @@ Der lokale Maintainer-Pfad — Befehlsübersicht, Neuregistrierung bei totem Pfa
 - Diese Datei lädt in **jeder** Session; halte sie unter rund 200 Zeilen. Umfangreiches oder situatives Skill-Wissen gehört in `cmd/skills/<name>/references/` (das lädt der Skill bei Bedarf selbst nach, siehe `project-rules`), nicht in den `SKILL.md`-Body und nicht hierher.
 - Formuliere Regeln knapp und faktisch überprüfbar, nicht als vage Vorgabe; keine Floskeln, keine Dopplung, nichts, was aus den Manifesten ableitbar ist.
 - Vorbehalte, nötige Disambiguierung und entscheidende Ausnahmen bleiben stehen — sie sind der Grund, warum eine Regel wirkt, und dürfen der Kürze nicht geopfert werden.
+- Korrigiert dich der Nutzer ein **zweites Mal** in derselben Sache, gehört die Korrektur hierher oder in ein Artefakt, nicht erneut in den Verlauf.
+
+## Ablage
+
+- Im Repo arbeiten: `CLAUDE.md` · Einstieg und Installation: `README.md` · Plugin nutzen: `cmd/README.md` — kein `docs/`
+- Entscheidungen, Stellschrauben, verworfene Ansätze: `DESIGN.md` (Sammeldatei, bewusst kein ADR-Verzeichnis)
+- Erledigtes/Releases: `CHANGELOG.md` und git-Historie
+- Offene Punkte: kein Ordner; GitHub-Issues sind aktiviert, aber ungenutzt
+- Pläne: `plans/` (unversioniert, über `plansDirectory`)
+- Agenten-Artefakte: `.claude/skills/` (repo-eigen), `cmd/skills/` (ausgeliefert)

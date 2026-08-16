@@ -58,6 +58,8 @@ Die Retrospektive läuft, bis kein tragfähiges Learning mehr offen ist. Zu beac
 
 **Warum die zweite Freigabe bleibt.** Sie ist der Wechsel in den Plan-Modus, und der ist derselbe Mechanismus, der bei `plan-grill` ausformuliert steht: `plan-review` arbeitet auf dem zuletzt erstellten Plan, `plan-execute` auf dem über `ExitPlanMode` freigegebenen. Ein Skill, der die Learnings in eine frei abgelegte Datei schriebe, spart die Zustimmung und verliert die Kette — er stünde dann allein da, statt in `plan-review` einzutreten. Nebenbefund derselben Untersuchung: `EnterPlanMode` fehlte im Body ganz, obwohl der Skill im Plan-Modus schreiben soll; `plan-grill` hatte den Schritt, `session-learn` nicht.
 
+**Warum der Auslöser generalisiert wird.** Ein Learning entsteht immer an einem Einzelfall, und die naheliegende Formulierung friert diesen Fall samt seiner Wortwahl ein. Anlass war eine Regel in der `CLAUDE.md` dieses Repos, die auf die Stichwörter „Best Practice" und „State of the Art" auslöste, obwohl das erwartete Verhalten an der Situation hängt und nicht an ihrer Benennung: Bei jeder anderen Formulierung derselben Frage hätte sie geschwiegen. Der Filter prüfte bis dahin, **ob** ein Learning etwas taugt (dauerhaft, neu, handlungsleitend), nie, **woran** es gebunden wird. Die Gegenprobe im Body setzt deshalb am Auslöser an und ausdrücklich nicht am Inhalt: Befehle, Pfade, Werkzeuge und Dateien bleiben konkret, sonst kippt die Korrektur ins Gegenteil und erzeugt generische Regeln ohne Halt im Projekt. Das ist dieselbe Linie, die `project-rules` mit „Im Projekt verankern" fährt.
+
 ### session-handoff
 
 Verdichtet den laufenden Arbeitsstand in eine `HANDOFF.md`, damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeitet.
