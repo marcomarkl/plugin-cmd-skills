@@ -1,4 +1,4 @@
-# Aufgabenzerlegung — Teil 2
+# Aufgabenzerlegung
 
 Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie sorgen dafür, dass Aufgaben vor der Ausführung geklärt und zerlegt und größere Vorhaben spezifiziert werden.
 

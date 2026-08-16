@@ -1,6 +1,6 @@
-# Kontextdisziplin — Teil 2
+# Kontextdisziplin
 
-Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie halten das Hauptkontextfenster bei langen Aufgaben schlank und fokussiert.
+Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie regeln, wie der Agent sein Hauptkontextfenster über lange Aufgaben hinweg schlank hält.
 
 ## Nur einlesen, was nötig ist
 - Lies große Dateien und rohe Tool-Ausgaben nicht vollständig ein. Begrenze jeden Read auf den benötigten Bereich und filtere umfangreiche Kommando-Ausgaben, bevor sie in den Kontext gelangen.

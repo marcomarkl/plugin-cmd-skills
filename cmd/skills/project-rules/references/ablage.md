@@ -1,4 +1,4 @@
-# Ablagedisziplin — Teil 2
+# Ablagedisziplin
 
 Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie regeln, **wohin** dauerhaftes Wissen gehört — nicht, wie es formuliert wird. Die konkreten Orte und Namensschemata stehen nicht hier, sondern im Ablage-Kanon, den der Skill-Body in Schritt 4 direkt lädt; er ist die einzige Quelle dafür und wird nicht dupliziert.
 

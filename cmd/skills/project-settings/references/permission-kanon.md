@@ -67,7 +67,7 @@ Stand der Belege: an der Herstellerdoku nachgeprüft am 16. August 2026 (`code.c
 |---|---|
 | `autoMode` | Wird aus Projekt- und Local-Settings nicht gelesen. Ein Eintrag dort wäre stumm wirkungslos. |
 | `dialogExpiry` | Wird nur aus Nutzer-, managed- und `--settings`-Quellen gelesen. Ein Eintrag in den Projekt-Settings wäre stumm wirkungslos. |
-| `language` | Steht bereits in den Nutzer-Settings und wirkt. Ein Projektwert wäre die Doppelung, die dieser Skill vermeiden soll. |
+| `language` | Gehört in den Nutzer-Scope: Die Sprache ist eine Eigenschaft der Person, nicht des Repos. Ein Projektwert überschriebe sie für alle Mitwirkenden. |
 | Lesende git-Formen | `git status`, `git log`, `git diff` gehören zum eingebauten Read-only-Satz und laufen ohne Prompt. Eine eigene Allow-Regel wäre Redundanz — `Bash(git *)` deckt sie ohnehin. Nicht „in jedem Fall prompt-frei": Ein unquotiertes Glob-Argument lässt `git` prompten (es könnte zu einem schreibenden Flag expandieren), und `cd <anderes Verzeichnis> && git …` ebenfalls, weil git dort fremde Hooks ausführen könnte. |
 | `Read(**)` fürs Projekt | Lesen innerhalb des Working Directory braucht ohnehin keine Permission. |
 | `.env` in `deny` | Eine deny-Regel kennt keine Ausnahme. `Read(//**/.env)` sperrte auch die `.env` des Projekts, an dem gerade gearbeitet wird. |
@@ -123,7 +123,7 @@ Umgekehrt wirkt sie an einer Stelle weiter als geschrieben: Eine `Read`-deny-Reg
 
 `Bash(git restore *)` und `Bash(git checkout -- *)` stehen **nicht** in der ask-Liste und laufen unter `Bash(git *)` ungefragt, obwohl beide uncommittete Arbeit unwiederbringlich löschen — sachlich dieselbe Klasse wie `git clean`.
 
-Sie bleiben draußen, weil `git restore` der dokumentierte Rückweg aus einem Fehlversuch ist; eine ask-Regel unterbräche die Notbremse bei jedem Gebrauch. Die Regelsyntax kann „restore gegen einen Commit" nicht von „restore über uncommittete Arbeit" trennen. Der Schutz liegt damit bei der Regel, vor großflächigem Umschreiben einen funktionierenden Stand zu committen. Nenne die Lücke im Bericht, damit sie eine sichtbare Entscheidung bleibt und keine Auslassung.
+Sie bleiben draußen, weil `git restore` der dokumentierte Rückweg aus einem Fehlversuch ist; eine ask-Regel unterbräche die Notbremse bei jedem Gebrauch. Die Regelsyntax kann „restore gegen einen Commit" nicht von „restore über uncommittete Arbeit" trennen. Der Schutz liegt damit außerhalb der Konfiguration, in der Arbeitsweise: ein funktionierender Stand ist committet, bevor großflächig umgeschrieben wird. Ob das Zielprojekt diese Regel führt, weißt du nicht — nenne die Lücke im Bericht und sag dazu, dass sie genau darauf angewiesen ist, damit sie eine sichtbare Entscheidung bleibt und keine Auslassung.
 
 ## Regelsyntax, kurz
 

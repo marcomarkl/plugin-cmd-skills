@@ -1,4 +1,4 @@
-# Ausführungsdisziplin — Teil 2
+# Ausführungsdisziplin
 
 Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie haben Vorrang vor dem Wunsch, dem Nutzer zu gefallen, und vor wörtlicher Auftragstreue.
 

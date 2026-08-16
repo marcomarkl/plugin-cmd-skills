@@ -19,7 +19,7 @@ Dieser Command nimmt eine bestehende `CLAUDE.md` (oder `AGENTS.md`), wendet sieb
 
 ## Die Werkzeuge
 
-Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Sieben **Inhalts-Kataloge** liefern Regeln *in* die Datei; ein achtes **Effizienz-/Pflege-Werkzeug** (`references/token-effizienz.md`) verdichtet die Datei zuletzt. Die **erste Zeile jedes Katalogs** ist eine Adressaten-Präambel und Teil des Inhalts: Sie sagt, für wen die Regeln gelten und ob sie in die Zieldatei wandern.
+Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Sieben **Inhalts-Kataloge** liefern Regeln *in* die Datei; ein achtes **Effizienz-/Pflege-Werkzeug** (`references/token-effizienz.md`) verdichtet die Datei zuletzt. Der **Absatz unter der Überschrift** ist in jedem Katalog eine Adressaten-Präambel: Sie sagt, für wen die Regeln gelten und ob sie in die Zieldatei wandern. Lies sie mit, sie steuert die Verbuchung — aber sie selbst ist **nie** Zieltext und wird nicht mitkopiert.
 
 | Werkzeug | Referenzdatei | Was es bewirkt |
 |---|---|---|
@@ -36,7 +36,7 @@ Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Sieben **I
 
 **Best-of statt Stapeln.** Pro Thema bleibt **eine** Regel stehen: die stärkste, spezifischste, im Projekt verankerte Fassung — gleichgültig, ob sie aus der vorhandenen Datei oder aus einem Katalog stammt. Überschneiden sich zwei Kataloge (z. B. Kontext-, Ablage- und Token-Effizienz bei „schlank halten" und beim Auslagern, Ablage und Artefakte bei „was gehört nicht in die Root-Datei", Artefakte und Sicherheitsdisziplin bei „eigene Instruktionen ändern", Fehler- und Sicherheitsdisziplin bei „anhalten und melden"), führe sie an der thematisch passenden Stelle zusammen, statt zwei Fassungen nebeneinanderzustellen. Hat die vorhandene Datei bereits die härtere oder genauere Regel, **gewinnt sie** — ein Katalog oder die Verdichtung darf sie nie verwässern, abschwächen oder generischer machen (siehe Schritt 4, „Nie schwächen").
 
-**Die Kataloge.** Die sieben Inhalts-Kataloge in `references/` liefern die zu verbuchenden Regeln (Schritt 4). Zwei von ihnen (`ablage.md`, `projekt-artefakte.md`) tragen keine Pfade und Namensschemata; die stehen einmal in den Kanon-Dateien von `project-structure` und werden in Schritt 4 **direkt aus dem Body** geladen, nie über einen Verweis im Katalog. Der Token-Effizienz-Katalog (`references/token-effizienz.md`) ist anders gebaut: **Teil 2A** ist Arbeitsanweisung an dich (verdichten/formatieren — kommt **nie** als Text in die Datei), **Teil 2B** ist eine knappe Pflegeregel, die **bedingt** in die Datei wandert (siehe Schritt 7).
+**Die Kataloge.** Die sieben Inhalts-Kataloge in `references/` liefern die zu verbuchenden Regeln (Schritt 4). Zwei von ihnen (`ablage.md`, `projekt-artefakte.md`) tragen keine Pfade und Namensschemata; die stehen einmal in den Kanon-Dateien von `project-structure` und werden in Schritt 4 **direkt aus dem Body** geladen, nie über einen Verweis im Katalog. Der Token-Effizienz-Katalog (`references/token-effizienz.md`) ist anders gebaut: **Teil A** ist Arbeitsanweisung an dich (verdichten/formatieren — kommt **nie** als Text in die Datei), **Teil B** ist eine knappe Pflegeregel, die **bedingt** in die Datei wandert (siehe Schritt 7).
 
 ## Warum diese Vorgehensweise
 
@@ -126,7 +126,9 @@ Leitplanken beim Klassifizieren:
 - **Sprache** der Zieldatei verwenden (siehe Schritt 3).
 - **Im Projekt verankern:** Plane jede `ergänzt`- und `geschärft`-Regel in den konkreten Begriffen des Projekts — seine Befehle (die echten Build-/Test-/Lint-Skripte, nicht „führe Tests aus"), Tools (MCP-Server, git, Deploy-Ziel), Dateitypen (Notebooks, Komponenten, Stores) und Risiken. Die generische Katalogregel ist die Quelle, nicht das Ergebnis. Erfinde dabei keine Konventionen, die das Projekt nicht hergibt — das verstieße gegen die Ausführungsdisziplin; verankere nur in dem, was Datei, Prompt und sichtbare Signale tatsächlich zeigen.
 - **Instruktionsbudget — kuratieren, nicht abmagern:** Streiche, was Claude ohnehin tut oder aus Code/Konfiguration ableiten kann (Stack-Fakten, reine Befehlsaufzählungen), und übernimm nichts doppelt. Schlank heißt: das Ableitbare, Redundante und Selbstverständliche weg — nicht: wenige, vage oder generische Regeln. Was bleibt, ist tragend und im Projekt verankert. Den eigentlichen Verdichtungsschliff macht Schritt 7.
-- **Bedarfsgeladenes Wissen** nicht in die ständig geladene Root-CLAUDE.md zwingen: situatives oder selten gebrauchtes Wissen gehört in bedarfsgeladene Mechanismen (Skills, `.claude/rules/` **mit** `paths:`, verschachtelte CLAUDE.md). Das ist selbst eine Regel der Kontext- und Ablagedisziplin — wende sie auch auf deine eigenen Ergänzungen an. Nicht bedarfsgeladen und damit keine Entlastung sind `@pfad`-Importe und `.claude/rules/` **ohne** `paths:`; beide laden beim Sessionstart mit.
+- **Bedarfsgeladenes Wissen** nicht in die ständig geladene Root-CLAUDE.md zwingen: situatives oder selten gebrauchtes Wissen gehört in bedarfsgeladene Mechanismen (Skills, `.claude/rules/` **mit** `paths:`, verschachtelte CLAUDE.md). Das ist selbst eine Regel der Kontext- und Ablagedisziplin: Sie geht als Inhalt in die Zieldatei **und** bindet dich beim Schreiben deiner Ergänzungen. Der „nicht an dich"-Satz der Präambel regelt nur, wessen Verhalten der Regeltext beschreibt, und hebt das nicht auf. Nicht bedarfsgeladen und damit keine Entlastung sind `@pfad`-Importe und `.claude/rules/` **ohne** `paths:`; beide laden beim Sessionstart mit.
+- **Geltungsbereich lesen, nicht als Filter missdeuten.** Jede Katalogpräambel und mancher Abschnittstitel nennt eine Bedingung („bei größeren Vorhaben", „sobald Wissen situativ gebraucht wird"). Sie bedingt **das Verhalten, das die Regel beschreibt**, nie ihre Aufnahme in die Datei. Ausgeschlossen wird eine Regel allein über die Kategorie `weggelassen` und mit Grund — nie deshalb, weil ihr Auslöser gerade nicht vorliegt. Sie wirkt in der Zukunft, in der du nicht mehr danebenstehst. Für Artefakte schärft `projekt-artefakte.md` denselben Punkt noch enger.
+- **Die Präambel bestimmt den Adressaten, nicht die Übernahme.** „Übernimm sie als Inhalt in die Zieldatei" heißt: Diese Regeln sind Zieltext und keine Anweisung an dich. *Ob* eine einzelne Regel hineinwandert, entscheidet erst dieses Register mit seinen fünf Kategorien. Beides gilt nebeneinander; ein Katalog wird nie am Register vorbei vollständig hineinkopiert.
 - **Nur verankern, was es gibt:** Ablage- und Artefaktregeln nennen ausschließlich Orte, die die Inventur aus Schritt 3 belegt hat, oder solche, deren Anlegen du in Schritt 9 ausdrücklich empfiehlst. Ein Verweis auf einen nicht existierenden Pfad ist eine Erfindung und verstößt gegen die Ausführungsdisziplin.
 
 ## Schritt 5 — Konflikte bündeln und vorlegen
@@ -151,9 +153,9 @@ Jetzt erst editierst du die Datei — in *einem* Durchgang, der das ganze Regist
 
 ## Schritt 7 — Token-Effizienz-/Kuratierungs-Pass (zuletzt)
 
-Erst wenn aller Inhalt steht, **liest du jetzt `references/token-effizienz.md`** und wendest ihn an — als letzten Schliff über die ganze Datei. **Teil 2A** ist Arbeitsanweisung an dich und kommt **nie** als Text in die Datei; **Teil 2B** ist die einzige Stelle, die als Inhalt übernommen wird (bedingt, s. u.).
+Erst wenn aller Inhalt steht, **liest du jetzt `references/token-effizienz.md`** und wendest ihn an — als letzten Schliff über die ganze Datei. **Teil A** ist Arbeitsanweisung an dich und kommt **nie** als Text in die Datei; **Teil B** ist die einzige Stelle, die als Inhalt übernommen wird (bedingt, s. u.).
 
-Verdichten (Teil 2A), ohne die Bedeutung zu verändern:
+Verdichten (Teil A), ohne die Bedeutung zu verändern:
 - Knappe Fachnotiz: Floskeln, Höflichkeitsrahmen und überflüssige Qualifizierer raus; Verben statt Nominalisierungen.
 - Redundanz entfernen, auch katalogübergreifende: dieselbe Regel zweimal in anderen Worten kostet doppelt und schärft nichts — eine Fassung, am thematisch richtigen Ort.
 - Falls beim Schreiben etwas Vages durchgerutscht ist: faktisch machen („vor dem Commit Tests laufen lassen" statt „Änderungen testen") — das spart Wörter *und* verbessert die Befolgbarkeit.
@@ -165,8 +167,8 @@ Die Grenze — hier hört Kürzen auf:
 - Verdichten ist reine Formarbeit. Verändert eine Umformulierung die Aussage, ist sie keine Verdichtung — lass die Stelle stehen.
 - Opfere **nie** einen Vorbehalt bei korrektheitskritischer Arbeit, eine nötige Disambiguierung oder die entscheidende Ausnahme der Kürze. Und schwäche **nie** eine starke Regel (vorhandene oder gerade ergänzte), um Tokens zu sparen — Best-of (Schritt 4) gilt auch hier. Im Zweifel zugunsten der eindeutigen, vollständigen Aussage.
 
-Pflegeregel verankern (Teil 2B) — **bedingt:**
-- Nur wenn der Agent diese Datei selbst fortschreibt, übernimm die knappe Pflegeregel aus Teil 2B (`references/token-effizienz.md`) unter einen passenden Abschnitt; gibt es schon eine Stil-/Pflegeregel, schärfe sie, statt sie zu doppeln.
+Pflegeregel verankern (Teil B) — **bedingt:**
+- Nur wenn der Agent diese Datei selbst fortschreibt, übernimm die knappe Pflegeregel aus Teil B (`references/token-effizienz.md`) unter einen passenden Abschnitt; gibt es schon eine Stil-/Pflegeregel, schärfe sie, statt sie zu doppeln.
 - Wird die Datei ausschließlich von Menschen gepflegt, lass sie weg und vermerke das — sonst verbrauchst du Budget für eine selbstbezügliche Regel.
 
 ## Schritt 8 — Selbstprüfung

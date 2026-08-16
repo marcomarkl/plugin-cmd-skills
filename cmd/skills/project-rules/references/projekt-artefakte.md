@@ -1,4 +1,4 @@
-# Projekteigene Artefakte — Teil 2
+# Projekteigene Artefakte
 
 Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie regeln, wann das Projekt einen eigenen Skill, Subagent oder eine pfad-bezogene Regel bekommt und wer sie pflegt. Pfade und Frontmatter-Keys stehen nicht hier, sondern im Artefakt-Kanon, den der Skill-Body in Schritt 4 direkt lädt.
 

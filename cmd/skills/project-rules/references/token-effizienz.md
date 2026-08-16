@@ -1,8 +1,8 @@
-# Token-Effizienz — Teil 2A/2B
+# Token-Effizienz — Teil A/B
 
-Dieser Katalog ist anders gebaut als die sieben Inhalts-Kataloge und wird in **Schritt 7** angewendet, nicht in Schritt 4 verbucht. **Teil 2A** richtet sich an dich als einsetzende KI und kommt **nie** als Text in die Zieldatei; **Teil 2B** ist der einzige Block, der (bedingt) als Inhalt übernommen wird.
+Dieser Katalog ist anders gebaut als die sieben Inhalts-Kataloge und wird in **Schritt 7** angewendet, nicht in Schritt 4 verbucht. **Teil A** richtet sich an dich als einsetzende KI und kommt **nie** als Text in die Zieldatei; **Teil B** ist der einzige Block, der (bedingt) als Inhalt übernommen wird.
 
-## Teil 2A — Überarbeitungskatalog (Arbeitsanweisung, nicht Inhalt der Datei)
+## Teil A — Überarbeitungskatalog (Arbeitsanweisung, nicht Inhalt der Datei)
 
 Die folgenden Regeln richten sich an dich als einsetzende KI und steuern, wie du die Zieldatei verdichtest und formatierst. Übernimm sie nicht als Text in die Datei.
 
@@ -29,9 +29,9 @@ Die folgenden Regeln richten sich an dich als einsetzende KI und steuern, wie du
 - Lass Vorbehalte bei korrektheitskritischer Arbeit, nötige Disambiguierung und die entscheidende Ausnahme stehen, auch wenn sie Tokens kosten. Ein weggelassener Vorbehalt oder eine zweideutige Anweisung kostet über Fehlversuche und Rework mehr, als die Kürzung spart.
 - Kürzen hat eine Grenze, und sie verläuft an der Korrektheit. Im Zweifel zugunsten der eindeutigen, vollständigen Aussage entscheiden, nicht zugunsten der kürzeren.
 
-## Teil 2B — Verankerte Pflegeregel (Inhalt, der in die Datei übernommen wird)
+## Teil B — Verankerte Pflegeregel (Inhalt, der in die Datei übernommen wird)
 
-Anders als Teil 2A wird der folgende Block als Inhalt in die Zieldatei übernommen. Er richtet sich an den Agenten, der diese Datei pflegt, und greift nur, wenn dieser sie selbst fortschreibt (siehe Schritt 7). Halte ihn knapp, sonst widerspricht er seinem eigenen Zweck.
+Anders als Teil A wird der folgende Block als Inhalt in die Zieldatei übernommen. Er richtet sich an den Agenten, der diese Datei pflegt, und greift nur, wenn dieser sie selbst fortschreibt (siehe Schritt 7). Halte ihn knapp, sonst widerspricht er seinem eigenen Zweck.
 
 ### Diese Datei pflegen
 - Formuliere neue oder geänderte Regeln knapp und faktisch überprüfbar; keine Floskeln, keine Redundanz.
