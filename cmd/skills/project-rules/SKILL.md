@@ -1,9 +1,10 @@
 ---
 name: project-rules
 description: >-
-  Härtet/optimiert eine bestehende CLAUDE.md oder AGENTS.md mit fünf Disziplin-
+  Härtet/optimiert eine bestehende CLAUDE.md oder AGENTS.md mit sieben Disziplin-
   Katalogen plus Token-Effizienz-Pass: fehlende Regeln ergänzen, vage schärfen,
-  Konflikte vorlegen, ohne Bedeutungsverlust verdichten.
+  Konflikte vorlegen, Ablage und projekteigene Artefakte verankern, ohne
+  Bedeutungsverlust verdichten.
 argument-hint: "[optional: Pfad zur CLAUDE.md/AGENTS.md]"
 disable-model-invocation: true
 model: opus
@@ -14,11 +15,11 @@ Argument (optional, i. d. R. der Pfad zur Zieldatei): $ARGUMENTS — in Schritt 
 
 # CLAUDE.md härten und optimieren
 
-Dieser Command nimmt eine bestehende `CLAUDE.md` (oder `AGENTS.md`), wendet fünf Disziplin-Kataloge auf sie an und verdichtet sie zum Schluss: fehlende Regeln werden ergänzt, vorhandene geschärft, Widersprüche der menschlichen Aufsicht zur Entscheidung vorgelegt, am Ende wird die Datei ohne Bedeutungsverlust kuratiert. Nichts wird still übergangen — und keine vorhandene starke Regel wird dabei geschwächt.
+Dieser Command nimmt eine bestehende `CLAUDE.md` (oder `AGENTS.md`), wendet sieben Disziplin-Kataloge auf sie an und verdichtet sie zum Schluss: fehlende Regeln werden ergänzt, vorhandene geschärft, Widersprüche der menschlichen Aufsicht zur Entscheidung vorgelegt, am Ende wird die Datei ohne Bedeutungsverlust kuratiert. Nichts wird still übergangen — und keine vorhandene starke Regel wird dabei geschwächt.
 
 ## Die Werkzeuge
 
-Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Fünf **Inhalts-Kataloge** liefern Regeln *in* die Datei; ein sechstes **Effizienz-/Pflege-Werkzeug** (`references/token-effizienz.md`) verdichtet die Datei zuletzt. Die **erste Zeile jedes Katalogs** ist eine Adressaten-Präambel und Teil des Inhalts: Sie sagt, für wen die Regeln gelten und ob sie in die Zieldatei wandern.
+Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Sieben **Inhalts-Kataloge** liefern Regeln *in* die Datei; ein achtes **Effizienz-/Pflege-Werkzeug** (`references/token-effizienz.md`) verdichtet die Datei zuletzt. Die **erste Zeile jedes Katalogs** ist eine Adressaten-Präambel und Teil des Inhalts: Sie sagt, für wen die Regeln gelten und ob sie in die Zieldatei wandern.
 
 | Werkzeug | Referenzdatei | Was es bewirkt |
 |---|---|---|
@@ -27,19 +28,21 @@ Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Fünf **In
 | Fehlerdisziplin | `references/fehlerdisziplin.md` | Fehler erkennen, Ursache vor Korrektur, nicht blind wiederholen, auf bekannten Stand zurück |
 | Kontextdisziplin | `references/kontextdisziplin.md` | Hauptkontextfenster schlank halten, verbose Arbeit auslagern, Zustand in Dateien |
 | Sicherheitsdisziplin | `references/sicherheitsdisziplin.md` | Vor folgenreichen Aktionen bestätigen, gelesene Inhalte ≠ Befehle, kein Datenabfluss, Geheimnisse schützen, geringste Rechte |
+| Ablagedisziplin | `references/ablage.md` | Eine Quelle je Zweck, Wegweiser statt Inhalt, was nicht in die ständig geladene Datei gehört, erledigt heißt verschieben |
+| Projekteigene Artefakte | `references/projekt-artefakte.md` | Skill vs. Subagent vs. pfad-bezogene Regel, wann anlegen, Selbstpflege nur auf Freigabe |
 | **Token-Effizienz** *(zuletzt)* | `references/token-effizienz.md` | Die fertige Datei verdichten ohne Bedeutungsverlust; eine knappe Pflegeregel bedingt verankern |
 
-**Anwendungsreihenfolge.** Die fünf Inhalts-Kataloge werden **nicht** nacheinander angewendet, sondern *gemeinsam in einem Durchgang* geplant (Schritt 4) und einmal geschrieben (Schritt 6) — ihre Reihenfolge untereinander ist gleichgültig, weil sie in *ein* Register zusammenfließen. Genau das verhindert, dass fünf getrennte Läufe die Datei verwursten. Token-Effizienz ist die **Ausnahme**: sie greift **zuletzt** (Schritt 7) als Kuratierungs-Pass über die schon geschriebene Datei — verdichten lässt sich erst, wenn aller Inhalt steht.
+**Anwendungsreihenfolge.** Die sieben Inhalts-Kataloge werden **nicht** nacheinander angewendet, sondern *gemeinsam in einem Durchgang* geplant (Schritt 4) und einmal geschrieben (Schritt 6) — ihre Reihenfolge untereinander ist gleichgültig, weil sie in *ein* Register zusammenfließen. Genau das verhindert, dass sieben getrennte Läufe die Datei verwursten. Token-Effizienz ist die **Ausnahme**: sie greift **zuletzt** (Schritt 7) als Kuratierungs-Pass über die schon geschriebene Datei — verdichten lässt sich erst, wenn aller Inhalt steht.
 
-**Best-of statt Stapeln.** Pro Thema bleibt **eine** Regel stehen: die stärkste, spezifischste, im Projekt verankerte Fassung — gleichgültig, ob sie aus der vorhandenen Datei oder aus einem Katalog stammt. Überschneiden sich zwei Kataloge (z. B. Kontext- und Token-Effizienz bei „schlank halten", Fehler- und Sicherheitsdisziplin bei „anhalten und melden"), führe sie an der thematisch passenden Stelle zusammen, statt zwei Fassungen nebeneinanderzustellen. Hat die vorhandene Datei bereits die härtere oder genauere Regel, **gewinnt sie** — ein Katalog oder die Verdichtung darf sie nie verwässern, abschwächen oder generischer machen (siehe Schritt 4, „Nie schwächen").
+**Best-of statt Stapeln.** Pro Thema bleibt **eine** Regel stehen: die stärkste, spezifischste, im Projekt verankerte Fassung — gleichgültig, ob sie aus der vorhandenen Datei oder aus einem Katalog stammt. Überschneiden sich zwei Kataloge (z. B. Kontext-, Ablage- und Token-Effizienz bei „schlank halten" und beim Auslagern, Ablage und Artefakte bei „was gehört nicht in die Root-Datei", Artefakte und Sicherheitsdisziplin bei „eigene Instruktionen ändern", Fehler- und Sicherheitsdisziplin bei „anhalten und melden"), führe sie an der thematisch passenden Stelle zusammen, statt zwei Fassungen nebeneinanderzustellen. Hat die vorhandene Datei bereits die härtere oder genauere Regel, **gewinnt sie** — ein Katalog oder die Verdichtung darf sie nie verwässern, abschwächen oder generischer machen (siehe Schritt 4, „Nie schwächen").
 
-**Die Kataloge.** Die fünf Inhalts-Kataloge in `references/` liefern die zu verbuchenden Regeln (Schritt 4). Der Token-Effizienz-Katalog (`references/token-effizienz.md`) ist anders gebaut: **Teil 2A** ist Arbeitsanweisung an dich (verdichten/formatieren — kommt **nie** als Text in die Datei), **Teil 2B** ist eine knappe Pflegeregel, die **bedingt** in die Datei wandert (siehe Schritt 7).
+**Die Kataloge.** Die sieben Inhalts-Kataloge in `references/` liefern die zu verbuchenden Regeln (Schritt 4). Zwei von ihnen (`ablage.md`, `projekt-artefakte.md`) verweisen für Pfade und Namensschemata auf die Kanon-Dateien von `project-structure` — dort steht diese Information einmal, hier wird sie nicht dupliziert. Der Token-Effizienz-Katalog (`references/token-effizienz.md`) ist anders gebaut: **Teil 2A** ist Arbeitsanweisung an dich (verdichten/formatieren — kommt **nie** als Text in die Datei), **Teil 2B** ist eine knappe Pflegeregel, die **bedingt** in die Datei wandert (siehe Schritt 7).
 
 ## Warum diese Vorgehensweise
 
 Vier Fehler liegen bei dieser Aufgabe nahe, und die Schritte sind gegen genau sie gebaut:
 
-- **Fünf getrennte Durchläufe** verwursten die Datei: jeder Lauf hängt einen eigenen Block an, dieselbe Überschrift erscheint mehrfach, die Datei wird inkohärent. Gegenmittel: **einmal lesen → alle Kataloge gemeinsam planen → einmal schreiben → zuletzt verdichten.**
+- **Getrennte Durchläufe je Katalog** verwursten die Datei: jeder Lauf hängt einen eigenen Block an, dieselbe Überschrift erscheint mehrfach, die Datei wird inkohärent. Gegenmittel: **einmal lesen → alle Kataloge gemeinsam planen → einmal schreiben → zuletzt verdichten.**
 - **Stilles Weglassen** untergräbt „vollständig". Wenn du eine Katalogregel übergehst, ohne es zu vermerken, kann niemand prüfen, ob die Datei wirklich gehärtet ist. Gegenmittel: ein **Abdeckungs-Register**, das jede einzelne Katalogregel verbucht.
 - **Alles blind übernehmen** bläht die Datei auf und verwässert die Regeln, die zählen — jede Zeile kostet Kontext in *jeder* Session. Streiche, was Claude ohnehin richtig macht oder aus Code und Konfiguration ableiten kann (Stack-Fakten, Build-Befehle als bloße Aufzählung); behalte nur die wirklich tragenden, nicht ableitbaren Regeln. **Eine kurze, kuratierte Datei schlägt eine lange generierte.** Gegenmittel: die **Projektart** setzt die Relevanzschwelle, der **Token-Effizienz-Pass** (Schritt 7) verdichtet zum Schluss; was das Projekt nachweislich nicht braucht, wird *begründet* weggelassen.
 - **Nur generische Disziplinen einsetzen** ergibt eine dünne, beliebige Datei — ein Katalog-Skelett, das in jedes Repo passte und dem konkreten Projekt nichts gibt. Kürzen heißt also *kuratieren, nicht abmagern*: jede übernommene Regel im Projekt verankern (in dessen Befehlen, Tools, Dateitypen, Workflows, Risiken), nicht nur Zeilen zählen. Eine Regel, die sich unverändert in jedes Repo kopieren ließe, ist noch nicht fertig. Dieser Punkt und der vorige spannen den Zielkorridor auf: **kurz und konkret und tragend** — nicht aufgebläht, aber auch nicht dünn-generisch.
@@ -48,8 +51,8 @@ Vier Fehler liegen bei dieser Aufgabe nahe, und die Schritte sind gegen genau si
 
 1. Zieldatei auflösen und bestätigen (eine Quelle der Wahrheit)
 2. Projektprofil bestimmen (steuert die Relevanzschwelle)
-3. Ist-Stand vollständig lesen
-4. Alle fünf Inhalts-Kataloge gemeinsam planen → Abdeckungs-Register
+3. Ist-Stand vollständig lesen, dazu eine knappe Ablage-Inventur
+4. Alle sieben Inhalts-Kataloge gemeinsam planen → Abdeckungs-Register
 5. Konflikte bündeln und der Aufsicht zur Entscheidung vorlegen
 6. Einmal kohärent schreiben
 7. Token-Effizienz-/Kuratierungs-Pass (zuletzt)
@@ -64,7 +67,7 @@ Bevor du irgendetwas änderst, kläre, *welche* Datei gehärtet wird. Diese Rege
 
 - **Projektweit** → Root-`CLAUDE.md`. Beim Arbeiten in einem Unterordner lädt Claude Code die Root-Datei ohnehin mit; eine Kopie pro Unterordner wäre Dopplung. Lass tiefere `CLAUDE.md` unangetastet (sie haben Vorrang vor der Root; eine global gemeinte Regel im Unterordner würde anderswo nicht greifen).
 - **Über alle Projekte des Nutzers** → nutzerweite `~/.claude/CLAUDE.md` statt der Projektdatei.
-- **CLAUDE.md vs. AGENTS.md — eine Quelle der Wahrheit:** `CLAUDE.md` liest Claude; `AGENTS.md` ist die werkzeugübergreifende Konvention, die Cursor, Codex, Copilot, Gemini CLI u. a. nativ lesen. Schreibe dieselben Regeln **nie in beide** Dateien — das ist keine sinnvolle Redundanz, sondern zwei fast identische Dateien, die auseinanderlaufen: sobald du eine editierst, ist die andere veraltet. Dieses **Drift-Problem wiegt schwerer als jede Platzierungsfrage.** Pflege genau **eine** maßgebliche Datei. Sollen mehrere Werkzeuge dieselben Regeln sehen, mach die zweite zu einem **Symlink** auf die erste (üblich: `CLAUDE.md` → `AGENTS.md`), statt den Inhalt zu kopieren. Ist `CLAUDE.md` schon ein Symlink auf `AGENTS.md`, bearbeite `AGENTS.md`. Existieren beide als getrennte echte Dateien mit überlappendem Inhalt, benenne das Drift-Risiko, härte nur die maßgebliche und biete an, die andere per Symlink zu konsolidieren.
+- **CLAUDE.md vs. AGENTS.md — eine Quelle der Wahrheit:** `CLAUDE.md` liest Claude; `AGENTS.md` ist die werkzeugübergreifende Konvention, die Cursor, Codex, Copilot, Gemini CLI u. a. nativ lesen. Schreibe dieselben Regeln **nie in beide** Dateien — das ist keine sinnvolle Redundanz, sondern zwei fast identische Dateien, die auseinanderlaufen: sobald du eine editierst, ist die andere veraltet. Dieses **Drift-Problem wiegt schwerer als jede Platzierungsfrage.** Pflege genau **eine** maßgebliche Datei. Claude Code liest `AGENTS.md` **nicht** von sich aus; es braucht immer eine `CLAUDE.md`. Sollen mehrere Werkzeuge dieselben Regeln sehen, gibt es dafür zwei Wege, beide ohne Kopie: ein **Symlink** `CLAUDE.md` → `AGENTS.md`, oder eine `CLAUDE.md`, die als erste Zeile `@AGENTS.md` importiert und darunter Claude-spezifische Zusätze trägt. Der Import ist der robustere Weg — er erlaubt den Zusatz und braucht unter Windows keine Administratorrechte, die ein Symlink dort verlangt. Ist `CLAUDE.md` schon Symlink oder Import-Hülle, bearbeite `AGENTS.md`; Claude-spezifische Regeln (Skills, Subagents, `.claude/rules/`) gehören dann unter den Import in die `CLAUDE.md`, nicht in die werkzeugübergreifende Datei, wo sie für andere Werkzeuge ins Leere zeigen. Existieren beide als getrennte echte Dateien mit überlappendem Inhalt, benenne das Drift-Risiko, härte nur die maßgebliche und biete an, die andere per Symlink zu konsolidieren.
 
 Ist die Zieldatei nicht eindeutig (mehrere Kandidaten, oder die Anfrage nennt keinen Pfad), frag kurz nach, statt zu raten. Sichere die Datei vor dem Überschreiben (Git-Stand oder eine `.bak`-Kopie), damit ein Fehlversuch verlustfrei rückgängig zu machen ist.
 
@@ -72,7 +75,7 @@ Ist die Zieldatei nicht eindeutig (mehrere Kandidaten, oder die Anfrage nennt ke
 
 ## Schritt 2 — Projektprofil bestimmen
 
-Nicht jede Disziplin wiegt für jede Projektart gleich. Eine CLAUDE.md für einen **autonomen Agenten** lebt von Sicherheits-, Fehler- und Kontextdisziplin; eine für einen **menschengesteuerten Coding-Assistenten** von Zerlegung, Ausführung und Build/Test/Lint. Das Profil setzt die *Relevanzschwelle* pro Regel — es entscheidet **nicht**, ob ein Katalog übersprungen wird. Alle fünf Inhalts-Kataloge werden immer durchgegangen (Schritt 4); das Profil steuert nur, was übernommen und was *begründet* weggelassen wird.
+Nicht jede Disziplin wiegt für jede Projektart gleich. Eine CLAUDE.md für einen **autonomen Agenten** lebt von Sicherheits-, Fehler- und Kontextdisziplin; eine für einen **menschengesteuerten Coding-Assistenten** von Zerlegung, Ausführung und Build/Test/Lint. Das Profil setzt die *Relevanzschwelle* pro Regel — es entscheidet **nicht**, ob ein Katalog übersprungen wird. Alle sieben Inhalts-Kataloge werden immer durchgegangen (Schritt 4); das Profil steuert nur, was übernommen und was *begründet* weggelassen wird. Bei Ablage und Artefakten wirkt die Schwelle besonders stark: Ein kleines Repo mit einer Handvoll Dateien braucht weder Ablagestruktur noch eigene Skills, und „begründet weggelassen" ist dort das richtige Ergebnis, nicht ein Versäumnis.
 
 So bestimmst du das Profil:
 
@@ -83,11 +86,11 @@ Die Profile sind **Denkhilfen, keine starren Tabellen**: Prüfe jede Zuordnung g
 
 | Projektart | Kern (gründlich übernehmen) | Situativ (nur bei Anlass) |
 |---|---|---|
-| **Software/Coding (Mensch im Loop)** | Aufgabenzerlegung, Ausführung (inkl. Build/Test/Lint), Fehler | Sicherheit: commit/push/Geheimnisse ja, MCP/Deploy nur bei Evidenz · Kontext bei großem Repo |
-| **Autonomer Agent / agentisches System** | Sicherheit, Fehler, Kontext, Ausführung | Aufgabenzerlegung je nach Aufgabenkomplexität |
-| **Daten / Analyse / Research** | Ausführung (v. a. keine Erfindung), Kontext | Zerlegung · Sicherheit v. a. Datenabfluss/Geheimnisse · Fehler geringer |
-| **Infrastruktur / DevOps** | Sicherheit (Deploy, CI, Secrets), Fehler (Rollback) | Zerlegung, Ausführung · Kontext bei großen Systemen |
-| **Bibliothek / Framework** | Ausführung, Aufgabenzerlegung | Fehler/Kontext situativ · Sicherheit v. a. Secrets/geringste Rechte |
+| **Software/Coding (Mensch im Loop)** | Aufgabenzerlegung, Ausführung (inkl. Build/Test/Lint), Fehler | Sicherheit: commit/push/Geheimnisse ja, MCP/Deploy nur bei Evidenz · Kontext bei großem Repo · Ablage/Artefakte ab mehreren Mitwirkenden oder langer Laufzeit |
+| **Autonomer Agent / agentisches System** | Sicherheit, Fehler, Kontext, Ausführung, Ablage | Aufgabenzerlegung je nach Aufgabenkomplexität · Artefakte, sobald Abläufe sich wiederholen |
+| **Daten / Analyse / Research** | Ausführung (v. a. keine Erfindung), Kontext, Ablage (Befunde überleben die Session) | Zerlegung · Sicherheit v. a. Datenabfluss/Geheimnisse · Fehler geringer · Artefakte für wiederkehrende Auswertungen |
+| **Infrastruktur / DevOps** | Sicherheit (Deploy, CI, Secrets), Fehler (Rollback), Artefakte (Runbooks als Skill) | Zerlegung, Ausführung · Kontext bei großen Systemen · Ablage v. a. für Entscheidungen |
+| **Bibliothek / Framework** | Ausführung, Aufgabenzerlegung, Ablage (Entscheidungen und öffentliche Doku) | Fehler/Kontext situativ · Sicherheit v. a. Secrets/geringste Rechte · Artefakte selten nötig |
 
 Passt keine Zeile, beschreibe das Profil in eigenen Worten anhand derselben Frage: *Handelt der Agent selbstständig nach außen? Läuft er lang? Berührt er Geheimnisse/Deploys? Wird gebaut und getestet?* Daraus folgt, welche Disziplinen tragen.
 
@@ -95,9 +98,20 @@ Passt keine Zeile, beschreibe das Profil in eigenen Worten anhand derselben Frag
 
 Lies die Zieldatei **vollständig**, bevor du planst. Ohne den Ist-Stand kannst du nicht entscheiden, was fehlt, was schon da ist und was nur vage formuliert ist. Erfasse dabei auch die **Sprache** der Datei: Katalogregeln werden in der Sprache der Zieldatei übernommen. Ist die CLAUDE.md englisch, übersetzt du die (deutschen) Katalogregeln, statt Sprachen zu mischen. Merke dir, **welche Regeln schon stark und spezifisch** sind — sie genießen Bestandsschutz (Schritt 4, „Nie schwächen").
 
-## Schritt 4 — Alle fünf Inhalts-Kataloge gemeinsam planen (Abdeckungs-Register)
+**Ablage-Inventur.** Halte anschließend fest, welche Orte das Projekt für dauerhaftes Wissen schon hat — ohne sie lassen sich die Kataloge Ablage und Artefakte nicht planen, weil du sonst Regeln für Orte schriebst, die es nicht gibt, oder neben vorhandenen einen zweiten aufmachst. Erfasst wird nur, was existiert:
 
-Das ist der Kern. **Lies jetzt die fünf mit diesem Skill gebündelten Inhalts-Kataloge unter `references/`** (`aufgabenzerlegung.md`, `ausfuehrungsdisziplin.md`, `fehlerdisziplin.md`, `kontextdisziplin.md`, `sicherheitsdisziplin.md`; Pfade relativ zum Skill-Ordner) und klassifiziere **jede einzelne Regel** in genau eine Kategorie. Das Ergebnis ist ein Register — gleichzeitig dein Arbeitsplan und der Nachweis der Vollständigkeit. Keine Regel verlässt diesen Schritt unverbucht. (Token-Effizienz ist kein Inhalts-Katalog und wird hier nicht verbucht, sondern in Schritt 7 angewendet.)
+- Aufgaben und offene Punkte: Issue-Tracker (Remote in `git remote -v`, `.github/`), `TODO.md`, `backlog/`
+- Entscheidungen: `docs/decisions/`, `docs/adr/`, Abschnitte in vorhandener Doku
+- Wissen und Doku: `docs/`, `README.md`, Wiki — dabei prüfen, ob `docs/` generiert wird (Konfiguration eines Doku-Generators im Repo); ein generierter Ordner ist kein Ablageort
+- Erledigtes: `CHANGELOG.md`, Releases, git-Historie
+- Agenten-Artefakte: `.claude/skills/`, `.claude/agents/`, `.claude/rules/`, verschachtelte `CLAUDE.md`
+- Streudateien, die nirgends dazugehören: `NOTES.md`, `SCRATCH.md`, `IDEEN.md` und Ähnliches
+
+Halte das eng — ein `ls` der einschlägigen Orte genügt, keine Repo-Tour und keine Inhaltsanalyse. Du brauchst nur die Antwort „existiert / existiert nicht / ist generiert".
+
+## Schritt 4 — Alle sieben Inhalts-Kataloge gemeinsam planen (Abdeckungs-Register)
+
+Das ist der Kern. **Lies jetzt die sieben mit diesem Skill gebündelten Inhalts-Kataloge unter `references/`** (`aufgabenzerlegung.md`, `ausfuehrungsdisziplin.md`, `fehlerdisziplin.md`, `kontextdisziplin.md`, `sicherheitsdisziplin.md`, `ablage.md`, `projekt-artefakte.md`; Pfade relativ zum Skill-Ordner) und klassifiziere **jede einzelne Regel** in genau eine Kategorie. Das Ergebnis ist ein Register — gleichzeitig dein Arbeitsplan und der Nachweis der Vollständigkeit. Keine Regel verlässt diesen Schritt unverbucht. (Token-Effizienz ist kein Inhalts-Katalog und wird hier nicht verbucht, sondern in Schritt 7 angewendet.)
 
 Kategorien:
 
@@ -112,11 +126,12 @@ Leitplanken beim Klassifizieren:
 - **Sprache** der Zieldatei verwenden (siehe Schritt 3).
 - **Im Projekt verankern:** Plane jede `ergänzt`- und `geschärft`-Regel in den konkreten Begriffen des Projekts — seine Befehle (die echten Build-/Test-/Lint-Skripte, nicht „führe Tests aus"), Tools (MCP-Server, git, Deploy-Ziel), Dateitypen (Notebooks, Komponenten, Stores) und Risiken. Die generische Katalogregel ist die Quelle, nicht das Ergebnis. Erfinde dabei keine Konventionen, die das Projekt nicht hergibt — das verstieße gegen die Ausführungsdisziplin; verankere nur in dem, was Datei, Prompt und sichtbare Signale tatsächlich zeigen.
 - **Instruktionsbudget — kuratieren, nicht abmagern:** Streiche, was Claude ohnehin tut oder aus Code/Konfiguration ableiten kann (Stack-Fakten, reine Befehlsaufzählungen), und übernimm nichts doppelt. Schlank heißt: das Ableitbare, Redundante und Selbstverständliche weg — nicht: wenige, vage oder generische Regeln. Was bleibt, ist tragend und im Projekt verankert. Den eigentlichen Verdichtungsschliff macht Schritt 7.
-- **Bedarfsgeladenes Wissen** nicht in die ständig geladene Root-CLAUDE.md zwingen: situatives oder selten gebrauchtes Wissen gehört in bedarfsgeladene Mechanismen (Skills, pfad-bezogene Regeln, verschachtelte CLAUDE.md). Das ist selbst eine Regel der Kontextdisziplin — wende sie auch auf deine eigenen Ergänzungen an.
+- **Bedarfsgeladenes Wissen** nicht in die ständig geladene Root-CLAUDE.md zwingen: situatives oder selten gebrauchtes Wissen gehört in bedarfsgeladene Mechanismen (Skills, `.claude/rules/` **mit** `paths:`, verschachtelte CLAUDE.md). Das ist selbst eine Regel der Kontext- und Ablagedisziplin — wende sie auch auf deine eigenen Ergänzungen an. Nicht bedarfsgeladen und damit keine Entlastung sind `@pfad`-Importe und `.claude/rules/` **ohne** `paths:`; beide laden beim Sessionstart mit.
+- **Nur verankern, was es gibt:** Ablage- und Artefaktregeln nennen ausschließlich Orte, die die Inventur aus Schritt 3 belegt hat, oder solche, deren Anlegen du in Schritt 9 ausdrücklich empfiehlst. Ein Verweis auf einen nicht existierenden Pfad ist eine Erfindung und verstößt gegen die Ausführungsdisziplin.
 
 ## Schritt 5 — Konflikte bündeln und vorlegen
 
-Sammle **alle** Konflikte aus Schritt 4 und lege sie der menschlichen Aufsicht in **einer** Entscheidungsrunde vor (nicht fünfmal unterbrechen). Nutze dafür eine strukturierte Rückfrage. Pro Konflikt nennst du:
+Sammle **alle** Konflikte aus Schritt 4 und lege sie der menschlichen Aufsicht in **einer** Entscheidungsrunde vor (nicht einmal je Katalog unterbrechen). Nutze dafür eine strukturierte Rückfrage. Pro Konflikt nennst du:
 
 - die **vorhandene** Regel (wörtlich),
 - die **Katalog**-Regel (wörtlich),
@@ -128,7 +143,7 @@ Die Entscheidung trifft die Aufsicht. **Fallback ohne menschliche Entscheidung**
 
 Jetzt erst editierst du die Datei — in *einem* Durchgang, der das ganze Register umsetzt:
 
-- Ergänzungen unter den thematisch passenden Abschnitt, neue Abschnitte nur, wenn nötig. Verwandte Regeln aus verschiedenen Katalogen gehören zusammen (z. B. alle Sicherheitsregeln in einen Abschnitt), nicht in fünf nach Werkzeug getrennte Blöcke.
+- Ergänzungen unter den thematisch passenden Abschnitt, neue Abschnitte nur, wenn nötig. Verwandte Regeln aus verschiedenen Katalogen gehören zusammen (z. B. alle Sicherheitsregeln in einen Abschnitt), nicht in nach Werkzeug getrennte Blöcke.
 - Schärfungen ersetzen die vage Fassung an Ort und Stelle — immer vage→testbar, nie umgekehrt. Eine vorhandene starke Regel bleibt stark (Best-of, Schritt 4).
 - Konfliktauflösungen nach der Entscheidung aus Schritt 5.
 - **Im Projekt verankern (siehe Schritt 4):** Schreibe jede Regel in den konkreten Begriffen des Projekts — echte Befehle, Tools, Dateitypen, Workflows, Risiken — statt in generischen Formeln. Erhalte und schärfe die projektspezifische Substanz, die schon in der Datei steht, statt sie auf ein Disziplin-Gerüst einzudampfen. Eine gehärtete Datei soll konkreter und tragfähiger sein als vorher, nicht dünner.
@@ -144,6 +159,8 @@ Verdichten (Teil 2A), ohne die Bedeutung zu verändern:
 - Falls beim Schreiben etwas Vages durchgerutscht ist: faktisch machen („vor dem Commit Tests laufen lassen" statt „Änderungen testen") — das spart Wörter *und* verbessert die Befolgbarkeit.
 - Markdown; Listen für gleichartige Mengen (Regeln, Schritte, Werte, Pfade), Prosa für zusammenhängende Logik. Wichtiges nach oben. Root-Datei möglichst unter ~200 Zeilen — darüber situatives/selten Gebrauchtes in Skills oder pfad-bezogene Rules auslagern, nicht quetschen.
 
+**Dieser Skill verschiebt nichts und legt nichts an.** Er bleibt bei der Zieldatei. Findest du auslagerungsreife Blöcke — situatives Wissen, ein mehrschrittiges Runbook, Regeln, die nur einen Dateibereich betreffen —, dann *markiere* sie mit dem vorgesehenen Ziel und lass sie vorerst stehen. Ausgeführt wird der Umzug von `/cmd:project-structure`, das dafür ein Verlagerungs-Register führt und eine eigene Freigabe einholt. Der Grund für die Trennung: Ein Umzug über mehrere Dateien braucht Rückweg und Verlustnachweis je Datei; beides passt nicht in den einen kohärenten Schreibvorgang, von dem dieser Skill lebt. Reiß hier also keine Inhalte heraus, für die es noch kein Ziel gibt — das wäre der Informationsverlust, den die Ablagedisziplin gerade verhindern soll.
+
 Die Grenze — hier hört Kürzen auf:
 - Verdichten ist reine Formarbeit. Verändert eine Umformulierung die Aussage, ist sie keine Verdichtung — lass die Stelle stehen.
 - Opfere **nie** einen Vorbehalt bei korrektheitskritischer Arbeit, eine nötige Disambiguierung oder die entscheidende Ausnahme der Kürze. Und schwäche **nie** eine starke Regel (vorhandene oder gerade ergänzte), um Tokens zu sparen — Best-of (Schritt 4) gilt auch hier. Im Zweifel zugunsten der eindeutigen, vollständigen Aussage.
@@ -156,7 +173,8 @@ Pflegeregel verankern (Teil 2B) — **bedingt:**
 
 Lies die geschriebene Datei neu und prüfe:
 
-- **Vollständig:** Steht jede Regel aller fünf Inhalts-Kataloge im Register (in *irgendeiner* der fünf Kategorien)? Eine unverbuchte Regel ist eine Lücke — schließe sie.
+- **Vollständig:** Steht jede Regel aller sieben Inhalts-Kataloge im Register (in *irgendeiner* der fünf Kategorien)? Eine unverbuchte Regel ist eine Lücke — schließe sie.
+- **Nichts erfunden, nichts verschoben:** Existiert jeder in der Datei genannte Ablage- oder Artefaktpfad tatsächlich, oder ist er als Empfehlung gekennzeichnet? Wurde keine Datei verschoben, kein Ordner angelegt, kein Inhalt ohne Ziel herausgelöst?
 - **Nicht geschwächt (Best-of):** Wurde keine vorhandene starke Regel verwässert, gelockert oder generischer? Steht jedes Thema in genau einer, der stärksten Fassung — keine zwei konkurrierenden Versionen?
 - **Verdichtet, aber bedeutungstreu:** Keine Redundanz, keine Floskeln, Wichtiges oben, Root möglichst unter ~200 Zeilen — und kein Vorbehalt, keine Disambiguierung, keine entscheidende Ausnahme der Kürze geopfert?
 - **Eine Quelle:** Nur die maßgebliche Datei bearbeitet? Stehen dieselben Regeln **nicht** zusätzlich in einer zweiten Datei (CLAUDE.md *und* AGENTS.md), die driften würde?
@@ -190,10 +208,20 @@ Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschla
 - <vorhanden> ↔ <Katalog> → Entscheidung: <…> (durch Aufsicht / Fallback strenger)
 
 ### Verdichtet (Token-Effizienz)
-- <zusammengeführt / gekürzt / ausgelagert>; Pflegeregel: <verankert / bewusst nicht (Grund)>
+- <zusammengeführt / gekürzt>; Pflegeregel: <verankert / bewusst nicht (Grund)>
+
+### Ablage und Artefakte
+- Vorgefunden: <Orte aus der Inventur, je Zweck der maßgebliche>
+- Verankert: <welcher Zweck zeigt auf welchen Pfad>
+- Auslagerungsreif markiert (nicht verschoben): <Block → vorgesehenes Ziel>
+- Empfohlen anzulegen: <Ort/Artefakt> — Grund: <…>
 
 ### Abdeckung
-<X von Y Katalogregeln verbucht> — alle fünf Inhalts-Kataloge durchgegangen, Token-Effizienz-Pass angewendet.
+<X von Y Katalogregeln verbucht> — alle sieben Inhalts-Kataloge durchgegangen, Token-Effizienz-Pass angewendet.
 ```
+
+Steht unter „Auslagerungsreif markiert" oder „Empfohlen anzulegen" mindestens ein Eintrag, empfiehl ausdrücklich einen Lauf von `/cmd:project-structure` — es führt den Umzug mit Verlagerungs-Register und Verlustnachweis aus. Ohne diesen Hinweis bleibt die Datei bei der nächsten Sitzung so lang wie zuvor.
+
+**Empfiehl es aber höchstens einmal.** Lief `project-structure` in diesem Projekt bereits — erkennbar am Wegweiser-Abschnitt `## Ablage` in der Zieldatei —, sind übrig gebliebene Blöcke solche, die jener Lauf bewusst liegen ließ. Dann legst du die Entscheidung vor („dieser Block gehört nach X, dort wurde er bisher nicht hingelegt — soll er?"), statt einen weiteren Lauf zu empfehlen. Zwei Skills, die einander im Wechsel empfehlen, schicken den Nutzer im Kreis.
 
 Die letzte Zeile ist der Vollständigkeitsbeleg: Sind alle Katalogregeln in einer der Kategorien gelandet und ist verdichtet, ist die Datei nachweislich vollständig, gehärtet und tokeneffizient — ohne dass eine starke Regel geschwächt wurde.

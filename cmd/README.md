@@ -1,6 +1,6 @@
 # cmd — Planungs-Toolkit für Claude Code
 
-Sieben Skills rund um Klären, Planen, Reviewen, Umsetzen, Einrichten, Lernen und Übergeben. Der Plugin-Name `cmd` (aus `.claude-plugin/plugin.json`) bildet den Namespace, deshalb beginnt jeder Aufruf mit `/cmd:`.
+Acht Skills rund um Klären, Planen, Reviewen, Umsetzen, Einrichten, Strukturieren, Lernen und Übergeben. Der Plugin-Name `cmd` (aus `.claude-plugin/plugin.json`) bildet den Namespace, deshalb beginnt jeder Aufruf mit `/cmd:`.
 
 Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsnotizen (Stellschrauben, verworfene Ansätze) in [`DESIGN.md`](../DESIGN.md).
 
@@ -13,12 +13,13 @@ Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsn
 | `/cmd:plan-grill` | Interviewt dich zu einem Vorhaben, löst die Entscheidungen einzeln in Abhängigkeits- und Tragweitenreihenfolge auf, protokolliert sie revidierbar und legt sie nach deiner Bestätigung als Plan an. | **Am Anfang**, wenn das Vorhaben noch unscharf ist. |
 | `/cmd:plan-review` | Reviewt den zuletzt erstellten Plan in rotierenden Blickwinkeln und arbeitet die belastbaren Befunde direkt ein. | Sobald ein Plan steht — von `plan-grill` oder `/plan` —, bevor du freigibst. |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan vollständig um und verifiziert jeden Schritt gegen ein beobachtbares Kriterium; hält bei einem Fund außerhalb des Plans oder einer Klassifikator-Blockade an und fragt nach. | **Nach** dem Verlassen des Plan-Modus. |
-| `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit fünf Disziplin-Katalogen und verdichtet sie token-effizient. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
+| `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit sieben Disziplin-Katalogen und verdichtet sie token-effizient. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon und entdoppelt die Permission-Listen. | **Einmal** beim Einrichten eines Projekts, danach bei Bedarf erneut. |
+| `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon, sammelt Streudateien ein und schlägt projekteigene Skills, Subagents und `paths:`-Regeln vor. Verschiebt nur mit Verlagerungs-Register und Verlustnachweis. | Wenn die `CLAUDE.md` zuwächst oder Wissen verstreut liegt. |
 | `/cmd:session-learn` | Reflektiert die laufende Session, leitet dauerhafte Learnings ab und übergibt sie als Plan an `plan-review`/`plan-execute`. | Am **Ende** einer Session. |
 | `/cmd:session-handoff` | Verdichtet den laufenden Arbeitsstand in eine kurze `HANDOFF.md`, damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeiten kann. | Wenn das **Kontextfenster knapp** wird. |
 
-Alle sieben sind `disable-model-invocation: true` — sie laden **nur auf deinen Aufruf hin**, nie automatisch. Das ist Absicht: es sind timing-kontrollierte Workflows.
+Alle acht sind `disable-model-invocation: true` — sie laden **nur auf deinen Aufruf hin**, nie automatisch. Das ist Absicht: es sind timing-kontrollierte Workflows.
 
 **grill und review teilen sich den Plan nach Gegenstand**, nicht nach Reihenfolge: grill klärt die **Entscheidungen** und legt sie als Plan an, review prüft den **fertigen Plan** in Runden und härtet ihn. Beide schreiben in dieselbe Plandatei, und beide machen ihr Ergebnis über **stabile Kennungen** zurücknehmbar (grill „nimm Entscheidung 3 zurück", review „nimm Änderung 2.3 zurück").
 
@@ -43,9 +44,21 @@ Jeder Skill ist einzeln nutzbar; die Kette ist die Kür, nicht die Pflicht.
 
 **Die beiden `session-*`-Skills teilen sich die Session nach Haltbarkeit**, und danach wählst du: `session-learn` nimmt das **Dauerhafte** (Learnings, die künftige Sessions besser machen) und legt es projektlokal ab; `session-handoff` nimmt das **Flüchtige** (wo die Arbeit gerade steht) und gibt es ans nächste Fenster. Am Sessionende sinnvoll beides, in dieser Reihenfolge — `session-learn` belegt die Plandatei, auf die `session-handoff` danach nur noch verweisen muss.
 
-`project-settings` steht **vor** der Kette: Es ist ein Einrichtungsschritt, kein Pipeline-Glied. Gegenüber `project-rules` gilt dabei eine Reihenfolge — erst `project-settings`, das vorhandene Auto-Memory-Einträge in die `CLAUDE.md` holt, dann `project-rules`, das sie härtet und verdichtet. Umgekehrt verdichtete `project-rules` einen Stand, dem der Import erst danach wieder Rohtext anhängt. Zu `session-learn` ist das Verhältnis komplementär: `project-settings` schaltet das Memory-System ab und leert es einmalig, `session-learn` hat es ohnehin nie genutzt.
+Die drei `project-*`-Skills stehen **vor** der Kette: Einrichtungsschritte, keine Pipeline-Glieder. Untereinander gilt aber eine Reihenfolge, und zwar aus je eigenem Grund:
 
-Die Präfixe ordnen die Skills: `plan-*` wirken am Plan-Lebenszyklus, `project-*` an Projekt-Artefakten (`CLAUDE.md`, `.claude/settings.json`), `session-*` an der Arbeitssession selbst.
+```
+project-settings  →  project-structure  →  project-rules
+ (Settings, holt      (Ablage, lagert      (härtet und
+  Auto-Memory rein)     Inhalt aus)          verdichtet)
+```
+
+- **settings vor rules**, weil `project-settings` vorhandene Auto-Memory-Einträge in die `CLAUDE.md` holt. Umgekehrt verdichtete `project-rules` einen Stand, dem der Import erst danach wieder Rohtext anhängt.
+- **structure vor rules**, weil `project-structure` Inhalt auslagert und den Wegweiser-Abschnitt `## Ablage` schreibt. `project-rules` härtet und verdichtet die Datei danach — auch diesen Abschnitt.
+- **Rückkopplung:** Findet `project-rules` auslagerungsreife Blöcke, verschiebt es sie nicht selbst, sondern markiert sie und empfiehlt einen Lauf von `project-structure`. Die Trennung ist Absicht: `project-rules` lebt von *einem* kohärenten Schreibvorgang an *einer* Datei, ein Umzug über viele Dateien braucht Rückweg und Verlustnachweis je Datei.
+
+Zu `session-learn` ist das Verhältnis komplementär: `project-settings` schaltet das Memory-System ab und leert es einmalig, `session-learn` hat es ohnehin nie genutzt.
+
+Die Präfixe ordnen die Skills: `plan-*` wirken am Plan-Lebenszyklus, `project-*` an Projekt-Artefakten (`CLAUDE.md`, `.claude/settings.json`, Ablage und projekteigene Skills), `session-*` an der Arbeitssession selbst.
 
 ## Voraussetzungen für `plan-execute`
 
@@ -67,6 +80,11 @@ Auto mode aktivieren (einmaliges Opt-in):
 - **`project-settings` ist wiederholbar.** Ein zweiter Lauf ohne zwischenzeitliche Änderung erzeugt keinen Diff. Fremde Einstellungen und fremde Permission-Einträge bleiben unangetastet; nur die Kanon-Werte werden gesetzt.
 - **`project-settings` legt neben `.claude/settings.json` und `.gitignore` auch den Ordner `plans/` an**, falls er fehlt — leer und unversioniert, weil `plansDirectory` auf ihn zeigt. Bestehende Pläne aus `~/.claude/plans/` zieht der Skill nicht um; sie tragen keine Projektzuordnung. Rückweg für einen neu angelegten Ordner ist `rmdir plans`.
 - **Nach `project-settings` greifen die `allow`-Regeln erst nach dem Workspace-Trust-Dialog** für den Ordner — `deny` und `ask` sofort. Direkt nach dem Lauf sind also die Einschränkungen aktiv und die Erleichterungen noch nicht; das ist erwartet, kein Fehlschlag.
+- **`project-rules` verschiebt nichts und legt nichts an.** Es bleibt bei der einen Zieldatei. Auslagerungsreife Blöcke markiert es mit dem vorgesehenen Ziel und empfiehlt `project-structure` — herausgelöst wird nichts, wofür es noch kein Ziel gibt.
+- **`project-structure` erkennt, bevor es anlegt.** Ein genutzter Issue-Tracker verhindert `backlog/`, ein vorhandenes `docs/adr/` ein zweites `docs/decisions/`, ein generiertes `docs/` jede Ablage darin. Umbenennungen auf den Kanon werden vorgeschlagen, nicht vorausgesetzt — bei Ablehnung gilt der vorhandene Name.
+- **`project-structure` bewegt nichts ohne Verlagerungs-Register.** Jede Quelle landet in genau einem Ziel, verschoben wird per `git mv` (Historie bleibt erhalten), und der Bericht schließt mit einer Zeilenbilanz. Geht sie nicht auf, meldet der Skill das als Fehler, statt die Differenz zu glätten. Verschieben ist dabei reine Ortsänderung: gekürzt oder umformuliert wird nichts — das macht danach `project-rules`.
+- **`project-structure` schreibt genau einen Abschnitt in die `CLAUDE.md`**, den Wegweiser unter der festen Überschrift `## Ablage`. Den Rest der Datei fasst es nicht an.
+- **Vorgeschlagene Skills und Subagents brauchen eine eigene Bestätigung.** Schreiben unter `.claude/` ist gesondert geschützt: Eine vorab erteilte Freigabe genügt dort nicht, der Prompt kommt trotzdem. Lehnst du ab, bleibt der Inhalt an seinem alten Platz stehen — der Skill entfernt eine Quelle nie, deren Ziel er nicht schreiben konnte. Der Vorschlag steht dann als offener Punkt im Bericht.
 - **`session-learn` belegt die Plandatei** und ersetzt damit den aktuellen Plan-Kontext — schließe laufende Aufgaben erst ab, bevor du es startest.
 - **`session-learn` schreibt ausschließlich projektlokal** (Projekt-`CLAUDE.md`, `references/`, Repo) — nie in user-globale Ablagen.
 - **`session-handoff` schreibt die Datei ungefragt** — der Aufruf ist die Freigabe. Anders als sonst in dieser Suite holt er keine Bestätigung ein: Eine Rückfrage kostet genau den Zug, für den der Kontext nicht mehr reicht. Er nennt dafür den Rückweg, wenn er die Datei neu angelegt oder überschrieben hat, und sichert eine untrackte Datei vorher als `.bak`.
@@ -88,10 +106,13 @@ cmd/
     ├── plan-review/SKILL.md
     ├── project-rules/
     │   ├── SKILL.md
-    │   └── references/                     # fünf Disziplin-Kataloge plus Token-Effizienz-Pass
+    │   └── references/                     # sieben Disziplin-Kataloge plus Token-Effizienz-Pass
     ├── project-settings/
     │   ├── SKILL.md
     │   └── references/permission-kanon.md  # die zu setzenden Werte samt Belegen
+    ├── project-structure/
+    │   ├── SKILL.md
+    │   └── references/                     # Ablage-Kanon und Artefakt-Kanon samt Belegen
     ├── session-handoff/SKILL.md
     └── session-learn/SKILL.md
 ```

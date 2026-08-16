@@ -65,6 +65,14 @@ run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
 # Die Permission-WIRKUNG ist headless grundsaetzlich nicht pruefbar: permissions.allow
 # greift erst nach dem Workspace-Trust-Dialog, und der erscheint in "-p" nie.
 run "project-settings" "/cmd:project-settings" "settings\.json|bestandsaufnahme|vorschau|kanon|freigabe"
+# project-structure: Eroeffnungszug ist die Inventur — was das Projekt an Ablageorten schon
+# hat. Der Skill VERSCHIEBT und BENENNT normalerweise Dateien um und legt Ordner an; dieser
+# Pfad wird hier nicht erreicht, weil er die gesammelte Freigabe aus Schritt 5 voraussetzt,
+# die ein "-p"-Lauf nicht liefert. Achtung, ungleicher Schutz wie bei project-settings:
+# "git mv", "mkdir" und "rmdir" liefen ueber Bash, nicht ueber Write — dort traegt allein
+# die Freigabe, nicht die fehlende Write-Berechtigung. Bewegt sich nach dem Lauf eine Datei
+# im Repo, ist das ein Befund am Skill, kein Testartefakt.
+run "project-structure" "/cmd:project-structure" "inventur|ablage|kanon|vorgefunden|backlog|docs/"
 # session-handoff: Sonderfall. Der Skill SCHREIBT normalerweise eine HANDOFF.md —
 # genau das wird hier bewusst NICHT geprueft, weil der Test sonst eine Datei ins
 # aktuelle Verzeichnis legt. Geprueft wird der nebenwirkungsfreie Zweig: Ein

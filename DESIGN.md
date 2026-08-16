@@ -16,7 +16,7 @@ Laden/testen: `claude --plugin-dir ./cmd`, nach Änderungen `/reload-plugins`. M
 
 ## Frontmatter und Stellschrauben je Skill
 
-Alle sieben Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows.
+Alle acht Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows.
 
 ### plan-execute
 
@@ -81,9 +81,35 @@ claude --plugin-dir ./cmd -p "hi" --output-format stream-json --verbose
 
 ### project-rules
 
-Wendet fünf Disziplin-Kataloge gemeinsam auf eine bestehende `CLAUDE.md`/`AGENTS.md` an und verdichtet die Datei zuletzt in einem Token-Effizienz-Pass. Die Kataloge liegen in `references/` und werden **bedarfsgeladen** — der Body liest sie erst in Schritt 4 bzw. 7, nicht beim Aufruf.
+Wendet sieben Disziplin-Kataloge gemeinsam auf eine bestehende `CLAUDE.md`/`AGENTS.md` an und verdichtet die Datei zuletzt in einem Token-Effizienz-Pass. Die Kataloge liegen in `references/` und werden **bedarfsgeladen** — der Body liest sie erst in Schritt 4 bzw. 7, nicht beim Aufruf.
 
 Frontmatter: `model: opus`, `effort: xhigh` — der Skill plant alle Kataloge in *einem* Durchgang und schreibt die Datei einmal kohärent; das ist der aufwendigste Einzelschritt der Suite.
+
+**Warum der Skill nichts verschiebt.** Ablage und projekteigene Artefakte kamen mit 0.12.0 als Katalog 6 und 7 dazu, die *Ausführung* aber nicht: Das Auslagern von Inhalt und das Anlegen von Ordnern liegt in `project-structure`. Der Grund ist die Bauform. `project-rules` lebt von „einmal lesen → alle Kataloge gemeinsam planen → einmal schreiben"; ein Umzug über viele Dateien braucht dagegen Rückweg, Registerführung und Verlustnachweis **je Datei**. Beides in einen Durchgang zu legen, bräche genau das Prinzip, gegen das die Schritte gebaut sind. Der Skill markiert deshalb auslagerungsreife Blöcke und empfiehlt im Protokoll den anderen Skill.
+
+**Warum der Ablage-Kanon nicht hier liegt.** Die Ortstabelle steht einmal, in `project-structure/references/ablage-kanon.md`; die beiden Kataloge verweisen darauf. Eine Kopie wäre bequemer zu lesen und genau das Drift-Problem, das die Ablagedisziplin selbst verbietet — zwei Fassungen, von denen eine beim nächsten Edit veraltet.
+
+**Der Konflikt mit der Sicherheitsdisziplin ist aufgelöst, nicht umgangen.** Katalog 7 verlangt, dass der Agent projekteigene Skills verbessert; `sicherheitsdisziplin.md` sagte „ändere deine eigenen Instruktionen nicht". Ohne Eingriff hätte der Skill sich widersprechende Regeln in jede `CLAUDE.md` geschrieben — und laut Doku wählt Claude bei widersprüchlichen Instruktionen willkürlich eine. Die Zeile trägt jetzt eine benannte Ausnahme: projekteigene, versionierte Artefakte nach ausdrücklicher Freigabe, weil die Änderung im Diff sichtbar und per `git restore` rückholbar ist. Systeminstruktionen, Freigaben, Berechtigungen und Hooks bleiben ausgenommen. Das ist eine Präzisierung, keine Lockerung — Best-of gilt auch für die Kataloge untereinander.
+
+### project-structure
+
+Frontmatter: `model: opus`, `effort: high`. Zwei bedarfsgeladene References: `ablage-kanon.md` (Orte, Namensschemata, Ladezeitpunkte samt Belegen) und `artefakt-kanon.md` (Skills, Subagents, `paths:`-Regeln).
+
+**Der Kanon ist recherchiert, nicht erfunden.** Ein selbst ausgedachter Sammelordner wäre einheitlicher gewesen und schlechter: Die Zwecke haben je eigene etablierte Konventionen, und wer sie verlässt, verliert deren Werkzeugunterstützung. Übernommen sind deshalb `docs/decisions/` mit `NNNN-titel.md` (MADR), `docs/` nach Diátaxis für Menschen-Doku, `CHANGELOG.md` plus git-Historie für Erledigtes und `backlog/tasks/` mit Archiv (Backlog.md). Dass Entscheidungen unter `docs/` liegen und Aufgaben nicht, ist keine Inkonsistenz, sondern spiegelt zwei Communities.
+
+**Warum der Kanon Belegstufen führt.** Die Einträge sind nicht gleich gut belegt, und das zu verwischen wäre der eigentliche Fehler: MADR und Diátaxis sind werkzeugunabhängig — `docs/decisions/` ergibt ohne jedes MADR-Tooling Sinn, weil die Ordnerstruktur die Konvention trägt. `backlog/tasks/` dagegen ist die Konvention *eines* CLI-Werkzeugs; wer es nicht nutzt, hat keinen Grund für genau diesen Pfad, und eine werkzeugunabhängige Konvention für dateibasierte Aufgaben gibt es schlicht nicht — üblich ist der Issue-Tracker. Ein tool-gebundener Pfad ohne Zustimmung wäre eine Erfindung, die eine Quellenangabe trägt und dadurch schwerer als Erfindung zu erkennen ist. Deshalb trennt die Tabelle `etabliert` von `tool-gebunden`, und nur die erste Stufe legt der Skill nach den normalen Regeln an; die zweite braucht ausdrückliche Zustimmung unter Nennung des Werkzeugs.
+
+**Warum sich die beiden Skills nicht gegenseitig im Kreis empfehlen.** `project-rules` empfiehlt am Ende `project-structure`, und dieses am Ende wieder `project-rules` — das konvergiert zwar, schickt beim ersten Mal aber hin und her. Beide Skills tragen deshalb einen Abbruch: `project-structure` benennt sich als letzten Schritt der Reihe, und `project-rules` empfiehlt den anderen Skill nur, solange kein `## Ablage`-Abschnitt existiert. Liegt er vor, sind übrige Blöcke solche, die der Umzug bewusst liegen ließ; dann legt der Skill die Entscheidung vor, statt einen weiteren Lauf vorzuschlagen.
+
+**Warum „erkennen" vor „anlegen" steht.** Ein Projekt mit Issue-Tracker bekommt kein `backlog/`, eines mit `docs/adr/` kein zweites Entscheidungsverzeichnis, ein generiertes `docs/` gar keine Ablage. Andernfalls entstünde für einen Zweck ein zweiter Ort — dieselbe Drift, die der Skill bei `CLAUDE.md` vs. `AGENTS.md` verhindern soll. Umbenennungen auf den Kanon werden vorgeschlagen und nicht vorausgesetzt, weil sie Verweise aus README, CI und Lesezeichen brechen; bei Ablehnung gilt der vorhandene Name als kanonisch.
+
+**Das Verlagerungs-Register ist der Verlustnachweis**, gebaut wie das Abdeckungs-Register von `project-rules`: Jede Quelle landet in genau einer von vier Kategorien, auch das Verbleibende wird verbucht, und der Bericht schließt mit einer Zeilenbilanz.
+
+Die vierte Kategorie `entfällt` kam aus dem Testlauf, nicht aus dem Entwurf. Mit nur drei Kategorien verbuchte der Skill eine Container-Überschrift (`# Notizen`) als „entfällt" **außerhalb** des Schemas — sachlich richtig, aber damit ging die Bilanz nicht auf, und genau das hätte den Verlustnachweis entwertet. `entfällt` ist deshalb eng gefasst: nur reine Strukturzeilen ohne eigene Aussage, unter Nennung der ersetzenden Zielzeile, in der Bilanz einzeln statt als Sammelposten. Ein Sammelposten machte aus der Bilanz eine Restgröße, in der sich ein echter Verlust verstecken ließe. Im Zweifel gilt „verschieben" — eine überflüssige Überschrift kostet eine Zeile, eine verlorene Aussage ist der Fehler, gegen den der Skill gebaut ist. Ohne Register wird nicht bewegt. Verschieben ist dabei als reine Ortsänderung definiert — Kürzen und Umformulieren sind verboten, weil dabei genau die Vorbehalte und Ausnahmen verlorengehen, deretwegen der Text geschrieben wurde. Das Verdichten kommt danach, aus `project-rules`.
+
+**`git mv` statt `mv`** erhält die Historie und zeigt den Umzug im Diff als Umbenennung statt als Löschen plus Neuanlegen. Ohne git-Repo entfällt beides; dann ist jede Quelle wie eine untrackte zu behandeln, also `.bak` vor jeder Bewegung — der Skill sagt ausdrücklich, dass der Umzug dort schlechter reversibel ist.
+
+**Warum der Wegweiser von diesem Skill geschrieben wird und nicht von `project-rules`.** Nur `project-structure` weiß, was tatsächlich angelegt wurde; `project-rules` würde sonst auf Pfade verweisen, die es nicht gibt — eine Erfindung nach eigenem Maßstab. Der Abschnitt trägt die feste Überschrift `## Ablage`, damit beide Skills ihn finden: einer schreibt ihn, der andere härtet und verdichtet ihn.
 
 ### project-settings
 

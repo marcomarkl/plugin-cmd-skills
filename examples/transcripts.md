@@ -46,7 +46,9 @@ Der Plan selbst wurde in den Runden direkt geändert. Rücknahme per Kennung: �
 
 **Eröffnungszug:** Auflösung der Zieldatei — welche `CLAUDE.md`/`AGENTS.md` gehärtet wird, und bei mehreren Kandidaten oder fehlendem Pfad die Rückfrage statt einer Annahme. Direkt danach das erkannte **Projektprofil** als Vorschlag zur Bestätigung, weil es die Relevanzschwelle jeder Regel setzt. Existieren `CLAUDE.md` und `AGENTS.md` als getrennte echte Dateien mit überlappendem Inhalt, wird das Drift-Risiko benannt und eine Symlink-Konsolidierung angeboten.
 
-**Eine Rückfragerunde in der Mitte:** alle Konflikte aus dem Abdeckungs-Register gebündelt — je vorhandene Regel wörtlich, Katalogregel wörtlich, Empfehlung. Bewusst **eine** Runde, nicht fünf Unterbrechungen. Ohne Aufsicht gilt der Fallback „strengere oder spezifischere Fassung", vermerkt im Protokoll.
+**Eine Rückfragerunde in der Mitte:** alle Konflikte aus dem Abdeckungs-Register gebündelt — je vorhandene Regel wörtlich, Katalogregel wörtlich, Empfehlung. Bewusst **eine** Runde, nicht eine je Katalog. Ohne Aufsicht gilt der Fallback „strengere oder spezifischere Fassung", vermerkt im Protokoll.
+
+**Was der Skill nicht tut:** verschieben, umbenennen, Ordner anlegen. Auslagerungsreife Blöcke erscheinen im Protokoll als markiert mit vorgesehenem Ziel, herausgelöst wird nichts — dafür folgt die Empfehlung, `/cmd:project-structure` zu fahren.
 
 **Änderungsprotokoll** (Chat-Notiz, nach dem Token-Effizienz-Pass):
 
@@ -58,10 +60,44 @@ Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschla
 ### Ergänzt / Geschärft / Bereits vorhanden / Bewusst weggelassen / Konflikte / Verdichtet
 - <Werkzeug> → <Abschnitt>: <Regel in Kurzform, im Projekt verankert>
 
+### Ablage und Artefakte
+- Vorgefunden / Verankert / Auslagerungsreif markiert / Empfohlen anzulegen
+
 ### Abdeckung
-<X von Y Katalogregeln verbucht> — alle fünf Inhalts-Kataloge durchgegangen, Token-Effizienz-Pass angewendet.
+<X von Y Katalogregeln verbucht> — alle sieben Inhalts-Kataloge durchgegangen, Token-Effizienz-Pass angewendet.
 ```
 Die letzte Zeile ist der Vollständigkeitsbeleg: Jede Katalogregel muss in genau einer Kategorie gelandet sein.
+
+## project-structure
+
+**Eröffnungszug:** die Inventur, nicht das Anlegen — welche Orte für Aufgaben, Entscheidungen, Wissen, Erledigtes und Agenten-Artefakte das Projekt schon hat, je mit Pfad und git-Status. Ein vorhandener Issue-Tracker oder ein generiertes `docs/` wird hier erkannt und schließt das jeweilige Anlegen aus.
+
+**Die Rückfragen kommen gebündelt in Schritt 5**, in *einer* Vorschau: anzulegende Ordner, vorgeschlagene Umbenennungen samt gebrochener Verweise, das vollständige Verlagerungs-Register, die Artefakt-Vorschläge. Eine Umbenennung wird nie vorausgesetzt; bei Ablehnung gilt der vorhandene Name als kanonisch für dieses Projekt.
+
+**Abschlussbericht** (Chat-Notiz), mit der Bilanz als Vollständigkeitsbeleg:
+
+```
+## Struktur: <Projektpfad>
+Kanon-Abgleich: <X übernommen / Y umbenannt / Z angelegt / N weggelassen>
+
+### Vorgefunden / Umbenannt / Angelegt / Verschoben / Aufgeteilt / Geblieben
+- <Quelle> → <Ziel> (<Zeilen>) · Rückweg: <git restore … / .bak … / rmdir …>
+
+### Entfallene Strukturzeilen
+- <Quelle:Zeile> „<Text>" — ersetzt durch <Zielzeile>
+
+### Artefakte vorgeschlagen
+- <Skill|Subagent|Regel> <Pfad> — Anlass: <konkret> · <angelegt / abgelehnt>
+
+### Bilanz
+<Ausgangszeilen> = <in Zielen> + <verblieben> + <entfallene Strukturzeilen> — jede Quelle verbucht.
+Zweiter Lauf ohne zwischenzeitliche Änderung: diff-frei.
+```
+Geht die Bilanz nicht auf, meldet der Skill den Lauf als fehlerhaft, statt die Differenz zu glätten. Ein zweiter Lauf ohne zwischenzeitliche Änderung erzeugt keinen Diff.
+
+**Zwei Rückwege, nicht einer:** Eine 1:1-Verschiebung läuft über `git mv` und wird mit `git restore <datei>` zurückgenommen. Eine Aufteilung auf mehrere Ziele kennt kein `git mv` — dort gibt es kein eindeutiges Ziel für die Historie —, die Quelle wird per `git rm` entfernt und der Rückweg heißt `git restore --staged --worktree <quelle>`.
+
+**Artefakte unter `.claude/` brauchen eine eigene Bestätigung**, die eine vorab erteilte Freigabe nicht ersetzt. Wird sie verweigert, bleibt der Inhalt an seinem alten Platz und der Vorschlag steht unter „Offen" — der Skill entfernt keine Quelle, deren Ziel er nicht schreiben konnte.
 
 ## project-settings
 

@@ -1,6 +1,6 @@
 # Token-Effizienz — Teil 2A/2B
 
-Dieser Katalog ist anders gebaut als die fünf Inhalts-Kataloge und wird in **Schritt 7** angewendet, nicht in Schritt 4 verbucht. **Teil 2A** richtet sich an dich als einsetzende KI und kommt **nie** als Text in die Zieldatei; **Teil 2B** ist der einzige Block, der (bedingt) als Inhalt übernommen wird.
+Dieser Katalog ist anders gebaut als die sieben Inhalts-Kataloge und wird in **Schritt 7** angewendet, nicht in Schritt 4 verbucht. **Teil 2A** richtet sich an dich als einsetzende KI und kommt **nie** als Text in die Zieldatei; **Teil 2B** ist der einzige Block, der (bedingt) als Inhalt übernommen wird.
 
 ## Teil 2A — Überarbeitungskatalog (Arbeitsanweisung, nicht Inhalt der Datei)
 

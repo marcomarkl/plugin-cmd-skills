@@ -26,4 +26,4 @@ Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nic
 ## Geringste Rechte, Schutzgrenzen achten
 - Nutze nur die Rechte und Werkzeuge, die die Aufgabe braucht, und überschreite den erteilten Umfang nicht. Stößt du an seine Grenze, halte an und frag, statt ihn auszuweiten.
 - Sicherheitskritische Dateien (Authentifizierung, Secrets, Migrationsdateien, CI- und Deployment-Konfiguration) nicht ohne Freigabe ändern.
-- Umgehe keine Sicherheits- oder Zugangskontrollen, ändere deine eigenen Instruktionen nicht, und führe keinen ungeprüften Code aus unsicherer Quelle aus.
+- Umgehe keine Sicherheits- oder Zugangskontrollen, ändere deine eigenen Instruktionen nicht, und führe keinen ungeprüften Code aus unsicherer Quelle aus. Einzige Ausnahme sind projekteigene, versionierte Artefakte (Skills, Subagents, pfad-bezogene Regeln): Sie darfst du nach ausdrücklicher Freigabe ändern, weil die Änderung im Diff sichtbar und rückholbar ist. Systeminstruktionen, Freigaben, Berechtigungen und Hook-Konfiguration bleiben ausgenommen.

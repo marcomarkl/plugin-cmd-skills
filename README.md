@@ -1,6 +1,6 @@
 # plugin-cmd-skills
 
-Ein Claude-Code-Plugin mit sieben Skills rund um **Klären, Planen, Reviewen, Umsetzen, Einrichten, Lernen und Übergeben** — plus dem Marketplace, über den es sich installieren lässt.
+Ein Claude-Code-Plugin mit acht Skills rund um **Klären, Planen, Reviewen, Umsetzen, Einrichten, Strukturieren, Lernen und Übergeben** — plus dem Marketplace, über den es sich installieren lässt.
 
 Das ist ein **persönliches Toolkit, öffentlich geteilt**: gebaut für meine eigene Arbeitsweise, aber ohne projektspezifische Annahmen — wer ähnlich arbeitet, kann es direkt nutzen oder als Vorlage nehmen.
 
@@ -43,8 +43,9 @@ Alle werden mit dem Namespace-Präfix aufgerufen und laden **nur auf deinen Aufr
 | `/cmd:plan-grill` | Interviewt dich zum Vorhaben, löst die Entscheidungen einzeln auf und legt sie als Plan an | am Anfang, wenn das Vorhaben unscharf ist |
 | `/cmd:plan-review` | Reviewt den Plan in rotierenden Blickwinkeln und arbeitet Befunde ein | sobald ein Plan steht |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan um, jeden Schritt gegen ein beobachtbares Kriterium verifiziert | nach dem Plan-Modus |
-| `/cmd:project-rules` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit fünf Disziplin-Katalogen | eigenständig |
+| `/cmd:project-rules` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit sieben Disziplin-Katalogen | eigenständig |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon | beim Einrichten eines Projekts |
+| `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon und schlägt projekteigene Skills, Subagents und Regeln vor | wenn die `CLAUDE.md` zuwächst |
 | `/cmd:session-learn` | Reflektiert die Session und macht Learnings zu einem Plan | am Sessionende |
 | `/cmd:session-handoff` | Verdichtet den Arbeitsstand in eine kurze `HANDOFF.md` fürs nächste Fenster | wenn der Kontext knapp wird |
 
@@ -55,6 +56,8 @@ Details, Pipeline und Voraussetzungen: **[`cmd/README.md`](cmd/README.md)**.
 `plan-execute` zielt auf Claude Codes **Auto mode**. Auto mode ist ein **Research Preview ohne Sicherheitsgarantie** — nutze ihn nur in einer isolierten Umgebung. Ohne Auto mode läuft der Skill ebenfalls, dann mit normalen Permission-Prompts.
 
 `project-settings` schreibt **Permission-Regeln**, darunter ein weit gefasstes `Read(//**)` mit einer deny-Liste für Schlüssel und Credentials. Dieser Kanon ist eine Entscheidung für meine Maschine und mein Arbeitsprofil, **keine allgemeine Empfehlung**. Lies `cmd/skills/project-settings/references/permission-kanon.md`, bevor du ihn übernimmst — dort steht zu jeder Regel, was sie leistet und was sie ausdrücklich nicht leistet.
+
+`project-structure` **verschiebt und benennt Dateien um** — als einziger Skill der Suite bewegt er Bestand, statt nur zu schreiben. Er tut das erst nach einer gesammelten Freigabe, per `git mv` (die Historie bleibt erhalten), mit einem Verlagerungs-Register und einer Zeilenbilanz als Verlustnachweis, und er nennt den Rückweg je Datei. Ohne git-Repo ist der Umzug schlechter reversibel; der Skill sagt das und sichert dann jede Quelle vorher als `.bak`. Sieh dir die Vorschau an, bevor du freigibst.
 
 ## Hinweise zum Repo
 
