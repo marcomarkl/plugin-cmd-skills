@@ -2,6 +2,13 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.14.3
+
+- **Die Abdeckungszeile im Protokoll von `project-rules` trägt keine Quote mehr.** „X von Y Katalogregeln verbucht" sah nach Messung aus, war aber keine: Was als *eine* Regel zählt, ist nirgends festgelegt, also kommt jeder Lauf auf eine andere Zahl. Der Lauf gegen dieses Repo meldete „38 von 38", während die sieben Kataloge 106 Listenpunkte enthalten — ein Fehlschätzer um Faktor 2,8, den nichts geprüft hätte. Die Zeile behauptet jetzt nur noch, was getan wurde; den Nachweis trägt das Abdeckungs-Register aus Schritt 4.
+- **Die Profilschwelle in Schritt 2 bekommt denselben Schnitt wie Katalog 7 in 0.14.2.** „Ein kleines Repo braucht weder Ablagestruktur noch eigene Skills" gilt fürs *Anlegen* und wurde als Freibrief gelesen, auch die Regel wegzulassen, wann ein Artefakt fällig wird. Der Text sagt jetzt: Die Schwelle entscheidet über das Anlegen, nicht über die Regel; weggelassen wird sie nur, wenn derselbe Handgriff realistisch kein drittes Mal auftritt.
+- **Zwei Tabellenzellen präzisiert**, weil beide auf ein Plugin-Repo passenden Profile die Artefaktschwelle senkten: „Bibliothek/Framework — Artefakte selten nötig" und „Software/Coding — Ablage/Artefakte ab mehreren Mitwirkenden oder langer Laufzeit". Beide trennen jetzt Anlegen von Verankern. Ohne diesen Fix wäre Katalog 7 über die Profilschwelle erneut ausgefallen, obwohl 0.14.2 den Anlassvorbehalt bereits behoben hatte.
+- `examples/transcripts.md` nachgezogen, weil sich die Protokollvorlage ändert; `DESIGN.md` ebenfalls. `cmd/README.md`, Root-`README.md`, `scripts/smoke.sh` und beide Manifest-`description`s bleiben unverändert gültig: Die Katalogzahl bleibt sieben, und der geprüfte Eröffnungszug ist weiterhin Zieldatei plus Projektprofil.
+
 ## 0.14.2
 
 - **Katalog 7 von `project-rules` kam bisher nur zur Hälfte in der Zieldatei an.** Der Katalog mischt Pflegeregeln (Freigabe vor dem Schreiben, zweite Korrektur gehört ins Artefakt) mit Auslöserregeln (welches Artefakt wofür, ab dem dritten gleichen Handgriff, keines auf Vorrat, `description` als eigentlicher Auslöser). Nur die erste Gruppe ist anlassunabhängig formuliert und ging deshalb durch; die zweite steht unter „Verlange von jedem Artefakt einen Anlass aus diesem Projekt" und fiel weg. Belegt am Lauf gegen dieses Repo: Freigabepflicht und Zweite-Korrektur-Auslöser stehen in der `CLAUDE.md`, die Zuordnung Skill/Subagent/Regel und der Dritter-Handgriff-Auslöser fehlen.

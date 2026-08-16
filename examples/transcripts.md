@@ -64,9 +64,9 @@ Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschla
 - Vorgefunden / Verankert / Auslagerungsreif markiert / Empfohlen anzulegen
 
 ### Abdeckung
-<X von Y Katalogregeln verbucht> — alle sieben Inhalts-Kataloge durchgegangen, Token-Effizienz-Pass angewendet.
+Alle sieben Inhalts-Kataloge durchgegangen, jede Regel in genau einer Kategorie verbucht, Token-Effizienz-Pass angewendet.
 ```
-Die letzte Zeile ist der Vollständigkeitsbeleg: Jede Katalogregel muss in genau einer Kategorie gelandet sein.
+Die letzte Zeile ist der Vollständigkeitsbeleg und trägt **keine Quote**: Was als eine Regel zählt, ist nicht festgelegt, also wäre eine Zahl nicht reproduzierbar und ein Fehlschätzer unauffällig. Sie behauptet nur, was tatsächlich getan wurde; den Nachweis trägt das Abdeckungs-Register.
 
 ## project-structure
 

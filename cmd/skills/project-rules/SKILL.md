@@ -75,7 +75,7 @@ Ist die Zieldatei nicht eindeutig (mehrere Kandidaten, oder die Anfrage nennt ke
 
 ## Schritt 2 — Projektprofil bestimmen
 
-Nicht jede Disziplin wiegt für jede Projektart gleich. Eine CLAUDE.md für einen **autonomen Agenten** lebt von Sicherheits-, Fehler- und Kontextdisziplin; eine für einen **menschengesteuerten Coding-Assistenten** von Zerlegung, Ausführung und Build/Test/Lint. Das Profil setzt die *Relevanzschwelle* pro Regel — es entscheidet **nicht**, ob ein Katalog übersprungen wird. Alle sieben Inhalts-Kataloge werden immer durchgegangen (Schritt 4); das Profil steuert nur, was übernommen und was *begründet* weggelassen wird. Bei Ablage und Artefakten wirkt die Schwelle besonders stark: Ein kleines Repo mit einer Handvoll Dateien braucht weder Ablagestruktur noch eigene Skills, und „begründet weggelassen" ist dort das richtige Ergebnis, nicht ein Versäumnis.
+Nicht jede Disziplin wiegt für jede Projektart gleich. Eine CLAUDE.md für einen **autonomen Agenten** lebt von Sicherheits-, Fehler- und Kontextdisziplin; eine für einen **menschengesteuerten Coding-Assistenten** von Zerlegung, Ausführung und Build/Test/Lint. Das Profil setzt die *Relevanzschwelle* pro Regel — es entscheidet **nicht**, ob ein Katalog übersprungen wird. Alle sieben Inhalts-Kataloge werden immer durchgegangen (Schritt 4); das Profil steuert nur, was übernommen und was *begründet* weggelassen wird. Bei Ablage und Artefakten wirkt die Schwelle besonders stark: Ein kleines Repo mit einer Handvoll Dateien braucht weder Ablagestruktur noch eigene Skills, und „begründet weggelassen" ist dort das richtige Ergebnis, nicht ein Versäumnis. **Die Schwelle entscheidet dabei über das Anlegen, nicht über die Regel.** Dass gerade kein Artefakt fällig ist, heißt nicht, dass die Datei die Regel nicht trägt, wann eines fällig wird — die wirkt erst in der Zukunft, in der du nicht mehr danebenstehst. Weglassen ist nur begründet, wenn das Projekt so klein oder kurzlebig ist, dass derselbe Handgriff realistisch kein drittes Mal auftritt. Sonst gehört die Regel in die Datei, auch wenn der Ordner dafür noch leer ist.
 
 So bestimmst du das Profil:
 
@@ -86,11 +86,11 @@ Die Profile sind **Denkhilfen, keine starren Tabellen**: Prüfe jede Zuordnung g
 
 | Projektart | Kern (gründlich übernehmen) | Situativ (nur bei Anlass) |
 |---|---|---|
-| **Software/Coding (Mensch im Loop)** | Aufgabenzerlegung, Ausführung (inkl. Build/Test/Lint), Fehler | Sicherheit: commit/push/Geheimnisse ja, MCP/Deploy nur bei Evidenz · Kontext bei großem Repo · Ablage/Artefakte ab mehreren Mitwirkenden oder langer Laufzeit |
+| **Software/Coding (Mensch im Loop)** | Aufgabenzerlegung, Ausführung (inkl. Build/Test/Lint), Fehler | Sicherheit: commit/push/Geheimnisse ja, MCP/Deploy nur bei Evidenz · Kontext bei großem Repo · Ablage ab mehreren Mitwirkenden oder langer Laufzeit; Artefakte *anlegen* dann, die Regel dafür schon ab langer Laufzeit |
 | **Autonomer Agent / agentisches System** | Sicherheit, Fehler, Kontext, Ausführung, Ablage | Aufgabenzerlegung je nach Aufgabenkomplexität · Artefakte, sobald Abläufe sich wiederholen |
 | **Daten / Analyse / Research** | Ausführung (v. a. keine Erfindung), Kontext, Ablage (Befunde überleben die Session) | Zerlegung · Sicherheit v. a. Datenabfluss/Geheimnisse · Fehler geringer · Artefakte für wiederkehrende Auswertungen |
 | **Infrastruktur / DevOps** | Sicherheit (Deploy, CI, Secrets), Fehler (Rollback), Artefakte (Runbooks als Skill) | Zerlegung, Ausführung · Kontext bei großen Systemen · Ablage v. a. für Entscheidungen |
-| **Bibliothek / Framework** | Ausführung, Aufgabenzerlegung, Ablage (Entscheidungen und öffentliche Doku) | Fehler/Kontext situativ · Sicherheit v. a. Secrets/geringste Rechte · Artefakte selten nötig |
+| **Bibliothek / Framework** | Ausführung, Aufgabenzerlegung, Ablage (Entscheidungen und öffentliche Doku) | Fehler/Kontext situativ · Sicherheit v. a. Secrets/geringste Rechte · Artefakte *anlegen* selten nötig, die Regel dafür trotzdem ab langer Laufzeit |
 
 Passt keine Zeile, beschreibe das Profil in eigenen Worten anhand derselben Frage: *Handelt der Agent selbstständig nach außen? Läuft er lang? Berührt er Geheimnisse/Deploys? Wird gebaut und getestet?* Daraus folgt, welche Disziplinen tragen.
 
@@ -217,11 +217,13 @@ Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschla
 - Empfohlen anzulegen: <Ort/Artefakt> — Grund: <…>
 
 ### Abdeckung
-<X von Y Katalogregeln verbucht> — alle sieben Inhalts-Kataloge durchgegangen, Token-Effizienz-Pass angewendet.
+Alle sieben Inhalts-Kataloge durchgegangen, jede Regel in genau einer Kategorie verbucht, Token-Effizienz-Pass angewendet.
 ```
+
+**Keine Zahl in dieser Zeile.** Eine Quote wie „38 von 38" sieht nach Messung aus, ist aber keine: Was als *eine* Regel zählt — Listenpunkt, Satz, Unterabschnitt —, ist nirgends festgelegt, also kommt ein zweiter Lauf auf ein anderes Ergebnis, und beide klingen gleich sicher. Ein Fehlschätzer fällt hier nicht auf, weil nichts ihn prüft. Die Zeile behauptet deshalb nur, was du tatsächlich getan hast. Steht auch nur eine Katalogregel unverbucht, ist sie falsch und du korrigierst das Register, statt die Zeile zu relativieren.
 
 Steht unter „Auslagerungsreif markiert" oder „Empfohlen anzulegen" mindestens ein Eintrag, empfiehl ausdrücklich einen Lauf von `/cmd:project-structure` — es führt den Umzug mit Verlagerungs-Register und Verlustnachweis aus. Ohne diesen Hinweis bleibt die Datei bei der nächsten Sitzung so lang wie zuvor.
 
 **Empfiehl es aber höchstens einmal.** Lief `project-structure` in diesem Projekt bereits — erkennbar am Wegweiser-Abschnitt `## Ablage` in der Zieldatei —, sind übrig gebliebene Blöcke solche, die jener Lauf bewusst liegen ließ. Dann legst du die Entscheidung vor („dieser Block gehört nach X, dort wurde er bisher nicht hingelegt — soll er?"), statt einen weiteren Lauf zu empfehlen. Zwei Skills, die einander im Wechsel empfehlen, schicken den Nutzer im Kreis.
 
-Die letzte Zeile ist der Vollständigkeitsbeleg: Sind alle Katalogregeln in einer der Kategorien gelandet und ist verdichtet, ist die Datei nachweislich vollständig, gehärtet und tokeneffizient — ohne dass eine starke Regel geschwächt wurde.
+Die letzte Zeile ist der Vollständigkeitsbeleg: Sind alle Katalogregeln in einer der Kategorien gelandet und ist verdichtet, ist die Datei vollständig, gehärtet und tokeneffizient — ohne dass eine starke Regel geschwächt wurde. Den Nachweis trägt das Register aus Schritt 4, nicht diese Zeile; sie referiert es nur.
