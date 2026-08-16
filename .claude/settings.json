@@ -1,4 +1,43 @@
 {
+  "autoMemoryEnabled": false,
+  "plansDirectory": "./plans",
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:*)",
+      "Bash(git *)",
+      "Read(//**)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git reset *)",
+      "Bash(git clean *)",
+      "Bash(git rebase *)",
+      "Bash(git filter-branch *)",
+      "Bash(git worktree remove *)"
+    ],
+    "deny": [
+      "Read(//**/.ssh/**)",
+      "Read(//**/.aws/**)",
+      "Read(//**/.gnupg/**)",
+      "Read(//**/.netrc)",
+      "Read(//**/id_rsa*)",
+      "Read(//**/id_ed25519*)",
+      "Read(//**/*.pem)",
+      "Read(//**/*.key)",
+      "Read(//**/credentials*)",
+      "Read(~/Library/Keychains/**)",
+      "Read(//**/.config/gh/**)",
+      "Read(//**/.config/gcloud/**)",
+      "Read(//**/.kube/config)",
+      "Bash(cat ~/.ssh/*)",
+      "Bash(cat ~/.aws/*)",
+      "Bash(cat ~/.gnupg/*)",
+      "Bash(cat ~/.netrc)",
+      "Bash(cat ~/.config/gcloud/*)",
+      "Bash(cat ~/.kube/config)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
       {
