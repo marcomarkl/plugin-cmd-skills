@@ -4,6 +4,15 @@
 # ACHTUNG: startet echte Modell-Laeufe (claude -p) — kostet Tokens und Zeit,
 # und die Ausgabe ist nicht deterministisch (loose Muster, kann selten flaken).
 #
+# ACHTUNG 2: Der Lauf ist NICHT unter allen Konfigurationen nebenwirkungsfrei.
+# Im Auslieferungszustand erlaubt "claude -p" kein Write; ein nutzerweit gesetzter
+# permissions.defaultMode, der Schreiben erlaubt, hebt das auf. Dann kann ein Skill
+# waehrend des Tests eine Datei anlegen (beobachtet bei session-handoff: eine
+# Uebergabedatei im Ablageort des Projekts). Pruefe die eigene Konfiguration, statt
+# die Nebenwirkungsfreiheit anzunehmen. Die beiden session-Laeufe sind deshalb in je
+# ein eigenes leeres Wegwerf-Verzeichnis ausgelagert (siehe SMOKE_TMP); die uebrigen
+# Eintraege laufen weiter im Repo.
+#
 # Prueft NUR den Eroeffnungszug je Skill (laedt der Skill, produziert er seine
 # charakteristische erste Ausgabe), NICHT die Schluss-/Abschlussnotiz: die
 # erreicht ein Einzelaufruf bei den mehrschrittigen Skills nicht. Die erwartete
@@ -21,10 +30,19 @@ if command -v timeout >/dev/null 2>&1; then TIMEOUT_CMD="timeout $TIMEOUT"
 elif command -v gtimeout >/dev/null 2>&1; then TIMEOUT_CMD="gtimeout $TIMEOUT"
 fi
 
+# Wegwerf-Verzeichnisse fuer die beiden session-Laeufe. Je EINS pro Lauf, nicht eines
+# fuer beide: session-handoff kann eine Uebergabedatei hinterlassen, und genau die wuerde
+# der nachfolgende session-resume-Lauf finden, dessen Muster "keine gefunden" erwartet.
+# Ein gemeinsames Verzeichnis verschoebe die Kopplung nur aus dem Repo heraus.
+SMOKE_TMP="$(mktemp -d)" || { echo "FAIL: kein temporaeres Arbeitsverzeichnis"; exit 1; }
+mkdir -p "$SMOKE_TMP/handoff" "$SMOKE_TMP/resume"
+
+# Vierter Parameter: Arbeitsverzeichnis des Laufs, Default das aktuelle. Der Wechsel
+# bleibt in der Kommandosubstitution lokal, PLUGIN_DIR ist ohnehin absolut.
 run() {
-  local name="$1" prompt="$2" pattern="$3" out
+  local name="$1" prompt="$2" pattern="$3" workdir="${4:-.}" out
   echo "=== $name ==="
-  if ! out="$($TIMEOUT_CMD claude --plugin-dir "$PLUGIN_DIR" -p "$prompt" 2>&1)"; then
+  if ! out="$(cd "$workdir" && $TIMEOUT_CMD claude --plugin-dir "$PLUGIN_DIR" -p "$prompt" 2>&1)"; then
     echo "FAIL ($name): Aufruf fehlgeschlagen oder Timeout"; fail=1; return
   fi
   if [ -z "$out" ]; then
@@ -91,16 +109,39 @@ run "project-settings" "/cmd:project-settings" "settings\.json|bestandsaufnahme|
 # die Freigabe, nicht die fehlende Write-Berechtigung. Bewegt sich nach dem Lauf eine Datei
 # im Repo, ist das ein Befund am Skill, kein Testartefakt.
 run "project-structure" "/cmd:project-structure" "inventur|ablage|kanon|vorgefunden|backlog|docs/"
-# session-handoff: Sonderfall. Der Skill SCHREIBT normalerweise eine HANDOFF.md —
-# genau das wird hier bewusst NICHT geprueft, weil der Test sonst eine Datei ins
-# aktuelle Verzeichnis legt. Geprueft wird der nebenwirkungsfreie Zweig: Ein
-# "claude -p"-Lauf hat keinen Gespraechsverlauf, also keinen uebergebbaren Stand,
-# und der Skill muss das sagen statt einen Stand zu erfinden.
-# Fuer den Schreibpfad braucht es zwei Dinge, die hier fehlen: synthetischen
-# Verlauf im Prompt und "--permission-mode acceptEdits" (ohne das erlaubt -p kein
-# Write, und der Test meldete einen falschen FAIL). Siehe DESIGN.md.
-run "session-handoff" "/cmd:session-handoff" "kein.{0,30}(stand|verlauf|uebergabe|übergabe)|keine (datei|uebergabe|übergabe)|nichts zu uebergeben"
+# session-handoff: Sonderfall. Der Skill SCHREIBT normalerweise eine HANDOFF.md.
+# Geprueft wird hier der andere Zweig: Ein "claude -p"-Lauf hat keinen Gespraechs-
+# verlauf, also keinen uebergebbaren Stand, und der Skill muss das sagen statt einen
+# Stand zu erfinden — auch dann, wenn "git status" und "git log" etwas hergeben.
+# Der Schreibpfad braucht synthetischen Verlauf im Prompt; ob er zusaetzlich
+# "--permission-mode acceptEdits" braucht, haengt vom defaultMode ab (siehe ACHTUNG 2).
+# Frueher stand hier, der Test lege "sonst eine Datei ins aktuelle Verzeichnis" —
+# beides war ungenau: Er legt sie nur bei schreibfreundlicher Konfiguration an, und
+# dann dorthin, wohin die Ablagekonvention des Projekts zeigt. Deshalb laeuft er in
+# einem leeren Wegwerf-Verzeichnis: Eine dort entstehende Datei bleibt aus dem Repo
+# heraus und kann den nachfolgenden session-resume-Lauf nicht mehr erreichen.
+run "session-handoff" "/cmd:session-handoff" "kein.{0,30}(stand|verlauf|uebergabe|übergabe)|keine (datei|uebergabe|übergabe)|nichts zu uebergeben" "$SMOKE_TMP/handoff"
+# session-resume: Gegenstueck zum Handoff. Geprueft wird der Zweig ohne vorhandene
+# Uebergabedatei: Der Skill muss sagen, dass er keine findet, und enden — nicht aus
+# git-Log und Diff eine Uebergabe rekonstruieren. Ohne Fund ist nichts zu loeschen und
+# nichts zu schreiben; die Vorbedingung "kein Fund" sichert aber erst das eigene leere
+# Verzeichnis. Im Repo waere sie nicht gegeben, denn der vorangegangene handoff-Lauf
+# kann dort eine Uebergabedatei hinterlassen. Der Loeschpfad braucht ohnehin eine
+# gefundene Datei UND eine ausdrueckliche Bestaetigung, die ein "-p"-Lauf nicht liefert.
+run "session-resume" "/cmd:session-resume" "keine .{0,20}(uebergabe|übergabe|handoff)|nicht gefunden|kein.{0,20}handoff|keine datei" "$SMOKE_TMP/resume"
 
 echo
+# Die Wegwerf-Verzeichnisse werden NICHT blind geloescht: Was darin liegt, ist ein
+# Befund am jeweiligen Skill — bei session-handoff, dass er ohne Gespraechsverlauf eine
+# Uebergabe geschrieben hat, bei session-resume, dass er ohne Fund etwas angelegt hat.
+# Ob das Schreiben erlaubt war, sagt darueber nichts: Es entscheidet nur, ob der Fall
+# ueberhaupt eintreten kann. Leer heisst nebenwirkungsfrei, dann raeumt rmdir sie weg;
+# sonst bleiben sie samt Pfad zur Ansicht stehen.
+for d in "$SMOKE_TMP/handoff" "$SMOKE_TMP/resume"; do
+  if [ -z "$(ls -A "$d" 2>/dev/null)" ]; then rmdir "$d" 2>/dev/null
+  else echo "HINWEIS: $d ist nicht leer — der Lauf hat dort geschrieben:"; ls -A "$d"; fi
+done
+rmdir "$SMOKE_TMP" 2>/dev/null
+
 if [ "$fail" -eq 0 ]; then echo "SMOKE: alle Eroeffnungszuege OK"; else echo "SMOKE: mind. ein Skill FAIL"; fi
 exit "$fail"

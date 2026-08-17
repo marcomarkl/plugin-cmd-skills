@@ -1,6 +1,6 @@
 # plugin-cmd-skills
 
-Ein Claude-Code-Plugin mit neun Skills rund um **Klären, Planen, Reviewen, Umsetzen, Lotsen, Einrichten, Strukturieren, Lernen und Übergeben** — plus dem Marketplace, über den es sich installieren lässt.
+Ein Claude-Code-Plugin mit zehn Skills rund um **Klären, Planen, Reviewen, Umsetzen, Lotsen, Einrichten, Strukturieren, Lernen, Übergeben und Wiederaufnehmen** — plus dem Marketplace, über den es sich installieren lässt.
 
 Das ist ein **persönliches Toolkit, öffentlich geteilt**: gebaut für meine eigene Arbeitsweise, aber ohne projektspezifische Annahmen — wer ähnlich arbeitet, kann es direkt nutzen oder als Vorlage nehmen.
 
@@ -49,6 +49,7 @@ Alle werden mit dem Namespace-Präfix aufgerufen und laden **nur auf deinen Aufr
 | `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon und schlägt projekteigene Skills, Subagents und Regeln vor | wenn die `CLAUDE.md` zuwächst |
 | `/cmd:session-learn` | Reflektiert die Session und macht Learnings zu einem Plan | am Sessionende |
 | `/cmd:session-handoff` | Verdichtet den Arbeitsstand in eine kurze `HANDOFF.md` fürs nächste Fenster | wenn der Kontext knapp wird |
+| `/cmd:session-resume` | Nimmt die Übergabedatei auf, prüft sie gegen den Projektstand und räumt sie nach Bestätigung weg | im neuen Fenster danach |
 
 Details, Pipeline und Voraussetzungen: **[`cmd/README.md`](cmd/README.md)**.
 
@@ -61,6 +62,8 @@ Details, Pipeline und Voraussetzungen: **[`cmd/README.md`](cmd/README.md)**.
 `project-settings` **entfernt in Projekten, die vor Version 0.10.0 eingerichtet wurden, eine Altlast**: den `SessionStart`-Hook und `.claude/skills/session-protocol/SKILL.md` des inzwischen gestrichenen Kommunikationsprotokolls, das dort sonst bei jedem Sessionstart weiterlädt. Erkannt wird beides an einer festen Marke, fremde `SessionStart`-Hooks bleiben stehen, und die Entfernung steht in derselben Vorschau wie alles andere. In einem Projekt ohne diese Spuren passiert nichts.
 
 `project-structure` **verschiebt und benennt Dateien um** — er bewegt Bestand in großem Umfang, wo die übrigen Skills schreiben. Er tut das erst nach einer gesammelten Freigabe, per `git mv` (die Historie bleibt erhalten), mit einem Verlagerungs-Register und einer Zeilenbilanz als Verlustnachweis, und er nennt den Rückweg je Datei. Ohne git-Repo ist der Umzug schlechter reversibel; der Skill sagt das und sichert dann jede Quelle vorher als `.bak`. Sieh dir die Vorschau an, bevor du freigibst.
+
+`session-resume` **löscht die Übergabedatei**, und war sie untrackt, bekommst du sie nicht ersetzt. Auch `project-settings` entfernt Dateien (siehe oben), dort aber eine an fester Marke erkannte Altlast innerhalb der Gesamtvorschau; hier hängt die Löschung an einer einzelnen Ja-Nein-Frage zu einer Datei, die der Skill selbst als Übergabe eingestuft hat. Er tut es nur nach ausdrücklicher Bestätigung, nur für die eine Datei, die er vorher benannt hat, und er nennt den Rückweg je nach git-Lage. Lehnst du ab, bleibt sie liegen.
 
 ## Hinweise zum Repo
 

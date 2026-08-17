@@ -183,7 +183,7 @@ Dann das Angebot, den Plan über `plan-review` zu härten und `plan-execute` anz
 
 Der einzige Skill, dessen **voller Flow in einem Zug endet** — Eröffnungszug und Ergebnis fallen zusammen.
 
-**Ohne Gesprächsverlauf** (was ein `claude -p`-Einzelaufruf zeigt): keine Datei, sondern die Feststellung, dass es keinen übergebbaren Stand gibt, samt dem, was aus dem Dateisystem *doch* belegbar war. Genau diesen Zweig prüft `scripts/smoke.sh`.
+**Ohne Gesprächsverlauf** (was ein `claude -p`-Einzelaufruf zeigt): keine Datei, sondern die Feststellung, dass es keinen übergebbaren Stand gibt, samt dem, was aus dem Dateisystem *doch* belegbar war. Das gilt **auch bei vollem `git status`**: Der Verlauf ist die Bedingung, der Projektzustand nur das Belegmittel. Genau diesen Zweig prüft `scripts/smoke.sh`.
 
 **Mit Verlauf:** eine geschriebene oder gepatchte `HANDOFF.md` (Obergrenze 60 Zeilen) plus die Schlussnotiz im Chat. Erwartete Form der Datei —
 
@@ -213,4 +213,30 @@ Die Überschriften sind **Richtschnur, kein Schema**: Ein Abschnitt, der für da
 
 **„Unsicher" ist der Abschnitt, der diesen Skill von einer Zusammenfassung unterscheidet.** Dorthin gehört, was der gekürzte Verlauf verschluckt hat — Entscheidungen ohne erkennbare Begründung, vage erinnerte Absprachen, aus dem Diff rekonstruierter Zweck. Er darf leer bleiben, aber nur wenn das stimmt: Sein Fehlen behauptet, dass nichts unsicher war, und das ist nach einem gekürzten Verlauf selten wahr.
 
-**Schlussnotiz** (Chat-Notiz, nicht in die Datei): der Pfad der Datei und der nächste Schritt in einem Satz. Mehr ist nicht verlangt — die Übergabe trägt die Datei, das nächste Fenster startet mit „lies `<pfad>` und arbeite dort weiter". Dazu der Rückweg (löschen / `git restore` / `.bak`), aber nur, wenn die Datei neu angelegt oder ganz überschrieben wurde. Ein fertiger Einstiegssatz zum Kopieren wird **nicht** verlangt: Er dupliziert die Datei, die ohnehin für sich stehen muss.
+**Schlussnotiz** (Chat-Notiz, nicht in die Datei): der Pfad der Datei und der nächste Schritt in einem Satz. Dazu der Weg, damit die Übergabe nicht bei einer Datei endet, die niemand aufnimmt: neues Fenster, dort `/cmd:session-resume`, plus ein Halbsatz zu Gegenprobe und Aufräumen. Mehr ist nicht verlangt — den Inhalt trägt die Datei. Dazu der Rückweg (löschen / `git restore` / `.bak`), aber nur, wenn die Datei neu angelegt oder ganz überschrieben wurde. Ein fertiger Einstiegssatz zum Kopieren wird **nicht** verlangt: Er dupliziert die Datei, die ohnehin für sich stehen muss.
+
+## session-resume
+
+**Eröffnungszug:** der Fundort der Übergabedatei, benannt statt vorausgesetzt — Projektroot, Planverzeichnis des Projekts (hier `plans/`) oder ein Doku-Verzeichnis. Ohne Fund die Feststellung, dass keine da ist, und Ende; bei mehreren Kandidaten alle mit Pfad, ohne Wahl. Eine `.bak` ist kein Kandidat, und eine bloße Plandatei auch nicht: Die Datei muss sich als Übergabe ausweisen.
+
+**Dann die Gegenprobe**, der Kern des Skills:
+
+```
+## Übergabe aufgenommen: <Pfad>
+
+### Abgeglichen
+- Versionsstand: <Datei sagt X> · <Projekt zeigt Y> → deckungsgleich / abweichend
+- Genannte Dateien: <alle vorhanden / diese fehlen>
+
+### Unsicher (aus der Datei, einzeln)
+- <Punkt> → jetzt belegbar: <Beleg> / weiterhin offen
+
+### Offen — nächster Schritt zuerst
+1. <konkret, ausformuliert>
+```
+
+Fehlt in der Datei der Abschnitt „Unsicher", erscheint das als Befund, nicht als gute Nachricht: Sein Fehlen behauptet, es sei nichts unsicher gewesen. Findet die Gegenprobe keine Abweichung, wird auch das ausdrücklich gesagt.
+
+**Zum Schluss die Aufräumfrage**, im selben Zug: ob die Übergabedatei entfernt werden soll, samt dem Rückweg für die konkrete git-Lage (`git restore` nur bei getrackt und unverändert; bei uncommitteten Änderungen holt es die ältere Fassung, nicht die gelöschte; untrackt bleibt ohne Rückweg). Gelöscht wird erst nach ausdrücklicher Bestätigung, mit einem einzelnen `rm` auf genau diesen Pfad.
+
+**Was der Skill nicht tut:** die Punkte abarbeiten, ungefragt löschen, in den Plan-Modus wechseln. Verweist die Datei auf eine Plandatei, nennt er sie und liest sie, wechselt aber nicht. Und nach der Antwort auf die Löschfrage hört er auf, statt mit Schritt 1 zu beginnen — die Übergabe ist angenommen, nicht abgearbeitet.
