@@ -42,6 +42,48 @@ Der Plan selbst wurde in den Runden direkt geändert. Rücknahme per Kennung: �
 
 **Abschlussbericht** (Chat-Notiz, nach Umsetzung): je Planschritt was umgesetzt und **womit verifiziert** (beobachtetes Kriterium + Ergebnis); aufgetretene Abweichungen samt Korrektur; Klassifikator-Blockaden und Reaktion; substanzielle Funde außerhalb des Plans und Nutzer-Entscheid; offene Blocker; abschließend der Commit-Status plus Angebot und nächster Schritt.
 
+## project-setup
+
+**Eröffnungszug:** die vier Feststellungen, kurz und benannt — Wurzel leer oder gewachsen, git-Lage samt erkanntem Repo-Root, maßgebliche Regeldatei (`CLAUDE.md`, `AGENTS.md`, beide, keine, Symlink oder Import-Hülle), vorhandenes `.claude/`. Kein Kanon-Vergleich, keine Ablage-Inventur, kein Projektprofil.
+
+**Dann die Liste**, alle drei Schritte immer enthalten, je Eintrag vier Angaben:
+
+```
+0. git init                       (nur ohne Repo)
+   Vorbedingung: keine · Fasst an: das Verzeichnis selbst
+   Abnahme (am Projekt): .git/ existiert
+   Grund: ohne Repo kein `git mv` (Historie), kein `git restore` als Rückweg,
+          und der .gitignore-Eintrag für plans/ entfällt in Schritt 1
+
+1. /cmd:project-settings          (kein Argument möglich)
+   Vorbedingung: keine — läuft auch ohne Repo und im leeren Ordner
+   Fasst an: .claude/settings.json (legt an oder ergänzt, aus Feststellung 4),
+          .gitignore, plans/
+   Abnahme (am Projekt): autoMemoryEnabled: false, plansDirectory: "./plans",
+          plans/ existiert; mit Repo zusätzlich plans/ in der .gitignore
+          — Stichprobe, kein Vollnachweis des Permission-Kanons
+
+2. /cmd:project-structure         (optional: Fokus oder Pfad)
+   Vorbedingung: keine gegenüber Schritt 1 — die beiden sind unabhängig
+   Fasst an: ...
+   Abnahme (am Projekt): Abschnitt `## Ablage` in der maßgeblichen CLAUDE.md
+          — im leeren Ordner unbestimmt, dort trägt nur die Zeilenbilanz
+   Abnahme (im Bericht): die Zeilenbilanz geht auf
+
+3. /cmd:project-rules             (optional: Pfad zur Zieldatei, hier gefüllt)
+   Vorbedingung: Schritt 2 gelaufen (Wegweiser existiert und wird mitgehärtet);
+          Zieldatei und Projektprofil bestätigt
+   Fasst an: genau diese eine Datei
+   Abnahme: kein Kriterium am Projekt — der Skill hinterlässt keine Marke;
+          das schwächste hinreichende ist sein Abdeckungs-Register im Bericht
+```
+
+Die Vorbedingungen sind **Reihenfolge-Hinweise, keine Sperren** — jeder der drei läuft auch für sich. Die Reihenfolge trägt einen Halbsatz je *belegter* Abhängigkeit; für die Naht Schritt 1 → Schritt 2 gibt es keine, und der Skill sagt das, statt sie zu erfinden.
+
+Jedes Kriterium ist gekennzeichnet, ob es **am Projekt** ablesbar ist oder nur **im Bericht** des Laufs steht. Randfälle erscheinen als Zusatz am betroffenen Schritt: fehlendes Repo, Aufruf aus einem Unterordner (mit offengelegtem Repo-Root und beiden Deutungen), `CLAUDE.md` und `AGENTS.md` als getrennte echte Dateien, leerer Ordner ohne erhebbares Projektprofil.
+
+**Was der Skill nicht tut:** ausführen, schreiben, anlegen, und feststellen, was schon gelaufen ist. Er kann die drei nicht aufrufen (ihre Sperre `disable-model-invocation`) und macht ihre Arbeit auch nicht selbst nach. Ein Schritt wird nie weggelassen, weil er erledigt aussieht — was die Erhebung ergibt, wird zum Hinweis am Schritt.
+
 ## project-rules
 
 **Eröffnungszug:** Auflösung der Zieldatei — welche `CLAUDE.md`/`AGENTS.md` gehärtet wird, und bei mehreren Kandidaten oder fehlendem Pfad die Rückfrage statt einer Annahme. Direkt danach das erkannte **Projektprofil** als Vorschlag zur Bestätigung, weil es die Relevanzschwelle jeder Regel setzt. Existieren `CLAUDE.md` und `AGENTS.md` als getrennte echte Dateien mit überlappendem Inhalt, wird das Drift-Risiko benannt und eine Symlink-Konsolidierung angeboten.

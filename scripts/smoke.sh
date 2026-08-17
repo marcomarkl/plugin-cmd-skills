@@ -45,6 +45,15 @@ run "plan-grill"   "/cmd:plan-grill Beispiel: soll ich Feature X bauen" "steelma
 run "plan-review"  "/cmd:plan-review" "plan|blickwinkel|einordnung|kein plan"
 # execute: braucht freigegebenen Plan -> ExitPlanMode/Bitte um Plan
 run "plan-execute" "/cmd:plan-execute" "plan|freigegeben|exitplanmode|umsetz"
+# project-setup: Eroeffnungszug sind die vier Feststellungen plus die Aufrufliste der drei
+# Einrichtungs-Skills. Erster Skill der Suite OHNE Schreibpfad — der sonst uebliche Vorbehalt
+# fehlt hier nicht aus Versehen, es gibt schlicht keinen Schreibzweig auszunehmen.
+# Achtung: "claude -p" laeuft ohne --permission-mode, und die Erhebung besteht aus
+# Shell-Aufrufen (ls, git rev-parse). Ob die dort durchgehen, ist UNGEPRUEFT; bei
+# session-handoff erzeugten fehlende Rechte schon einmal einen falschen FAIL. Das Muster
+# haengt deshalb nicht an der Erhebung: "project-settings" greift auch dann, wenn nur die
+# Liste zustande kommt.
+run "project-setup" "/cmd:project-setup" "aufrufliste|reihenfolge|project-settings|erhebung"
 # project-rules: Eroeffnungszug ist die Aufloesung der Zieldatei plus das Projektprofil
 # zur Bestaetigung. Der Skill SCHREIBT normalerweise die CLAUDE.md — dieser Pfad wird hier
 # nicht erreicht: er setzt die bestaetigte Zieldatei und das bestaetigte Profil voraus, die

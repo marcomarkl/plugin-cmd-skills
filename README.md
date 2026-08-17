@@ -1,6 +1,6 @@
 # plugin-cmd-skills
 
-Ein Claude-Code-Plugin mit acht Skills rund um **Klären, Planen, Reviewen, Umsetzen, Einrichten, Strukturieren, Lernen und Übergeben** — plus dem Marketplace, über den es sich installieren lässt.
+Ein Claude-Code-Plugin mit neun Skills rund um **Klären, Planen, Reviewen, Umsetzen, Lotsen, Einrichten, Strukturieren, Lernen und Übergeben** — plus dem Marketplace, über den es sich installieren lässt.
 
 Das ist ein **persönliches Toolkit, öffentlich geteilt**: gebaut für meine eigene Arbeitsweise, aber ohne projektspezifische Annahmen — wer ähnlich arbeitet, kann es direkt nutzen oder als Vorlage nehmen.
 
@@ -43,6 +43,7 @@ Alle werden mit dem Namespace-Präfix aufgerufen und laden **nur auf deinen Aufr
 | `/cmd:plan-grill` | Interviewt dich zum Vorhaben, löst die Entscheidungen einzeln auf und legt sie als Plan an | am Anfang, wenn das Vorhaben unscharf ist |
 | `/cmd:plan-review` | Reviewt den Plan in rotierenden Blickwinkeln und arbeitet Befunde ein | sobald ein Plan steht |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan um, jeden Schritt gegen ein beobachtbares Kriterium verifiziert | nach dem Plan-Modus |
+| `/cmd:project-setup` | Gibt die geordnete Aufrufliste der drei Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium; richtet selbst nichts ein | vor der Einrichtung eines Projekts |
 | `/cmd:project-rules` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit sieben Disziplin-Katalogen | eigenständig |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon | beim Einrichten eines Projekts |
 | `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon und schlägt projekteigene Skills, Subagents und Regeln vor | wenn die `CLAUDE.md` zuwächst |

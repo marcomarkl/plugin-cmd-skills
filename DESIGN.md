@@ -16,7 +16,7 @@ Laden/testen: `claude --plugin-dir ./cmd`, nach Änderungen `/reload-plugins`. M
 
 ## Frontmatter und Stellschrauben je Skill
 
-Alle acht Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows.
+Alle neun Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows. `project-setup` ist der einzige, der die übrigen Frontmatter-Felder erbt statt sie zu setzen (kein `model`, kein `effort`); er trägt als einziger ein `allowed-tools`.
 
 ### plan-execute
 
@@ -84,6 +84,29 @@ Verdichtet den laufenden Arbeitsstand in eine `HANDOFF.md`, damit ein frisches F
 claude --plugin-dir ./cmd -p "hi" --output-format stream-json --verbose
 # → plugins: [{"name":"cmd","version":"<aktuell>","path":"…",...}], plugin_errors, slash_commands
 ```
+
+### project-setup
+
+Erhebt vier Fakten am Projekt und gibt daraus die Reihe `project-settings` → `project-structure` → `project-rules` als Aufrufliste aus, je Schritt mit Argument, Vorbedingung, angefasstem Bereich und Abnahmekriterium. Frontmatter: `disable-model-invocation: true` und ein enges `allowed-tools` (`Read`, `Bash(ls:*)`, `Bash(git rev-parse:*)`), sonst nichts.
+
+**Warum er lotst statt auszuführen.** Eine echte Verkettung ist nicht möglich: `disable-model-invocation: true` verhindert laut Frontmatter-Referenz das automatische Laden **und** das Preloading in Subagenten, und der Abschnitt „Control who invokes a skill" ergänzt an seinem Deploy-Beispiel, dass Claude Code einen Aufruf durch das Modell blockiert und das Modell zusätzlich anweist, die Schritte nicht auf anderem Weg zu reproduzieren. Die Sperre aufzuheben wäre der einzige Weg zur Verkettung und der falsche: Er öffnete ausgerechnet die drei Skills fürs automatische Laden, die Settings schreiben und Dateien verschieben. Der Gewinn wäre ohnehin klein, denn alle drei holen Freigaben ein; gespart würde das erneute Tippen, nicht die Interaktion.
+
+**Warum er nicht feststellt, was schon lief.** Naheliegend wäre ein Wiedereinstieg, der erledigte Schritte überspringt. Er trägt nur für zwei der drei: `project-settings` stellt einen idempotenten Soll-Zustand her (`autoMemoryEnabled`, `plansDirectory`), `project-structure` schreibt den Wegweiser unter die feste Überschrift `## Ablage`. **`project-rules` hinterlässt keine Marke** — sein Ergebnis ist gehärteter Text über die ganze Datei verteilt, und die einzige echte Prüfung wäre der Volllauf des Skills selbst. Ein Wiedereinstieg, der bei zwei Schritten belegt und beim dritten rät, behauptet mehr als er weiß, deshalb stehen alle drei immer in der Liste. Aus demselben Grund erhebt der Skill schlank: kein Abgleich gegen den Permission-Kanon, keine Ablage-Inventur, keine Profilbestimmung.
+
+**Warum er ohne `model` und `effort` steht.** Die übrigen acht setzen beides; hier war **keine Vorgabe gewünscht**, und das Erbe aus der Session genügt. Der Grund ist ausdrücklich *nicht*, dass es nichts abzuwägen gäbe — das stand bis 0.16.0 so da und war schon beim Schreiben überholt. Der Body verlangt, Kriterien nach ihrer Art zu kennzeichnen, im leeren Ordner eines als unbestimmt zu führen, bei gescheiterter Erhebung Hinweise als unbestimmt zu markieren und im Unterordner-Fall zwei Deutungen nebeneinanderzustellen, statt eine zu wählen. Das ist durchgehend Abwägung; wer den Skill später auf ein schwächeres Profil festnageln will, muss gegen diese Stellen argumentieren, nicht gegen eine behauptete Trivialität. Das `allowed-tools` ist der Gegenpol dazu — es genehmigt die vier lesenden Aufrufe vorab, damit ein Skill, dessen Zweck Bequemlichkeit ist, nicht an vier Permission-Prompts hängt. Es **sperrt nichts**; die Schreibsperre trägt allein die Body-Prosa, wie bei `plan-grill` und `session-learn`.
+
+**Der Skill ist strukturell eine Kopie, und das ist der Preis.** Argumente, Abnahmekriterien und Randfälle der drei stehen jetzt zweimal. Genau dieses Muster verwirft der Ablage-Kanon an anderer Stelle („Warum der Ablage-Kanon nicht hier liegt", weiter unten), und hier wiegt es schwerer: Eine veraltete `cmd/README.md` informiert falsch, ein veralteter `project-setup` **weist falsch an**. Die Pflegepflicht ist deshalb ausdrücklich: **Wer an `project-settings`, `project-structure` oder `project-rules` ein Argument, einen Randfall oder ein Abnahmekriterium ändert, zieht `project-setup` nach.**
+
+**Diese fünfzehn Einzelfakten sind kopiert** — ohne die Liste wäre die Pflicht ein Appell statt einer Checkliste, denn aus „Argumente, Abnahmekriterien und Randfälle" lässt sich beim Ändern eines der drei nicht ableiten, was betroffen ist:
+
+- **Argumentlage, je Schritt (3):** `project-settings` nimmt keines; `project-structure` optional Fokus oder Pfad; `project-rules` optional Pfad zur Zieldatei.
+- **Angefasster Bereich, je Schritt (3):** `.claude/settings.json`, `.gitignore`, `plans/` — die Ablage plus der Wegweiser `## Ablage` — genau die eine Regeldatei.
+- **Abnahmekriterien (4):** `autoMemoryEnabled: false` und `plansDirectory: "./plans"` plus existierendes `plans/`; der `.gitignore`-Eintrag für `plans/` als git-abhängiger Zusatz; der Abschnitt `## Ablage` samt aufgehender Zeilenbilanz; das Abdeckungs-Register als einziges Kriterium bei `project-rules`.
+- **Randfall-Aussagen (5):** `.bak`-Sicherung untrackter Dateien ohne Repo; Historienverlust, weil ohne Repo nicht per `git mv` verschoben wird; ersatzlos entfallender `.gitignore`-Eintrag ohne Repo; Drift-Risiko bei getrennter `CLAUDE.md`/`AGENTS.md`; vom Nutzer beizubringendes Projektprofil im leeren Ordner.
+
+Ein Ausweg **könnte** sein, die beiden `argument-hint`-Werte zur Laufzeit aus `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` zu lesen. Das setzt voraus, dass die Variable in Plugin-Skills im Body **und** in Bash-Regeln der `allowed-tools` substituiert wird — **beides ist hier nicht verifiziert**, der zweite Teil ist der riskantere, und eine falsch angenommene Substitution fiele nicht auf, sondern liefe still ins Leere. Der Ausweg wurde ohnehin nicht genommen, unabhängig von dieser Frage: Er löst die kleinste Duplikation, während Abnahmekriterien und Randfälle nicht im Frontmatter stehen und Kopie bleiben — der Skill hinge dann an einer Pfadvariable, ohne das Problem zu lösen.
+
+**Niemand verweist zurück.** Die drei Skills bleiben unverändert; ein Rückverweis auf den Lotsen wäre entweder redundant (wer mitten in der Reihe steht, braucht die Reihenfolge nicht mehr) oder erzeugte die Kreisempfehlung, gegen die `project-rules` und `project-structure` eigens gebaut sind.
 
 ### project-rules
 

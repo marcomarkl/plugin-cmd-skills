@@ -1,6 +1,6 @@
 # cmd — Planungs-Toolkit für Claude Code
 
-Acht Skills rund um Klären, Planen, Reviewen, Umsetzen, Einrichten, Strukturieren, Lernen und Übergeben. Der Plugin-Name `cmd` (aus `.claude-plugin/plugin.json`) bildet den Namespace, deshalb beginnt jeder Aufruf mit `/cmd:`.
+Neun Skills rund um Klären, Planen, Reviewen, Umsetzen, Lotsen, Einrichten, Strukturieren, Lernen und Übergeben. Der Plugin-Name `cmd` (aus `.claude-plugin/plugin.json`) bildet den Namespace, deshalb beginnt jeder Aufruf mit `/cmd:`.
 
 Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsnotizen (Stellschrauben, verworfene Ansätze) in [`DESIGN.md`](../DESIGN.md).
 
@@ -13,13 +13,14 @@ Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsn
 | `/cmd:plan-grill` | Interviewt dich zu einem Vorhaben, löst die Entscheidungen einzeln in Abhängigkeits- und Tragweitenreihenfolge auf, protokolliert sie revidierbar und legt sie nach deiner Bestätigung als Plan an. | **Am Anfang**, wenn das Vorhaben noch unscharf ist. |
 | `/cmd:plan-review` | Reviewt den zuletzt erstellten Plan in rotierenden Blickwinkeln und arbeitet die belastbaren Befunde direkt ein. | Sobald ein Plan steht — von `plan-grill` oder `/plan` —, bevor du freigibst. |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan vollständig um und verifiziert jeden Schritt gegen ein beobachtbares Kriterium; hält bei einem Fund außerhalb des Plans oder einer Klassifikator-Blockade an und fragt nach. | **Nach** dem Verlassen des Plan-Modus. |
+| `/cmd:project-setup` | Erhebt vier Fakten am Projekt und gibt die geordnete Aufrufliste der drei Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium. Richtet selbst nichts ein. | **Zuerst**, bevor du die drei anderen `project-`Skills fährst. |
 | `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit sieben Disziplin-Katalogen und verdichtet sie token-effizient. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon und entdoppelt die Permission-Listen. | **Einmal** beim Einrichten eines Projekts, danach bei Bedarf erneut. |
 | `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon, sammelt Streudateien ein und schlägt projekteigene Skills, Subagents und `paths:`-Regeln vor. Verschiebt nur mit Verlagerungs-Register und Verlustnachweis. | Wenn die `CLAUDE.md` zuwächst oder Wissen verstreut liegt. |
 | `/cmd:session-learn` | Reflektiert die laufende Session, leitet dauerhafte Learnings ab und übergibt sie als Plan an `plan-review`/`plan-execute`. | Am **Ende** einer Session. |
 | `/cmd:session-handoff` | Verdichtet den laufenden Arbeitsstand in eine kurze `HANDOFF.md`, damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeiten kann. | Wenn das **Kontextfenster knapp** wird. |
 
-Alle acht sind `disable-model-invocation: true` — sie laden **nur auf deinen Aufruf hin**, nie automatisch. Das ist Absicht: es sind timing-kontrollierte Workflows.
+Alle neun sind `disable-model-invocation: true` — sie laden **nur auf deinen Aufruf hin**, nie automatisch. Das ist Absicht: es sind timing-kontrollierte Workflows.
 
 **grill und review teilen sich den Plan nach Gegenstand**, nicht nach Reihenfolge: grill klärt die **Entscheidungen** und legt sie als Plan an, review prüft den **fertigen Plan** in Runden und härtet ihn. Beide schreiben in dieselbe Plandatei, und beide machen ihr Ergebnis über **stabile Kennungen** zurücknehmbar (grill „nimm Entscheidung 3 zurück", review „nimm Änderung 2.3 zurück").
 
@@ -44,13 +45,15 @@ Jeder Skill ist einzeln nutzbar; die Kette ist die Kür, nicht die Pflicht.
 
 **Die beiden `session-*`-Skills teilen sich die Session nach Haltbarkeit**, und danach wählst du: `session-learn` nimmt das **Dauerhafte** (Learnings, die künftige Sessions besser machen) und legt es projektlokal ab; `session-handoff` nimmt das **Flüchtige** (wo die Arbeit gerade steht) und gibt es ans nächste Fenster. Am Sessionende sinnvoll beides, in dieser Reihenfolge — `session-learn` belegt die Plandatei, auf die `session-handoff` danach nur noch verweisen muss.
 
-Die drei `project-*`-Skills stehen **vor** der Kette: Einrichtungsschritte, keine Pipeline-Glieder. Untereinander gilt aber eine Reihenfolge, und zwar aus je eigenem Grund:
+Die `project-*`-Skills stehen **vor** der Kette und sind keine Pipeline-Glieder: **drei** richten ein, ein **vierter** lotst nur durch die drei. Unter den einrichtenden gilt eine Reihenfolge, und zwar aus je eigenem Grund:
 
 ```
-project-settings  →  project-structure  →  project-rules
- (Settings, holt      (Ablage, lagert      (härtet und
-  Auto-Memory rein)     Inhalt aus)          verdichtet)
+project-setup  ⇢  project-settings  →  project-structure  →  project-rules
+ (lotst, führt      (Settings, holt      (Ablage, lagert      (härtet und
+  nichts aus)        Auto-Memory rein)     Inhalt aus)          verdichtet)
 ```
+
+`project-setup` steht davor, ist aber **kein Glied**: Es erhebt vier Fakten am Projekt und gibt die Reihe als Liste aus, mit dem Argument je Aufruf, der Vorbedingung und dem Abnahmekriterium. Ausgeführt wird nichts, deshalb der gestrichelte Pfeil. Aufrufen musst du die drei weiterhin selbst, und genau das ist Absicht: Ihre Sperre `disable-model-invocation` hält Claude von ihnen fern, und sie aufzuheben, um eine Verkettung zu ermöglichen, öffnete ausgerechnet die schreibenden Skills fürs automatische Laden.
 
 - **settings vor rules**, weil `project-settings` vorhandene Auto-Memory-Einträge in die `CLAUDE.md` holt. Umgekehrt verdichtete `project-rules` einen Stand, dem der Import erst danach wieder Rohtext anhängt.
 - **structure vor rules**, weil `project-structure` Inhalt auslagert und den Wegweiser-Abschnitt `## Ablage` schreibt. `project-rules` härtet und verdichtet die Datei danach — auch diesen Abschnitt.
@@ -58,7 +61,7 @@ project-settings  →  project-structure  →  project-rules
 
 Zu `session-learn` ist das Verhältnis komplementär: `project-settings` schaltet das Memory-System ab und leert es einmalig, `session-learn` hat es ohnehin nie genutzt.
 
-Die Präfixe ordnen die Skills: `plan-*` wirken am Plan-Lebenszyklus, `project-*` an Projekt-Artefakten (`CLAUDE.md`, `.claude/settings.json`, Ablage und projekteigene Skills), `session-*` an der Arbeitssession selbst.
+Die Präfixe ordnen die Skills: `plan-*` wirken am Plan-Lebenszyklus, `project-*` am Projekt als Ganzem (an seinen Artefakten `CLAUDE.md`, `.claude/settings.json` und Ablage, oder wie `project-setup` am Weg dorthin), `session-*` an der Arbeitssession selbst.
 
 ## Voraussetzungen für `plan-execute`
 
@@ -112,6 +115,7 @@ cmd/
     ├── project-settings/
     │   ├── SKILL.md
     │   └── references/permission-kanon.md  # die zu setzenden Werte samt Belegen
+    ├── project-setup/SKILL.md
     ├── project-structure/
     │   ├── SKILL.md
     │   └── references/                     # Ablage-Kanon und Artefakt-Kanon samt Belegen
