@@ -18,7 +18,7 @@ Für dieselbe Sache genau eines. Ein Subagent, der nur eine Instruktion vorliest
 
 Pfad `.claude/skills/<name>/SKILL.md`; der Ordnername ist der Aufrufname (`/<name>`). Zusätzliche Dateien liegen daneben, üblich in `references/`, und werden vom Body bei Bedarf gelesen. `.claude/commands/<name>.md` erzeugt denselben Aufruf, ist aber die ältere Form; Neues wird als Skill angelegt, Vorhandenes nicht ohne Anlass migriert.
 
-Entdeckung ist automatisch, kein Manifest-Eintrag. Belegte Frontmatter-Keys, im `cmd`-Plugin im Einsatz und nicht aus dem Gedächtnis gesetzt: `name` (Anzeige-Label), `description` (steuert, ob der Skill von selbst gefunden wird — der eigentliche Auslöser), `argument-hint`, `disable-model-invocation`, `model`, `effort`, `allowed-tools`.
+Entdeckung ist automatisch, kein Manifest-Eintrag. Frontmatter-Keys, an der Herstellerdoku belegt und nicht aus dem Gedächtnis gesetzt: `name` (Anzeige-Label), `description` (steuert, ob der Skill von selbst gefunden wird — der eigentliche Auslöser), `argument-hint`, `disable-model-invocation`, `allowed-tools`, dazu `model` und `effort`. Die letzten beiden überschreiben Modell und Denktiefe, solange der Skill aktiv ist; ohne sie erbt er beides von der Sitzung, und das ist der ruhigere Weg — eine feste Vorgabe im Skill nimmt dem Aufrufenden eine Entscheidung ab, die er in seiner Sitzung ohnehin trifft.
 
 `allowed-tools` **sperrt nichts**: Es genehmigt vorab und unterdrückt Rückfragen. Als Schranke ist es untauglich.
 

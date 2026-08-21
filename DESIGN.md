@@ -16,12 +16,12 @@ Laden/testen: `claude --plugin-dir ./cmd`, nach Änderungen `/reload-plugins`. M
 
 ## Frontmatter und Stellschrauben je Skill
 
-Alle zehn Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows. `project-setup` ist der einzige, der die übrigen Frontmatter-Felder erbt statt sie zu setzen (kein `model`, kein `effort`); er trägt als einziger ein `allowed-tools`.
+Alle zehn Skills sind `disable-model-invocation: true` — nur manuell aufrufbar, kein Auto-Laden durch Claude. Das ist Absicht: es sind timing-kontrollierte Workflows. `project-setup` trägt als einziger ein `allowed-tools`.
+
+**Seit 0.18.0 setzt kein Skill mehr `model` oder `effort`.** Beide Keys sind entfallen; laut Frontmatter-Referenz erbt `effort` ohne Angabe die Session-Einstellung, und ein `model` überschriebe ohnehin nur den laufenden Turn. Die Denktiefe ist damit eine Eigenschaft der Sitzung, nicht des Skills — dieselbe Begründung, mit der `language` nie in den Projekt-Kanon von `project-settings` kam. Verstellt wird sie über `--effort` für eine Sitzung oder `effortLevel` in den Nutzer-Settings, nicht im Plugin. Zwei Beobachtungen aus der Zeit der festen Werte bleiben als Anhalt gültig, jetzt aber an die Sitzung adressiert: Nach oben, wenn `plan-review` die Blickwinkel früh für erschöpft erklärt, `plan-grill` nach etwas fragt, das im Faktenvorlauf stand, oder `project-rules` die Kataloge nicht in einem kohärenten Durchgang zusammenbekommt — diese drei waren die aufwendigsten. Nach unten, wenn ein kurzer, weitgehend mechanischer Lauf wie `session-handoff` erkennbar überzahlt ist. Welcher Wert hier gerade gesetzt ist, gehört nicht in diese Datei: Das wäre eine Aussage über eine Maschine, und genau die hat 0.15.0 aus `permission-kanon.md` entfernt.
 
 ### plan-execute
 
-- `effort: high` ist fest gesetzt.
-- `model: opus` ist eine Übernahme; bei Bedarf ändern oder entfernen.
 - Bewusst **kein** `allowed-tools`: Der Skill erbt so die Session-Rechte des aktiven Modus.
 
 ### plan-grill
@@ -29,8 +29,6 @@ Alle zehn Skills sind `disable-model-invocation: true` — nur manuell aufrufbar
 Das Interview läuft, bis keine offene Entscheidung mit Ergebniswirkung mehr im Pool ist (kein Abbruch, nur weil du zustimmst). Anpassbar:
 
 - **Rückfrage-Form:** `AskUserQuestion` bei abzählbaren Optionen, Prosa als Grundfall — im Body im Abschnitt „Genau eine offene Frage zur Zeit". Ob `AskUserQuestion` über alle Surfaces (CLI/IDE/headless) verfügbar ist, ist **nicht dokumentiert**; deshalb ist Prosa der Grundfall und das Tool nur die Kür.
-
-Frontmatter: `model: opus`, `effort: high` (nicht `xhigh` wie `plan-review`: interaktiv, viele kurze Züge). Beobachtbares Kriterium zum Nachschärfen auf `xhigh`: Der Skill stellt Fragen, deren Antwort im Faktenvorlauf auffindbar gewesen wäre, oder ordnet den Pool erkennbar nicht nach Abhängigkeit.
 
 **Warum grill den Plan seit 0.8.0 selbst schreibt.** Die alte Begründung („übergibt an `/plan`, weil vor `/plan` noch kein Plan zum Ändern existiert") war **zirkulär**: Sie begründet, warum grill nichts *ändert*, nicht, warum es nichts *erstellt* — der Plan fehlte ja nur, weil grill ihn nicht anlegte. Der Gewinn ist dabei weniger der gesparte Zug als der **Faktenvorlauf**: Er ist der teuerste Teil des Interviews, und der Übergabeblock sah für Belege gar keinen Platz vor. Ein frischer `/plan`-Lauf musste sie also glauben oder neu erheben. Jetzt wandern sie mit Quelle in den Plan, ebenso das Entscheidungs-Ledger — der Chat ist flüchtig, nach einer Kürzung fehlte sonst die Begründung jeder Entscheidung.
 
@@ -44,15 +42,12 @@ Der Review läuft rundenweise mit rotierenden Blickwinkeln, bis die Blickwinkel 
 
 - **Blickwinkel-Untergrenze:** in der Regel mindestens 3, bevor „erschöpft" erklärt wird (im Body im Abschnitt „Abarbeitung und Erschöpfungs-Abbruch" verstellbar).
 
-Frontmatter: `model: opus`, `effort: xhigh`.
-
 ### session-learn
 
 Die Retrospektive läuft, bis kein tragfähiges Learning mehr offen ist. Zu beachten:
 
 - **Schreibt selbst nichts an die Zielorte** — die einzige Ausgabe ist ein Plan, den `plan-review` härtet und `plan-execute` anwendet. Die Ziele sind **projektlokal** (Projekt-CLAUDE.md/`references`/Repo, nie user-global; das Memory-System bleibt unangetastet) und damit git-reversibel. Wie bei `plan-grill` trägt auch diese Regel allein die Body-Prosa, kein Frontmatter-Schutz — dort in ihrer zeitlichen Fassung (während des Interviews nichts, danach nur die Plandatei), hier als vollständiges Nicht-Schreiben.
 - **End-of-Session gedacht:** der erzeugte Plan belegt die Plandatei und ersetzt den aktuellen Plan-Kontext — erst laufende Aufgaben abschließen und committen.
-- **Frontmatter:** `model: opus`, `effort: high`.
 
 **Warum die Learnings nicht vorab bestätigt werden.** Der Skill lief bis 0.13.0 faktisch mit zwei Freigaben: erst die Learnings absegnen, dann den Plan-Modus. Nur die zweite war je entworfen — der Body verlangte nirgends eine Bestätigung, aber er erlaubte das Schreiben auch nicht ausdrücklich, und ohne diese Erlaubnis legt das Modell das Ergebnis ersatzweise in den Chat und bittet um sie. Dieselbe Beobachtung steht bei `session-handoff`; dort war die Zusage von Anfang an im Body. Die Vorab-Bestätigung sicherte auch nichts: An die Zielorte schreibt der Skill ohnehin nichts, der Plan ist eine Datei, und über die stabile Kennung nimmt der Nutzer jedes einzelne Learning gezielt zurück. Die inhaltliche Kontrolle liegt damit am Plan, nicht davor.
 
@@ -71,7 +66,6 @@ Verdichtet den laufenden Arbeitsstand in eine `HANDOFF.md`, damit ein frisches F
 - **Kein „Einstiegssatz" als Pflicht.** Naheliegend wäre, nach dem Wegfall des Fenster-Öffnens einen kopierfertigen Satz für das nächste Fenster zu verlangen. Die Kaltstart-Probe zeigt, dass er entbehrlich ist: Die Datei allein genügt, um den nächsten Schritt ohne Rückfrage auszuführen. Ein solcher Satz dupliziert sie also — die Schlussnotiz verlangt nur Pfad, nächsten Schritt und gegebenenfalls den Rückweg. Die tragende Anforderung steht stattdessen bei den Abschnitten: **Die Datei muss für sich stehen.** Seit 0.17.0 nennt die Schlussnotiz zusätzlich den **Weg**: neues Fenster, `/cmd:session-resume`. Das ist kein Rückzieher, sondern eine andere Gattung. Verworfen wurde ein Satz, der den **Inhalt** der Datei dupliziert; hinzugekommen ist eine **Vorgehensanleitung**, die in der Datei gar nicht stehen kann, weil sie von ihr weg zeigt. Die Kaltstart-Probe bleibt damit gültig: Wer die Datei allein liest, kommt weiter; wer die Schlussnotiz liest, weiß zusätzlich, mit welchem Aufruf das am besten geschieht.
 - **Abschnitte als Richtschnur, nicht als Schema.** Das Modell passt Überschriften situationsgerecht an, und das Patchen trägt trotzdem, weil es semantisch abgleicht statt wörtlich. Stabile Überschriften bleiben erwünscht, aber als Vergleichbarkeit über mehrere Übergaben — nicht als Bedingung fürs Patchen.
 - **Kommandos sind Beispiele, keine Vorschrift.** `git log`/`git status` stehen unter „etwa", der Nicht-Git-Zweig ist gleichrangig formuliert. Der Bestand enthält sonst genau ein konkretes Kommando (`git restore` in `session-learn`, als Rückweg-Hinweis), und `plan-execute` formuliert Verifikation bewusst generisch. Auch die Zeilenprüfung schreibt kein Werkzeug vor — der Agent hat die Datei selbst geschrieben.
-- **Frontmatter:** `model: opus`, `effort: high`. `high` ist vorläufig — der Lauf ist kurz und weitgehend mechanisch, die Urteilslast steckt allein in der Auswahl. Beobachtbares Kriterium zum Senken auf `medium`: Bleibt die Datei über mehrere Läufe knapp und relevant, ist `high` überzahlt; schreibt der Skill dagegen Erledigtes und Verlauf mit, fehlt Auswahlurteil und `high` trägt.
 
 **Testbarkeit, abweichend vom Rest der Suite.** `session-handoff` ist der einzige Skill, dessen voller Flow in *einem* Zug endet — er ließe sich anders als grill/review/execute vollständig headless prüfen. Zwei Hürden stehen dem entgegen und sind in `scripts/smoke.sh` berücksichtigt:
 
@@ -87,7 +81,7 @@ claude --plugin-dir ./cmd -p "hi" --output-format stream-json --verbose
 
 ### session-resume
 
-Das Gegenstück zu `session-handoff`: nimmt die Übergabedatei im frischen Fenster auf, prüft sie gegen den Projektzustand, legt den nächsten Schritt vor und räumt die Datei nach ausdrücklicher Bestätigung weg. Frontmatter: `model: opus`, `effort: high`, `argument-hint` für den Pfad.
+Das Gegenstück zu `session-handoff`: nimmt die Übergabedatei im frischen Fenster auf, prüft sie gegen den Projektzustand, legt den nächsten Schritt vor und räumt die Datei nach ausdrücklicher Bestätigung weg. Frontmatter: `argument-hint` für den Pfad.
 
 **Warum ein eigener Skill und keine Anweisung in der Datei.** Kein Skill kann erzwingen, was eine andere Session tut; festschreiben lässt sich nur, was diese Session lädt. Die naheliegende Alternative wäre ein Block am Ende der Übergabedatei („wenn du das übernommen hast, lösche mich"). Sie ist die schlechtere: Sie verlangt, dass ein Agent einer Handlungsanweisung aus einer eingelesenen Datei folgt, und genau das behandelt die Sicherheitsdisziplin dieses Repos als nicht vertrauenswürdige Eingabe. Der Preis der Entscheidung ist, dass der Skill aufgerufen werden muss; wer weiter „lies `<pfad>` und arbeite dort weiter" tippt, bekommt weder Gegenprobe noch Aufräumen.
 
@@ -103,22 +97,22 @@ Das Gegenstück zu `session-handoff`: nimmt die Übergabedatei im frischen Fenst
 
 ### project-setup
 
-Erhebt vier Fakten am Projekt und gibt daraus die Reihe `project-settings` → `project-structure` → `project-rules` als Aufrufliste aus, je Schritt mit Argument, Vorbedingung, angefasstem Bereich und Abnahmekriterium. Frontmatter: `disable-model-invocation: true` und ein enges `allowed-tools` (`Read`, `Bash(ls:*)`, `Bash(git rev-parse:*)`), sonst nichts.
+Erhebt vier Fakten am Projekt und gibt daraus die Reihe `project-settings` → `project-structure` → `project-rules` als Aufrufliste aus, je Schritt mit Argument, Vorbedingung, angefasstem Bereich und Abnahmekriterium. Frontmatter: `disable-model-invocation: true` wie alle, dazu als einziger ein enges `allowed-tools` (`Read`, `Bash(ls:*)`, `Bash(git rev-parse:*)`).
 
 **Warum er lotst statt auszuführen.** Eine echte Verkettung ist nicht möglich: `disable-model-invocation: true` verhindert laut Frontmatter-Referenz das automatische Laden **und** das Preloading in Subagenten, und der Abschnitt „Control who invokes a skill" ergänzt an seinem Deploy-Beispiel, dass Claude Code einen Aufruf durch das Modell blockiert und das Modell zusätzlich anweist, die Schritte nicht auf anderem Weg zu reproduzieren. Die Sperre aufzuheben wäre der einzige Weg zur Verkettung und der falsche: Er öffnete ausgerechnet die drei Skills fürs automatische Laden, die Settings schreiben und Dateien verschieben. Der Gewinn wäre ohnehin klein, denn alle drei holen Freigaben ein; gespart würde das erneute Tippen, nicht die Interaktion.
 
-**Warum er nicht feststellt, was schon lief.** Naheliegend wäre ein Wiedereinstieg, der erledigte Schritte überspringt. Er trägt nur für zwei der drei: `project-settings` stellt einen idempotenten Soll-Zustand her (`autoMemoryEnabled`, `plansDirectory`), `project-structure` schreibt den Wegweiser unter die feste Überschrift `## Ablage`. **`project-rules` hinterlässt keine Marke** — sein Ergebnis ist gehärteter Text über die ganze Datei verteilt, und die einzige echte Prüfung wäre der Volllauf des Skills selbst. Ein Wiedereinstieg, der bei zwei Schritten belegt und beim dritten rät, behauptet mehr als er weiß, deshalb stehen alle drei immer in der Liste. Aus demselben Grund erhebt der Skill schlank: kein Abgleich gegen den Permission-Kanon, keine Ablage-Inventur, keine Profilbestimmung.
+**Warum er nicht feststellt, was schon lief.** Naheliegend wäre ein Wiedereinstieg, der erledigte Schritte überspringt. Er trägt nur für zwei der drei: `project-settings` stellt einen idempotenten Soll-Zustand her (`autoMemoryEnabled`, Permission-Kanon), `project-structure` schreibt den Wegweiser unter die feste Überschrift `## Ablage`. **`project-rules` hinterlässt keine Marke** — sein Ergebnis ist gehärteter Text über die ganze Datei verteilt, und die einzige echte Prüfung wäre der Volllauf des Skills selbst. Ein Wiedereinstieg, der bei zwei Schritten belegt und beim dritten rät, behauptet mehr als er weiß, deshalb stehen alle drei immer in der Liste. Aus demselben Grund erhebt der Skill schlank: kein Abgleich gegen den Permission-Kanon, keine Ablage-Inventur, keine Profilbestimmung.
 
-**Warum er ohne `model` und `effort` steht.** Die übrigen acht setzen beides; hier war **keine Vorgabe gewünscht**, und das Erbe aus der Session genügt. Der Grund ist ausdrücklich *nicht*, dass es nichts abzuwägen gäbe — das stand bis 0.16.0 so da und war schon beim Schreiben überholt. Der Body verlangt, Kriterien nach ihrer Art zu kennzeichnen, im leeren Ordner eines als unbestimmt zu führen, bei gescheiterter Erhebung Hinweise als unbestimmt zu markieren und im Unterordner-Fall zwei Deutungen nebeneinanderzustellen, statt eine zu wählen. Das ist durchgehend Abwägung; wer den Skill später auf ein schwächeres Profil festnageln will, muss gegen diese Stellen argumentieren, nicht gegen eine behauptete Trivialität. Das `allowed-tools` ist der Gegenpol dazu — es genehmigt die vier lesenden Aufrufe vorab, damit ein Skill, dessen Zweck Bequemlichkeit ist, nicht an vier Permission-Prompts hängt. Es **sperrt nichts**; die Schreibsperre trägt allein die Body-Prosa, wie bei `plan-grill` und `session-learn`.
+**Warum sein `allowed-tools` bleibt, und was es nicht ist.** Es genehmigt die vier lesenden Aufrufe vorab, damit ein Skill, dessen Zweck Bequemlichkeit ist, nicht an vier Permission-Prompts hängt. Es **sperrt nichts** (siehe „Kein Frontmatter- oder Hook-Schutz gegen Schreibzugriffe"); dass der Skill nichts ausführt, trägt allein die Body-Prosa. Und der Lauf ist trotz seiner Kürze keine Trivialität: Der Body verlangt, Kriterien nach ihrer Art zu kennzeichnen, im leeren Ordner eines als unbestimmt zu führen, bei gescheiterter Erhebung Hinweise als unbestimmt zu markieren und im Unterordner-Fall zwei Deutungen nebeneinanderzustellen, statt eine zu wählen. Wer ihn später auf ein schwächeres Profil festnageln will, muss gegen diese Stellen argumentieren.
 
 **Der Skill ist strukturell eine Kopie, und das ist der Preis.** Argumente, Abnahmekriterien und Randfälle der drei stehen jetzt zweimal. Genau dieses Muster verwirft der Ablage-Kanon an anderer Stelle („Warum der Ablage-Kanon nicht hier liegt", weiter unten), und hier wiegt es schwerer: Eine veraltete `cmd/README.md` informiert falsch, ein veralteter `project-setup` **weist falsch an**. Die Pflegepflicht ist deshalb ausdrücklich: **Wer an `project-settings`, `project-structure` oder `project-rules` ein Argument, einen Randfall oder ein Abnahmekriterium ändert, zieht `project-setup` nach.**
 
-**Diese fünfzehn Einzelfakten sind kopiert** — ohne die Liste wäre die Pflicht ein Appell statt einer Checkliste, denn aus „Argumente, Abnahmekriterien und Randfälle" lässt sich beim Ändern eines der drei nicht ableiten, was betroffen ist:
+**Diese dreizehn Einzelfakten sind kopiert** — ohne die Liste wäre die Pflicht ein Appell statt einer Checkliste, denn aus „Argumente, Abnahmekriterien und Randfälle" lässt sich beim Ändern eines der drei nicht ableiten, was betroffen ist:
 
 - **Argumentlage, je Schritt (3):** `project-settings` nimmt keines; `project-structure` optional Fokus oder Pfad; `project-rules` optional Pfad zur Zieldatei.
-- **Angefasster Bereich, je Schritt (3):** `.claude/settings.json`, `.gitignore`, `plans/` — die Ablage plus der Wegweiser `## Ablage` — genau die eine Regeldatei.
-- **Abnahmekriterien (4):** `autoMemoryEnabled: false` und `plansDirectory: "./plans"` plus existierendes `plans/`; der `.gitignore`-Eintrag für `plans/` als git-abhängiger Zusatz; der Abschnitt `## Ablage` samt aufgehender Zeilenbilanz; das Abdeckungs-Register als einziges Kriterium bei `project-rules`.
-- **Randfall-Aussagen (5):** `.bak`-Sicherung untrackter Dateien ohne Repo; Historienverlust, weil ohne Repo nicht per `git mv` verschoben wird; ersatzlos entfallender `.gitignore`-Eintrag ohne Repo; Drift-Risiko bei getrennter `CLAUDE.md`/`AGENTS.md`; vom Nutzer beizubringendes Projektprofil im leeren Ordner.
+- **Angefasster Bereich, je Schritt (3):** `.claude/settings.json`, bei Altlast zusätzlich `.gitignore` und `.claude/skills/` — die Ablage plus der Wegweiser `## Ablage` — genau die eine Regeldatei.
+- **Abnahmekriterien (3):** `autoMemoryEnabled: false` als Stichprobe; der Abschnitt `## Ablage` samt aufgehender Zeilenbilanz; das Abdeckungs-Register als einziges Kriterium bei `project-rules`.
+- **Randfall-Aussagen (4):** `.bak`-Sicherung untrackter Dateien ohne Repo; Historienverlust, weil ohne Repo nicht per `git mv` verschoben wird; Drift-Risiko bei getrennter `CLAUDE.md`/`AGENTS.md`; vom Nutzer beizubringendes Projektprofil im leeren Ordner.
 
 Ein Ausweg **könnte** sein, die beiden `argument-hint`-Werte zur Laufzeit aus `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` zu lesen. Das setzt voraus, dass die Variable in Plugin-Skills im Body **und** in Bash-Regeln der `allowed-tools` substituiert wird — **beides ist hier nicht verifiziert**, der zweite Teil ist der riskantere, und eine falsch angenommene Substitution fiele nicht auf, sondern liefe still ins Leere. Der Ausweg wurde ohnehin nicht genommen, unabhängig von dieser Frage: Er löst die kleinste Duplikation, während Abnahmekriterien und Randfälle nicht im Frontmatter stehen und Kopie bleiben — der Skill hinge dann an einer Pfadvariable, ohne das Problem zu lösen.
 
@@ -128,7 +122,7 @@ Ein Ausweg **könnte** sein, die beiden `argument-hint`-Werte zur Laufzeit aus `
 
 Wendet sieben Disziplin-Kataloge gemeinsam auf eine bestehende `CLAUDE.md`/`AGENTS.md` an und verdichtet die Datei zuletzt in einem Token-Effizienz-Pass. Die Kataloge liegen in `references/` und werden **bedarfsgeladen** — der Body liest sie erst in Schritt 4 bzw. 7, nicht beim Aufruf.
 
-Frontmatter: `model: opus`, `effort: xhigh` — der Skill plant alle Kataloge in *einem* Durchgang und schreibt die Datei einmal kohärent; das ist der aufwendigste Einzelschritt der Suite.
+Der Skill plant alle Kataloge in *einem* Durchgang und schreibt die Datei einmal kohärent; das ist der aufwendigste Einzelschritt der Suite.
 
 **Warum der Skill nichts verschiebt.** Ablage und projekteigene Artefakte kamen mit 0.12.0 als Katalog 6 und 7 dazu, die *Ausführung* aber nicht: Das Auslagern von Inhalt und das Anlegen von Ordnern liegt in `project-structure`. Der Grund ist die Bauform. `project-rules` lebt von „einmal lesen → alle Kataloge gemeinsam planen → einmal schreiben"; ein Umzug über viele Dateien braucht dagegen Rückweg, Registerführung und Verlustnachweis **je Datei**. Beides in einen Durchgang zu legen, bräche genau das Prinzip, gegen das die Schritte gebaut sind. Der Skill markiert deshalb auslagerungsreife Blöcke und empfiehlt im Protokoll den anderen Skill.
 
@@ -152,7 +146,7 @@ Frontmatter: `model: opus`, `effort: xhigh` — der Skill plant alle Kataloge in
 
 ### project-structure
 
-Frontmatter: `model: opus`, `effort: high`. Zwei bedarfsgeladene References: `ablage-kanon.md` (Orte, Namensschemata, Ladezeitpunkte samt Belegen) und `artefakt-kanon.md` (Skills, Subagents, `paths:`-Regeln).
+Zwei bedarfsgeladene References: `ablage-kanon.md` (Orte, Namensschemata, Ladezeitpunkte samt Belegen) und `artefakt-kanon.md` (Skills, Subagents, `paths:`-Regeln).
 
 **Der Kanon ist recherchiert, nicht erfunden.** Ein selbst ausgedachter Sammelordner wäre einheitlicher gewesen und schlechter: Die Zwecke haben je eigene etablierte Konventionen, und wer sie verlässt, verliert deren Werkzeugunterstützung. Übernommen sind deshalb `docs/decisions/` bzw. `docs/adr/` mit `NNNN-titel.md` (MADR), `docs/` nach Diátaxis für Menschen-Doku, `CHANGELOG.md` plus git-Historie für Erledigtes und `backlog/tasks/` mit `completed/` (Backlog.md). Dass Entscheidungen unter `docs/` liegen und Aufgaben nicht, ist keine Inkonsistenz, sondern spiegelt zwei Communities.
 
@@ -174,13 +168,11 @@ Die vierte Kategorie `entfällt` kam aus dem Testlauf, nicht aus dem Entwurf. Mi
 
 ### project-settings
 
-Frontmatter: `model: opus`, `effort: high`. Ein `references/` wird bedarfsgeladen: `permission-kanon.md` (die zu setzenden Werte samt Belegen).
+Ein `references/` wird bedarfsgeladen: `permission-kanon.md` (die zu setzenden Werte samt Belegen).
 
 **Warum `autoMode` und `dialogExpiry` gar nicht angefasst werden:** beide werden aus Projekt- und Local-Settings **nicht gelesen**. Ein Eintrag dort erzeugt keinen Fehler, er wird stillschweigend ignoriert — genau die Fehlerklasse, gegen die dieses Repo sonst mit `claude plugin validate` arbeitet und die hier kein Werkzeug abfängt.
 
-**Warum der Skill `plans/` selbst anlegt.** `plansDirectory: "./plans"` zu setzen, ohne den Ordner anzulegen, hinterlässt eine Konfiguration, die auf einen nicht existierenden Pfad zeigt. Ob die Runtime ihn beim Schreiben des ersten Plans selbst erzeugt, ist **nicht verifiziert** — der Skill legt ihn deshalb explizit an, und die Existenzprüfung davor macht den Schritt folgenlos, falls er redundant ist. Sie ist ohnehin nötig, damit der zweite Lauf diff-frei bleibt.
-
-**Warum der Rückweg `rmdir` heißt.** Ein neu angelegtes `plans/` ist untrackt und steht zugleich in der `.gitignore`, `git restore` greift dort also nicht. `rm -rf plans` wäre der naheliegende Ersatz und genau deshalb falsch: Es löscht kommentarlos die Pläne mit, die inzwischen darin liegen. `rmdir` scheitert in dem Fall — der einzige Rückweg, der nur das rückgängig macht, was der Skill tatsächlich angelegt hat.
+**Warum der Kanon das Planverzeichnis nicht mehr setzt, und warum er es zurücknimmt.** Bis 0.17.0 setzte der Skill `plansDirectory: "./plans"`, legte den Ordner an und trug ihn in die `.gitignore` ein. Mit 0.18.0 fällt das ersatzlos; Pläne bleiben user-global. Die Räumung in bereits eingerichteten Projekten folgt derselben Überlegung wie beim Kommunikationsprotokoll: Nur die Quelle zu streichen ließe die Konfiguration in jedem Projekt weiterwirken, wo ein früherer Lauf sie geschrieben hat. Anders als dort gibt es **keine Marke** — das einzige Unterscheidungsmerkmal ist der Wert selbst. Deshalb greift die Spur ausschließlich bei exakt `"./plans"`, dem Wert, den nur ein Lauf dieses Skills geschrieben haben kann; jeder abweichende Wert bleibt stehen und wird gemeldet. **Die `.gitignore`-Zeile hängt am Key**, nicht umgekehrt: Eine Zeile `plans/` allein belegt gar nichts, ein Projekt darf einen eigenen Planordner ignorieren. Und sie bleibt stehen, sobald Pläne im Ordner liegen — ohne sie erschienen die Plandateien als untrackt in `git status`, und Pläne tragen lokale Pfade. Eine wirkungslose Ignore-Zeile ist der billigere Rückstand als ein Veröffentlichungsrisiko. Der Ordner selbst wird nie angefasst, aus demselben Grund, aus dem der alte Rückweg `rmdir` hieß und nicht `rm -rf`: Was der Nutzer hineingeschrieben hat, gehört ihm.
 
 **Warum der Skill eine Altlast räumt, die er selbst nicht mehr kennt.** 0.10.0 hat das Kommunikationsprotokoll ersatzlos entfernt und dabei nur die *Quelle* beseitigt: Wo ein Lauf bis 0.9.0 den `SessionStart`-Hook und `.claude/skills/session-protocol/SKILL.md` abgelegt hatte, blieb beides liegen und lud weiter bei jedem Sessionstart. Das war im Changelog benannt, aber nicht behoben — eine entfernte Funktion, die in jedem eingerichteten Projekt weiterlief. Der Skill bekommt deshalb genau so viel Kenntnis des Protokolls zurück, wie das Erkennen braucht: die Marke `# cmd:project-settings:session-protocol`, die über alle Fassungen identisch ist. **Sie ist der Grund, warum die Räumung überhaupt möglich ist** — am Kommandotext wäre ein Eintrag aus 0.8.0 nicht mehr sicher von einem fremden Hook zu unterscheiden.
 
@@ -215,6 +207,7 @@ Die Skills teilen Vokabular. Diese Begriffe wortgleich halten, damit die Suite n
 - **Erschöpfungs-Abbruch** — die Schleife endet erst, wenn nichts Neues mehr trägt (Entscheidungen bei grill, Blickwinkel bei review, Learnings bei session-learn), nie auf Zustimmung oder Ungeduld hin. **Nicht** bei `session-handoff`: Der Skill hat keine Schleife über einen Pool, sondern schreibt einmal. Dort steht stattdessen der **Wirkungsfilter** (aus grill), der auf eine einmalige Auswahl passt. Den Begriff nicht ausdehnen — er ist über den leerlaufenden Pool definiert.
 - **beobachtbares Kriterium** — ein prüfbarer Beleg (Testlauf, Exit-Code, Datei-/Lesezustand), kein „fehlerfrei"-Versprechen (execute; verwandt reviews „Befund am konkreten Schritt belegen").
 - **stabile Kennung / revidierbar** — jedem eingearbeiteten Punkt eine über den Lauf stabile Kennung geben, damit gezielt zurückgenommen werden kann.
+- **sichtbare Fortschrittsliste** — der Vorbehalt „falls deine Session eine anbietet, sonst im Text" in `plan-execute` und `session-resume`, wortgleich zu halten. **Bewusst ohne Tool-Namen:** Das Todo-System hieß bis Januar 2026 `TodoWrite` und wurde durch `TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` ersetzt; seit Claude Code 2.1.233 fehlen alle fünf auf den neueren Modellfamilien, sofern man sie nicht ausdrücklich einschaltet, weil diese Modelle mehrstufige Arbeit ohne geschriebene Liste verfolgen. In Background-Sessions und im Web sind sie dagegen auf jedem Modell da. Ein Skill, der Namen nennt, altert mit dem nächsten Wechsel; einer, der zum Einschalten auffordert, griffe in die Umgebung des Nutzers ein. Deshalb nur der Zweck und der Vorbehalt.
 
 Drei Divergenzen sind **absichtlich** — nicht angleichen:
 

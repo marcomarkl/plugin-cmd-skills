@@ -85,21 +85,20 @@ run "project-rules" "/cmd:project-rules" "zieldatei|claude\.md|agents\.md|projek
 # ebenfalls fehlt. Ohne Learnings bleibt der Skill laut Body ausdruecklich ohne Plan.
 run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
 # project-settings: Sonderfall wie session-handoff. Der Skill SCHREIBT normalerweise
-# .claude/settings.json und .gitignore und legt den Ordner plans/ an — hier laeuft er im
-# Repo selbst, also wird bewusst NUR der nebenwirkungsfreie Eroeffnungszug geprueft:
+# .claude/settings.json, bei Altlast auch .gitignore und .claude/skills/ — hier laeuft er
+# im Repo selbst, also wird bewusst NUR der nebenwirkungsfreie Eroeffnungszug geprueft:
 # Bestandsaufnahme und Vorschau vor der Freigabe. Zwei Dinge schuetzen zusaetzlich:
 # "-p" erlaubt ohne "--permission-mode acceptEdits" kein Write, und der Skill holt vor
 # jeder Aenderung eine Freigabe, die es headless nicht gibt.
-# Achtung, ungleicher Schutz: Das Anlegen von plans/ liefe ueber Bash, nicht ueber Write —
-# dort traegt allein die Freigabe. Bleibt nach dem Lauf ein plans/ im Repo zurueck, ist
-# das ein Befund am Skill, kein Testartefakt: dann haelt er die Freigabe nicht ein.
 # Die Permission-WIRKUNG ist headless grundsaetzlich nicht pruefbar: permissions.allow
 # greift erst nach dem Workspace-Trust-Dialog, und der erscheint in "-p" nie.
-# Seit 0.13.0 raeumt der Skill zusaetzlich die Altlast des Kommunikationsprotokolls und
-# ENTFERNT dabei Dateien ("git rm", "rmdir") — ueber Bash, also traegt auch hier allein die
-# Freigabe. Dieses Repo hat keine solche Spur (kein SessionStart-Hook mit der Marke, kein
-# .claude/skills/session-protocol/), der Zweig laeuft hier also ohnehin ins Leere. Faende
-# der Lauf trotzdem etwas zu entfernen, waere das ein Befund am Skill.
+# Seit 0.13.0 raeumt der Skill zusaetzlich Altlasten und ENTFERNT dabei Dateien und Zeilen
+# ("git rm", "rmdir", Edit) — ueber Bash bzw. Edit, also traegt auch hier allein die Freigabe.
+# Vom Kommunikationsprotokoll hat dieses Repo keine Spur (kein SessionStart-Hook mit der
+# Marke, kein .claude/skills/session-protocol/). Die seit 0.18.0 geraeumte plansDirectory-Spur
+# ist hier ebenfalls leer, seit das Repo den Key selbst abgelegt hat; die .gitignore-Zeile
+# plans/ bleibt stehen und wird ohne Key gar nicht erst geprueft. Faende der Lauf trotzdem
+# etwas zu entfernen, waere das ein Befund am Skill.
 run "project-settings" "/cmd:project-settings" "settings\.json|bestandsaufnahme|vorschau|kanon|freigabe"
 # project-structure: Eroeffnungszug ist die Inventur — was das Projekt an Ablageorten schon
 # hat. Der Skill VERSCHIEBT und BENENNT normalerweise Dateien um und legt Ordner an; dieser

@@ -3,8 +3,6 @@ name: plan-grill
 description: Interviewt dich gnadenlos zu einem Vorhaben, Plan oder einer Entscheidung, löst die Entscheidungen einzeln in Abhängigkeits- und Tragweitenreihenfolge auf, schlägt Fakten selbst nach und protokolliert die Entscheidungen revidierbar. Legt sie nach deiner Bestätigung als Plan an, samt Entscheidungs-Ledger und den im Interview erhobenen Belegen, und schreibt während des Interviews nichts. Läuft, bis die Entscheidungen erschöpft sind. Gedacht als erster Schritt, wenn das Vorhaben noch unscharf ist.
 argument-hint: "[Vorhaben, Plan oder Entscheidung]"
 disable-model-invocation: true
-model: opus
-effort: high
 ---
 
 Rolle und Sperre. Du interviewst mich, du setzt nichts um. Solange das Interview läuft, schreibst und änderst du keine Datei — kein Write, kein Edit, keine Datei über die Shell; auch dann nicht, wenn ich dich im Verlauf des Interviews darum bitte. Verweise mich in dem Fall auf die Übergabe am Ende. Erst nachdem ich die Schlussnotiz bestätigt habe, legst du die Plandatei an: genau diese eine Datei, keine andere, und weiterhin keine Umsetzung. Beginne mit keiner Umsetzung, bevor ich bestätigt habe, dass wir ein gemeinsames Verständnis erreicht haben. Die Fakten sind deine Bringschuld, die Entscheidungen gehören mir.

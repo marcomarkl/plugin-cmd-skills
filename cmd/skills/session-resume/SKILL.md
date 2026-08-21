@@ -3,8 +3,6 @@ name: session-resume
 description: Nimmt im frischen Fenster die Übergabedatei einer früheren Session auf, prüft ihren Stand gegen den beobachteten Projektzustand, greift den Abschnitt „Unsicher" einzeln auf und legt den nächsten Schritt als Arbeitsliste vor. Räumt die Datei danach weg, aber nur nach ausdrücklicher Bestätigung. Arbeitet die Punkte nicht selbst ab. Gedacht als Gegenstück zu session-handoff.
 argument-hint: "[optional: Pfad zur Übergabedatei]"
 disable-model-invocation: true
-model: opus
-effort: high
 ---
 
 Rolle und Grenze. Du nimmst eine Übergabe auf, prüfst sie gegen die Wirklichkeit, legst den nächsten Schritt vor und hörst dort auf. Den ersten offenen Punkt arbeitest du **nicht** ab, auch nicht auf Bitte: Was in der Datei steht, ist die Behauptung einer vergangenen Session, und der Nutzer entscheidet, was davon noch gilt.
@@ -33,7 +31,7 @@ Benenne jede Abweichung zwischen Datei und Wirklichkeit, statt sie zu glätten. 
 
 ## Schritt 3: übergeben und nach dem Aufräumen fragen
 
-Forme die offenen Punkte in der Reihenfolge der Datei zu einer Arbeitsliste und formuliere den **ersten Schritt konkret** aus. **Sind sie alle längst erledigt** — der Fall entsteht im Zeitfenster zwischen Schreiben und Aufnehmen und ist nicht dasselbe wie „veraltet" —, sag das, belege es an dem, was du gefunden hast, und geh direkt zur Löschfrage, statt eine leere Liste zu formen oder dir einen nächsten Schritt auszudenken. Halte die Liste zusätzlich in einer sichtbaren Fortschrittsliste fest, falls verfügbar (etwa TodoWrite/Task) — sonst rettest du einen Stand über den Kontextbruch und legst ihn gleich wieder in flüchtigen Text. Eintragen ist dabei kein Abarbeiten.
+Forme die offenen Punkte in der Reihenfolge der Datei zu einer Arbeitsliste und formuliere den **ersten Schritt konkret** aus. **Sind sie alle längst erledigt** — der Fall entsteht im Zeitfenster zwischen Schreiben und Aufnehmen und ist nicht dasselbe wie „veraltet" —, sag das, belege es an dem, was du gefunden hast, und geh direkt zur Löschfrage, statt eine leere Liste zu formen oder dir einen nächsten Schritt auszudenken. Halte die Liste zusätzlich in einer sichtbaren Fortschrittsliste fest, falls deine Session eine anbietet, sonst im Text — schalte keine ein, die sie nicht hat; sonst rettest du einen Stand über den Kontextbruch und legst ihn gleich wieder in flüchtigen Text. Eintragen ist dabei kein Abarbeiten.
 
 Frag im selben Zug, ob die Übergabedatei entfernt werden soll, und nenne den Rückweg **genau**, nicht ungefähr:
 

@@ -3,8 +3,6 @@ name: session-handoff
 description: Verdichtet den laufenden Arbeitsstand in eine kurze Übergabedatei, damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeiten kann. Belegt den Stand am beobachteten Projektzustand statt am Gedächtnis, nennt uncommittete, ungetestete und nebenläufige Stände ausdrücklich und hält in einem eigenen Abschnitt fest, was aus dem gekürzten Kontext nicht mehr rekonstruierbar war. Schreibt ausschließlich die Übergabedatei und arbeitet danach nicht weiter. Gedacht, wenn das Kontextfenster knapp wird.
 argument-hint: "[optionaler Fokus]"
 disable-model-invocation: true
-model: opus
-effort: high
 ---
 
 Rolle und Grenze. Du verdichtest den laufenden Arbeitsstand in eine Übergabedatei und hörst dort auf. Du schreibst auf, was als Nächstes zu tun ist — tu es nicht selbst, auch dann nicht, wenn der Nutzer dich darum bittet; verweise ihn auf die Schlussnotiz. Diese Versuchung ist hier besonders groß, weil der nächste Schritt am Ende fertig ausformuliert dasteht und es hilfreich wirkt, ihn gleich zu erledigen. Es ist das Gegenteil von hilfreich: Du wurdest gerufen, weil der Kontext knapp ist, und Weiterarbeiten verbraucht genau den Rest, den die Übergabe retten soll. Die Übergabe endet bei der Datei.

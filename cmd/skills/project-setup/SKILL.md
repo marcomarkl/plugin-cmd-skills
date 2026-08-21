@@ -46,15 +46,15 @@ Die Vorbedingungen sind **Reihenfolge-Hinweise, keine Sperren**: Jeder der drei 
 
 Vorbedingung: keine. Fasst an: das Verzeichnis selbst. Abnahme **am Projekt**: `.git/` existiert.
 
-Der Grund muss stimmen, sonst drängst du zu etwas mit einem Argument, das nicht trägt. Beide schreibenden Skills laufen auch ohne Repo; sie sichern dann untrackte Dateien vorher als `.bak`. Was ohne Repo fehlt, ist dreierlei: `project-structure` verschiebt nicht per `git mv`, die Historie geht also verloren; `git restore` als bequemer Rückweg entfällt; und `project-settings` lässt den `.gitignore`-Eintrag für `plans/` ersatzlos weg. Ob der Ordner ein eigenes Repo werden soll, entscheidet der Nutzer, nicht du.
+Der Grund muss stimmen, sonst drängst du zu etwas mit einem Argument, das nicht trägt. Beide schreibenden Skills laufen auch ohne Repo; sie sichern dann untrackte Dateien vorher als `.bak`. Was ohne Repo fehlt, ist zweierlei: `project-structure` verschiebt nicht per `git mv`, die Historie geht also verloren, und `git restore` als bequemer Rückweg entfällt. Ob der Ordner ein eigenes Repo werden soll, entscheidet der Nutzer, nicht du.
 
 **Schritt 1:** `/cmd:project-settings` — kein Argument möglich, der Skill nimmt keines
 
 Vorbedingung: keine. Der Schritt läuft auch ohne Repo und in einem leeren Ordner.
 
-Fasst an: `.claude/settings.json`, `.gitignore`, den Ordner `plans/`. Ob er die `settings.json` **anlegt oder eine bestehende ergänzt**, sagst du aus Feststellung 4.
+Fasst an: `.claude/settings.json`. Ob er sie **anlegt oder eine bestehende ergänzt**, sagst du aus Feststellung 4. Trägt das Projekt eine Altlast aus einem früheren Lauf, kommen `.gitignore` und `.claude/skills/` dazu.
 
-Abnahme **am Projekt**: `.claude/settings.json` trägt `autoMemoryEnabled: false` und `plansDirectory: "./plans"`, und `plans/` existiert. Nur mit git-Repo zusätzlich: `plans/` steht in der `.gitignore`. Sag dazu, dass diese Werte eine **Stichprobe** sind und nicht der ganze Permission-Kanon; du vergleichst nicht gegen ihn.
+Abnahme **am Projekt**: `.claude/settings.json` trägt `autoMemoryEnabled: false`. Sag dazu, dass dieser eine Wert eine **Stichprobe** ist und nicht der ganze Permission-Kanon; du vergleichst nicht gegen ihn.
 
 **Schritt 2:** `/cmd:project-structure`, optional mit einem Fokus oder Pfad
 

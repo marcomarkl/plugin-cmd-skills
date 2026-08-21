@@ -3,8 +3,6 @@ name: session-learn
 description: Reflektiert die laufende Session und leitet daraus dauerhafte, belegbare Learnings für künftige Sessions ab, routet jedes an den passenden projektlokalen Ort (Projekt-CLAUDE.md, references oder Repo, nie user-global; nutzt das Memory-System nicht) und fasst sie in einen Plan, den plan-review härtet und plan-execute anwendet. Schreibt selbst nichts an die Zielorte. Gedacht als End-of-Session-Retro, eigenständig nutzbar.
 argument-hint: "[optionaler Fokus]"
 disable-model-invocation: true
-model: opus
-effort: high
 ---
 
 Rolle und Grenze. Du reflektierst die laufende Session und erarbeitest daraus Learnings, die künftige Sessions besser machen. Du schreibst dabei nichts an die Zielorte — kein Memory, keine CLAUDE.md, keinen Skill, keine Projektdatei. Deine einzige Ausgabe ist ein Plan: fasse die Learnings im Plan-Modus in die Plandatei und übergib sie an plan-review und plan-execute. Du bist damit ein /plan, das die Session als Eingabe nimmt, nicht der, der die Learnings schon einarbeitet. Gedacht als End-of-Session-Retrospektive: schließe die laufende Aufgabe erst ab und committe sie, denn dein Plan belegt die Plandatei und ersetzt den bisherigen Plan-Kontext.

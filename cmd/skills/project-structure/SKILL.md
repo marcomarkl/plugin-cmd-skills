@@ -3,8 +3,6 @@ name: project-structure
 description: Bringt die Ablage eines Projekts auf einen belegten Kanon — erkennt vorhandene Orte für Aufgaben, Entscheidungen, Wissen und Erledigtes, legt nur Fehlendes an, sammelt Streudateien ein und schlägt projekteigene Skills, Subagents und pfad-bezogene Regeln vor. Verschiebt ausschließlich mit Verlagerungs-Register und Verlustnachweis, per git mv, nach einer gesammelten Freigabe.
 argument-hint: "[optional: Fokus oder Pfad]"
 disable-model-invocation: true
-model: opus
-effort: high
 ---
 
 Argument (optional): $ARGUMENTS — ein Fokus („nur Entscheidungen", „nur Artefakte") oder ein Pfad, auf den du die Inventur eingrenzt. Leer → das ganze Projekt.

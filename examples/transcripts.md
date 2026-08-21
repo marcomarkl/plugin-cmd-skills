@@ -52,15 +52,13 @@ Der Plan selbst wurde in den Runden direkt geändert. Rücknahme per Kennung: �
 0. git init                       (nur ohne Repo)
    Vorbedingung: keine · Fasst an: das Verzeichnis selbst
    Abnahme (am Projekt): .git/ existiert
-   Grund: ohne Repo kein `git mv` (Historie), kein `git restore` als Rückweg,
-          und der .gitignore-Eintrag für plans/ entfällt in Schritt 1
+   Grund: ohne Repo kein `git mv` (Historie) und kein `git restore` als Rückweg
 
 1. /cmd:project-settings          (kein Argument möglich)
    Vorbedingung: keine — läuft auch ohne Repo und im leeren Ordner
-   Fasst an: .claude/settings.json (legt an oder ergänzt, aus Feststellung 4),
-          .gitignore, plans/
-   Abnahme (am Projekt): autoMemoryEnabled: false, plansDirectory: "./plans",
-          plans/ existiert; mit Repo zusätzlich plans/ in der .gitignore
+   Fasst an: .claude/settings.json (legt an oder ergänzt, aus Feststellung 4);
+          bei Altlast zusätzlich .gitignore und .claude/skills/
+   Abnahme (am Projekt): autoMemoryEnabled: false
           — Stichprobe, kein Vollnachweis des Permission-Kanons
 
 2. /cmd:project-structure         (optional: Fokus oder Pfad)
@@ -145,9 +143,7 @@ Geht die Bilanz nicht auf, meldet der Skill den Lauf als fehlerhaft, statt die D
 
 **Eröffnungszug:** Bestandsaufnahme statt Schreiben — welche der Zieldateien existieren, welche von git getrackt werden, was im Auto-Memory dieses Projekts liegt. Danach die gesammelte Vorschau aller Änderungen zur Freigabe. Nicht parsebares JSON in einer Zieldatei bricht hier ab, ohne etwas zu überschreiben.
 
-**In der Vorschau steht auch das Anlegen von `plans/`**, sofern der Ordner fehlt — mit `rmdir plans` als Rückweg. Existiert er schon, taucht er dort gar nicht auf; liegt unter `plans` eine Datei statt eines Verzeichnisses, steht dort stattdessen der Konflikt, und der Ordner wird nicht angelegt.
-
-**In Projekten, die vor 0.10.0 eingerichtet wurden, steht in der Vorschau zusätzlich die Räumung** des Kommunikationsprotokolls — der `SessionStart`-Hook mit der Marke `# cmd:project-settings:session-protocol` und `.claude/skills/session-protocol/SKILL.md`, erst der Hook, dann die Datei. Dabei der Hinweis, dass der Skill nicht prüfen kann, ob die Datei noch dem ausgelieferten Stand entspricht. Findet er keine Spur, kommt der Punkt in Vorschau und Bericht nicht vor.
+**In Projekten, die früher eingerichtet wurden, steht in der Vorschau zusätzlich die Räumung.** Vor 0.10.0 das Kommunikationsprotokoll — der `SessionStart`-Hook mit der Marke `# cmd:project-settings:session-protocol` und `.claude/skills/session-protocol/SKILL.md`, erst der Hook, dann die Datei, dabei der Hinweis, dass der Skill nicht prüfen kann, ob die Datei noch dem ausgelieferten Stand entspricht. Bis 0.17.0 das projektlokale Planverzeichnis — der Key `plansDirectory` bei exakt `"./plans"`, danach die `.gitignore`-Zeile, aber nur mit gefundenem Key und nur bei leerem `plans/`; der Ordner selbst bleibt unangetastet, mit dem Hinweis, wo neue Pläne künftig entstehen. Findet er keine Spur, kommt der Punkt in Vorschau und Bericht nicht vor.
 
 **Zwischenschritte, die eine Rückfrage erzeugen:** übernehmbare Kandidaten aus `.claude/settings.local.json`; jede Wildcard-Zusammenfassung, die mehr freigäbe als die Summe der Einzeleinträge (mit benanntem Zugewinn); jeder Auto-Memory-Eintrag mit Zielvorschlag.
 

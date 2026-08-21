@@ -1,6 +1,5 @@
 {
   "autoMemoryEnabled": false,
-  "plansDirectory": "./plans",
   "permissions": {
     "allow": [
       "WebSearch",

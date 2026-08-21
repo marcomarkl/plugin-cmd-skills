@@ -20,7 +20,6 @@ Stand der Belege: an der Herstellerdoku nachgeprüft am 16. August 2026 (`code.c
 ```jsonc
 {
   "autoMemoryEnabled": false,
-  "plansDirectory": "./plans",
   "permissions": {
     "allow": [
       "WebSearch",
