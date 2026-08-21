@@ -2,6 +2,11 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.19.0
+
+- **Die maßgebliche Regeldatei zählt jetzt zu den Artefakten, die der Agent nach Freigabe ändern darf.** `sicherheitsdisziplin.md` sagte „ändere deine eigenen Instruktionen nicht" und nahm davon nur Skills, Subagents und pfad-bezogene Regeln aus — die `CLAUDE.md`/`AGENTS.md` selbst fiel unter das Verbot. In einer Zieldatei gelandet, hinderte der Satz den dortigen Agenten daran, seine eigene Regeldatei auch nur auf Aufforderung zu korrigieren, während `project-rules` genau das tut. Sie steht jetzt in derselben Ausnahme, mit derselben Begründung: versioniert, im Diff sichtbar, per `git restore` rückholbar. Die Freigabepflicht bleibt, und Systeminstruktionen, Freigaben, Berechtigungen und Hook-Konfiguration bleiben unverändert tabu.
+- `projekt-artefakte.md` (Parallelstelle) und `DESIGN.md` nachgezogen. Minor statt Patch, weil sich ändert, was in fremden `CLAUDE.md`-Dateien landet.
+
 ## 0.18.0
 
 - **Kein Skill setzt mehr `model` oder `effort`.** Die beiden Frontmatter-Keys sind aus allen neun Skills entfernt, die sie trugen (`project-setup` hatte nie welche); alle zehn laufen jetzt mit Modell und Denktiefe der Sitzung. Belegt an der Frontmatter-Referenz: `effort` erbt ohne Angabe die Session-Einstellung, ein `model` überschriebe ohnehin nur den laufenden Turn. Verstellt wird beides dort, wo es hingehört — `--effort` für eine Sitzung, `effortLevel` in den Nutzer-Settings —, nicht im Plugin. Die beiden Beobachtungskriterien, an denen bisher „nachschärfen" bzw. „senken" hing, stehen weiter in `DESIGN.md`, jetzt an die Sitzung adressiert.

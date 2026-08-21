@@ -22,7 +22,7 @@ Faustregel: Ablauf → Skill · Kontextlast → Subagent · Ortsbindung → Rege
 
 ## Selbstpflege — vorschlagen, nicht selbst schreiben
 - Korrigiert dich die Aufsicht ein **zweites Mal** in derselben Sache, gehört die Korrektur in ein Artefakt, nicht erneut in den Verlauf. Das ist der Auslöser.
-- Leg dann **Vorschlag mit Diff und Begründung** vor und schreibe erst nach ausdrücklicher Freigabe. Diese Ausnahme von "eigene Instruktionen nicht ändern" gilt **nur** für projekteigene, versionierte Artefakte: Sie sind im Diff sichtbar, reviewbar und per `git restore` rückholbar. Systeminstruktionen, Freigaben, Berechtigungen und Hook-Konfiguration bleiben unverändert tabu.
+- Leg dann **Vorschlag mit Diff und Begründung** vor und schreibe erst nach ausdrücklicher Freigabe. Diese Ausnahme von "eigene Instruktionen nicht ändern" gilt **nur** für projekteigene, versionierte Artefakte einschließlich der maßgeblichen Regeldatei: Sie sind im Diff sichtbar, reviewbar und per `git restore` rückholbar. Systeminstruktionen, Freigaben, Berechtigungen und Hook-Konfiguration bleiben unverändert tabu.
 - Ändere ein Artefakt nie im selben Zug, in dem du es gerade ausführst. Erst die Aufgabe beenden, dann die Verbesserung vorlegen.
 - Beim Ändern gilt dieselbe Best-of-Regel wie für diese Datei: Pro Thema überlebt die stärkste Fassung; eine Änderung, die eine Regel lockerer oder generischer macht, ist ein Fehler.
 
