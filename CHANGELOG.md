@@ -2,6 +2,14 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.19.2
+
+- **Revidiert die Deutung aus 0.19.1.** Dort stand die Größe der Skilltexte als das Problem, samt einer Umbauliste, die drei Skills unter die 5.000-Token-Marke drücken sollte. Eine zweite Messung, diesmal am Session-Transcript statt an den Skilldateien, kehrt das um: Über eine Sitzung mit `plan-grill`, `plan-review` und `plan-execute` hinweg stammten **48 Prozent** der Belastung aus Tool-Ergebnissen, **35 Prozent** aus den Tool-Aufrufen selbst und **5 Prozent** aus allen drei Skilltexten zusammen. Ein `plan-grill`-Lauf kostete rund 76.700 Tokens bei 2.508 Tokens Skilltext.
+- **Der `DESIGN.md`-Abschnitt ist danach umgehängt**, ohne eine seiner Messungen zu verwerfen: Die Herkunft der Last steht jetzt vor der Größentabelle, die Strategien sind nach Wirkung sortiert statt nach Entstehung, und aus zwei Maßstäben sind drei geworden. Die alte Umbauliste bleibt als eigener Abschnitt stehen, aber unter richtigem Titel: Sie löst ein **Funktionsrisiko** an der Re-Attach-Grenze, nämlich dass `project-rules` nach einer Verdichtung halbiert weiterläuft, und nicht das Kontextproblem.
+- **Zwei Urteile haben sich geändert.** Mitgelieferte Subagenten unter `agents/` waren wegen ihrer 204 Tokens Grundlast verworfen; gegen zehntausende Tokens, die dadurch aus dem Hauptfenster bleiben, ist das ein guter Tausch, also jetzt **bedingt**. Und **Delegation an einen Subagenten** ist als eigene Strategie aufgenommen, weil sie als einzige an den 83 Prozent ansetzt. Unverändert bleibt, dass `context: fork` nur für `project-setup` taugt: Kein Subagent hat `AskUserQuestion`, im Vordergrund so wenig wie im Hintergrund, und neun der zehn Skills fragen den Nutzer.
+- **`cmd/README.md` nennt jetzt die gemessene Last je Aufruf** statt nur die Summe der Skilltexte, die den Aufwand um ein Vielfaches untertrieb. Der Rat bleibt derselbe: ein Skill je Session.
+- Kein Skill ist angefasst, das Verhalten der Suite ändert sich nicht. Der Gewinn der Delegation ist gerechnet und nicht belegt; ein Pilot an `plan-grill` steht aus und braucht einen eigenen Plan. Entfallende Kettenglieder nach §9: `cmd/skills/**`, Root-`README.md`, `examples/transcripts.md` und `scripts/smoke.sh` (keine geänderte Ausgabeform, kein geänderter Eröffnungszug) sowie beide Manifest-`description`s (kein Skill kommt hinzu oder fällt weg).
+
 ## 0.19.1
 
 - **`cmd/README.md` rät jetzt davon ab, die `project-*`-Kette in einer Session zu fahren**, mit der gemessenen Zahl dahinter: Die vier Bodies summieren sich auf rund 33.000 Tokens, mit ihren nachgeladenen Katalogen auf bis zu 59.000, und ein aufgerufener Skill bleibt bis Sessionende im Fenster. Ein Schritt je Session kostet nur den, den man gerade braucht.

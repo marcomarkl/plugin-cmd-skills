@@ -199,9 +199,12 @@ Ein `references/` wird bedarfsgeladen: `permission-kanon.md` (die zu setzenden W
 
 Bis 0.2.0 stand bei `plan-review` eine Liste lesender Tools mit der Begründung „kein Schreibzugriff". Die war falsch: `allowed-tools` sperrt nichts, es genehmigt nur vorab und unterdrückt damit Permission-Prompts. Die Liste hat den Skill also nie am Schreiben gehindert. Ersatzlos gestrichen, statt einen Schutz vorzutäuschen; dass `plan-review` nichts umsetzt, trägt allein der erste Satz des Bodys. Spürbare Folge: bei `Read`/`Grep`/`git log` kann wieder ein Permission-Prompt kommen — willst du die weg, ist `allowed-tools` das richtige Mittel, aber als Bequemlichkeit deklariert, nicht als Schranke.
 
-## Kontextlast der Skills — was wann lädt, und was dagegen hilft
+## Kontextlast der Skills — woher sie kommt und was hilft
 
-Alle Zahlen dieses Abschnitts stammen aus einer Messung vom 21. August 2026 gegen Claude Code 2.1.238 und Plugin-Stand 0.19.0. Gemessen wurde headless: `claude --plugin-dir ./cmd --tools "" -p "/cmd:<skill>" --output-format stream-json --max-turns 1`, als Summe aus `input_tokens`, `cache_creation_input_tokens` und `cache_read_input_tokens` des `result`-Events, abzüglich eines Baseline-Laufs mit `-p "hi"`. Zwei unabhängige Läufe für `project-rules` stimmten auf ein Token überein.
+Zwei Messungen tragen diesen Abschnitt, beide vom 21. bis 23. August 2026 gegen Claude Code 2.1.238 und Plugin-Stand 0.19.x.
+
+- **Die Größe je Skill** wurde headless gemessen: `claude --plugin-dir ./cmd --tools "" -p "/cmd:<skill>" --output-format stream-json --max-turns 1`, als Summe aus `input_tokens`, `cache_creation_input_tokens` und `cache_read_input_tokens` des `result`-Events, abzüglich eines Baseline-Laufs mit `-p "hi"`. Zwei unabhängige Läufe für `project-rules` stimmten auf ein Token überein.
+- **Die Herkunft der Last** wurde am Session-Transcript unter `~/.claude/projects/` ausgewertet, aufgeteilt nach `tool_use`-Eingaben, `tool_result`-Inhalten, Assistant-Text und Skill-Body. Der konkrete Dateiname enthält eine Session-Kennung und steht deshalb nicht hier.
 
 ### Was wann lädt
 
@@ -210,9 +213,30 @@ Alle Zahlen dieses Abschnitts stammen aus einer Messung vom 21. August 2026 gege
 - **Beim zweiten Aufruf: nur ein Hinweis**, solange der gerenderte Inhalt identisch ist. Unterscheidet er sich, weil Argumente oder eine `!`-Injektion ihn verändert haben, hängt Claude Code den vollen Inhalt erneut an.
 - **Nach einer Verdichtung: je Skill die ersten 5.000 Tokens**, gemeinsames Budget 25.000, gefüllt vom zuletzt aufgerufenen Skill her. `references/` fallen nicht darunter: Das Budget bindet an „the most recent invocation of each skill", und eine nachgeladene Datei ist ein Tool-Ergebnis, keine Invocation. Hergeleitet, nicht wörtlich belegt.
 
-### Gemessene Last je Skill
+### Woher die Last kommt
 
-`references/` sind geschätzt mit dem an den Messwerten kalibrierten Faktor **2,04 Zeichen pro Token** (über alle zehn Skills zwischen 1,98 und 2,10). Der zuvor angesetzte Faktor 3,2 unterschätzte den Verbrauch um rund ein Drittel.
+Der Skilltext ist nicht das Problem. Gemessen an einer Session, in der `plan-grill`, `plan-review` und `plan-execute` nacheinander liefen, mit 96 Tool-Aufrufen und ohne Verdichtung dazwischen:
+
+| Was den Kontext belegt | ~Tokens | Anteil |
+|---|---:|---:|
+| Tool-Ergebnisse | 86.000 | 48 % |
+| Tool-Aufrufe | 63.200 | 35 % |
+| Antworttext | 19.200 | 11 % |
+| Skill-Bodies aller drei Aufrufe | 9.800 | 5 % |
+
+Je Aufruf, mit dem Skilltext daneben: `plan-grill` rund **76.700** Tokens bei 2.508 Skilltext, `plan-review` rund **29.600** bei 2.351, `plan-execute` rund **62.100** bei 2.131. Diese zweite Aufstellung führt andere Kategorien als die erste, weil Skilltext und Nutzertext keiner Phase zugerechnet sind; ihre Summe liegt deshalb um genau diese beiden Posten unter der Gesamtsumme.
+
+Drei Vorbehalte, und der erste wiegt am schwersten:
+
+- **Die Messung ist selbstbezüglich.** Ein erheblicher Teil des Tool-Verkehrs stammt aus den Messläufen selbst. Die Zahlen taugen als Größenordnung, nicht als Präzisionsmessung.
+- Sie sind kumulierte Zeichen im Verlauf. Als Anteilsrechnung trägt das, solange keine Verdichtung lief, und es lief keine.
+- Die Anteile summieren sich auf 99 Prozent; der Rest ist Nutzertext.
+
+Zwei Folgerungen, die den Rest dieses Abschnitts ordnen. Erstens wirkt jede Strategie, die den Skilltext verkleinert, auf 5 Prozent. Zweitens kosten die Tool-**Aufrufe** mit 35 Prozent fast so viel wie ihre Ergebnisse, im Schnitt rund 1.300 Zeichen je Aufruf, und ein Teil der Ergebnisse wurde zu grob geholt. Das ist Lesedisziplin, und `references/kontextdisziplin.md` schreibt sie fremden Projekten bereits vor, während die `cmd`-Skills selbst sie nicht befolgen.
+
+### Gemessene Größe je Skill
+
+Diese Tabelle misst die **statische** Last, also jene 5 Prozent. `references/` sind geschätzt mit dem an den Messwerten kalibrierten Faktor **2,04 Zeichen pro Token** (über alle zehn Skills zwischen 1,98 und 2,10). Der zuvor angesetzte Faktor 3,2 unterschätzte den Verbrauch um rund ein Drittel.
 
 | Skill | Body (gemessen) | `references/` (geschätzt) | Verlauf nötig | breite Exploration | `references`-Nachlad | mehrere Turns |
 |---|---:|---:|---|---|---|---|
@@ -227,25 +251,30 @@ Alle Zahlen dieses Abschnitts stammen aus einer Messung vom 21. August 2026 gege
 | `plan-review` | 2.351 | — | nein | nein | keiner | ja |
 | `plan-execute` | 2.131 | 515 | nein | nein | 1 Datei, nur bei Blockade | ja |
 
-### Zwei Maßstäbe, und was sie wirklich messen
+### Drei Maßstäbe, und was sie wirklich messen
+
+**Die tatsächliche Belastung je Aufruf** ist der Maßstab, der zählt, wenn es um das Fenster des Zielprojekts geht: rund 76.700 Tokens für einen `plan-grill`-Lauf, davon 3 Prozent Skilltext.
 
 **5.000 Tokens je Skill ist kein Kostenargument, sondern ein Funktionsrisiko.** Wer darüber liegt, verliert nach einer Verdichtung den Rest seiner eigenen Anweisung und läuft gekürzt weiter, ohne dass es auffällt. Betroffen sind drei Skills: `project-rules` verlöre 9.656 Tokens, `project-structure` 3.452, `project-settings` 124.
 
-**Die Kettenlast ist die laufende Belegung, nicht das Re-Attach-Budget.** Die von `project-setup` vorgegebene Kette belegt mit ihren vier Bodies **32.960 Tokens**, mit allen `references/` bis zu 59.276. Das 25.000er-Budget wird dabei nie bindend, weil die 5.000er-Kappung vorher greift und vier Skills damit höchstens 20.000 erreichen; bindend würde es erst ab sechs aufgerufenen Skills.
+**Die statische Kettenlast ist die laufende Belegung, nicht das Re-Attach-Budget.** Die von `project-setup` vorgegebene Kette belegt mit ihren vier Bodies **32.960 Tokens**, mit allen `references/` bis zu 59.276. Das ist die Untergrenze: Was die vier Skills an Arbeit auslösen, kommt nach der Messung oben um ein Vielfaches obendrauf. Das 25.000er-Budget wird dabei nie bindend, weil die 5.000er-Kappung vorher greift und vier Skills damit höchstens 20.000 erreichen; bindend würde es erst ab sechs aufgerufenen Skills.
 
 ### Urteil je Strategie
 
+Sortiert nach Wirkung: Die ersten drei wirken auf die 83 Prozent Tool-Verkehr, die übrigen auf die 5 Prozent Skilltext oder gar nicht.
+
 | Strategie | Urteil | Begründung |
 |---|---|---|
-| Body verdichten | übernehmen | Wirkt auf die statische Last, die als einzige dauerhaft anfällt. Maßstab ist nicht die Zeichenzahl, sondern die Zahl eigenständiger Anweisungen: Zusammenführen schlägt Kürzen. |
+| Ausgabestarke Teilarbeit an einen Subagenten delegieren | übernehmen, wo abgrenzbar | Der einzige Hebel, der an den 83 Prozent ansetzt. Der Subagent verbraucht sein eigenes Fenster und gibt ein verdichtetes Ergebnis zurück. Preis: Was er zusammenfasst, steht nicht mehr wörtlich zur Verfügung, und ein einmaliger Lauf am Anfang deckt nicht ab, was unterwegs an Fragen aufkommt. Voraussetzung ist eine abgrenzbare Teilarbeit mit verdichtbarem Ergebnis. |
+| Body-Anweisungen zur Kontextdisziplin | übernehmen | Kostet wenige Zeilen und wirkt auf gefilterte Ausgaben, enge Pfade und kurze Kommandos. Ohne Tool-Namen formulieren, siehe „Konventionen". Vorbehalt: Instruktion ist keine Durchsetzung, die Wirkung ist unbelegt. |
+| Aufrufdisziplin über Sessiongrenzen | übernehmen | Wirkt sofort und ohne Codeänderung. Ein `project-`Schritt je Session statt der ganzen Kette, deren vier Aufrufe nach der Messung oben ein Vielfaches der 32.960 Tokens Skilltext kosten. |
+| Mitgelieferte Subagenten unter `cmd/agents/` | bedingt | Gemessen: Ein Testplugin mit einem einzigen Agenten kostet **204 Tokens in jeder Session**, aufgerufen oder nicht; die Doku bestätigt den Mechanismus, die `description` ist Routing-Information für die Hauptkonversation. Der Wert stammt von einer bewusst langen Description von 431 Zeichen und ist ein Beispiel, kein Richtwert. Gegen zehntausende Tokens, die dadurch aus dem Hauptfenster bleiben, ist das ein guter Tausch. Der Zweck ist nicht der Agent selbst, sondern dass sein Systemprompt die Rückgabeform festschreibt und so den Informationsverlust der Delegation begrenzt. |
+| `context: fork` plus `agent:` | bedingt, nur für `project-setup` | Neun Skills fragen den Nutzer, und **kein** Subagent hat `AskUserQuestion`, im Vordergrund so wenig wie im Hintergrund. Dazu hat ein Fork „no access to your conversation history". `project-setup` erhebt vier Fakten und gibt eine Liste aus; seine 4.728 Tokens verschwänden aus dem Hauptkontext. Beide Bedingungen sind erfüllt: `Bash` ist im Toolsatz backgroundeter Subagenten enthalten, und `agent: Explore` überspränge zusätzlich `CLAUDE.md` und git-Status. |
+| Begründungstext aus dem Auslieferungspfad entfernen | übernehmen, größter Hebel am Skilltext | Die Bodies erklären vielerorts, warum eine Regel gilt. Die Doku dazu: „State what to do rather than narrating how or why." Entwurfsbegründungen gehören hierher, Nutzungsbegründungen in `cmd/README.md`. Die Grenze verläuft am Vorbehalt und an der entscheidenden Ausnahme: Was das Verhalten steuert, bleibt stehen. |
+| Body verdichten | übernehmen | Maßstab ist nicht die Zeichenzahl, sondern die Zahl eigenständiger Anweisungen: Zusammenführen schlägt Kürzen. |
 | Body-Teile nach `references/` auslagern | übernehmen, mit Grenze | Senkt die laufende Last, weil Nachgeladenes nicht ins Re-Attach-Budget zählt. Genau deshalb ist es für **durchgehend geltende** Anweisungen die schlechtere Wahl: Nach einer Verdichtung kommt der Body zurück, die ausgelagerte Datei nicht. Auslagern, was situativ ist; im Body lassen, was immer gilt. |
-| `context: fork` plus `agent:` | bedingt, nur für `project-setup` | Neun Skills brauchen Dialog oder Gesprächsverlauf, und ein Fork hat „no access to your conversation history". `project-setup` erhebt vier Fakten und gibt eine Liste aus; seine 4.728 Tokens verschwänden aus dem Hauptkontext. Beide Bedingungen sind erfüllt: `Bash` ist im Toolsatz backgroundeter Subagenten enthalten, und `agent: Explore` überspränge zusätzlich `CLAUDE.md` und git-Status. |
-| Mitgelieferte Subagenten unter `cmd/agents/` | **verwerfen** | Gemessen: Ein Testplugin mit einem einzigen Agenten kostet **204 Tokens in jeder Session**, in der es installiert ist, aufgerufen oder nicht. Zehn Skills kosten null. Die Doku bestätigt den Mechanismus: Die `description` ist Routing-Information für die Hauptkonversation. Eine dauerhafte Grundlast einzuführen, um eine gelegentliche Spitze zu senken, kehrt das Ziel um. |
-| Body-Anweisungen zur Kontextdisziplin | übernehmen | Kostet wenige Zeilen und senkt, was der Lauf hereinzieht. Ohne Tool-Namen formulieren, siehe „Konventionen". |
-| `disallowed-tools` | verwerfen | Die Einschränkung verfällt mit der nächsten Nachricht und trägt in keinem mehrschrittigen Skill. Bleibt allein für `project-setup` denkbar und lohnt dort nicht. |
 | Dynamic context injection | verwerfen | Gegenläufig und unterm Strich teurer: Die injizierte Ausgabe landet ungefiltert im Body und bleibt dort, und der veränderte Inhalt hebt die Ersparnis des zweiten Aufrufs auf, bei dem ein statischer Skill nur einen Hinweis kostet. |
-| Aufrufdisziplin über Sessiongrenzen | übernehmen | Der einzige Hebel, der sofort und ohne Codeänderung gegen die 32.960 Tokens der Kette wirkt. |
-| Begründungstext aus dem Auslieferungspfad entfernen | übernehmen, größter Hebel | Die Bodies erklären vielerorts, warum eine Regel gilt. Die Doku dazu: „State what to do rather than narrating how or why." Entwurfsbegründungen gehören hierher, Nutzungsbegründungen in `cmd/README.md`. Die Grenze verläuft am Vorbehalt und an der entscheidenden Ausnahme: Was das Verhalten steuert, bleibt stehen. |
+| `disallowed-tools` | verwerfen | Die Einschränkung verfällt mit der nächsten Nachricht und trägt in keinem mehrschrittigen Skill. Bleibt allein für `project-setup` denkbar und lohnt dort nicht. |
 
 ### Drei Zweige, die durch Fakten geschlossen sind
 
@@ -253,27 +282,27 @@ Alle Zahlen dieses Abschnitts stammen aus einer Messung vom 21. August 2026 gege
 - `model` und `effort` sind keine Kontexthebel.
 - `allowed-tools` sperrt nichts und ist damit auch keiner.
 
-### Umbauliste, nach Einsparung
+### Kandidaten, nicht beschlossen
 
-| # | Skill | Strategien | Ist | Ziel | Risiko | Folgeänderungen |
-|---|---|---|---:|---:|---|---|
-| 1 | `project-rules` | verdichten, Begründung raus, Auslagern | 14.656 | 5.000 | hoch, 66 Prozent Reduktion | `cmd/README.md`, falls sich das Vorgehen ändert |
-| 2 | `project-structure` | verdichten, Begründung raus | 8.452 | 5.000 | mittel, 41 Prozent | keine absehbar |
-| 3 | `project-settings` | verdichten | 5.124 | 5.000 | gering, 2 Prozent | keine absehbar |
-| 4 | alle zehn | Aufrufdisziplin dokumentieren | — | — | keins, kein Skill wird angefasst | `cmd/README.md` |
-| 5 | `project-setup` | `context: fork` mit `agent: Explore` | 4.728 | 0 im Hauptkontext | mittel, setzt eine Mindestversion voraus | `cmd/README.md`, weil dort steht, kein Skill setze ein Modell oder eine Denktiefe |
+Der Gewinn der Delegation ist **gerechnet, nicht belegt**: Die 76.700 Tokens sind gemessen, was danach übrig bliebe, ist geschätzt. Ein Pilot muss zwei Dinge prüfen, und das zweite ist das eigentliche Risiko: ob die Last wie gerechnet sinkt, und ob ein verdichtetes Ergebnis den Skill noch trägt.
 
-`plugin.json` kennt kein Feld für eine Claude-Code-Mindestversion; `dependencies` deckt nur andere Plugins. Eine Mindestversion für Eintrag 5 gehört deshalb in `README.md` und `CHANGELOG.md`, wie schon bei der `renames`-Map.
+1. **`plan-grill`, Faktenvorlauf delegieren.** Der teuerste Einzelposten der Suite und der am klarsten abgrenzbare Teil: Er läuft am Anfang, sein Ergebnis ist die Faktentabelle, die der Nutzer ohnehin zu sehen bekommt.
+2. **`project-structure`, Ablage-Inventur delegieren.** Der einzige weitere Skill mit breiter Exploration.
+3. **Lesedisziplin-Zeilen in allen Bodies.** Billig, aber mit unbelegter Wirkung.
 
-### Summenprobe, und wo sie nicht aufgeht
+### Nebenbaustelle: das Funktionsrisiko an der 5.000er-Marke
 
-Für `project-structure` und `project-settings` sind 41 beziehungsweise 2 Prozent Reduktion durch Verdichten und Auslagern plausibel erreichbar. Für `project-rules` ist die Lücke **9.656 Tokens**, also zwei Drittel des Bodys.
+Getrennt von der Kontextlast zu behandeln. Hier geht es nicht um Tokens, sondern darum, dass drei Skills nach einer Verdichtung gekürzt weiterlaufen.
 
-Eine Grobanalyse seiner Blöcke grenzt das ein, ohne es zu entscheiden. Rund 36 Prozent des Bodys sind **situative** Anweisung, die erst ab einem bestimmten Schritt gilt und damit nach `references/` könnte: das Abdeckungs-Register aus Schritt 4 (20 Prozent), der Token-Pass aus Schritt 7 (9 Prozent) und die Ausgabeformat-Vorlage (7 Prozent). Reine Begründung sind „Warum diese Vorgehensweise" (6 Prozent) und rund ein Fünftel von „Die Werkzeuge". Daraus geschätzt: Begründungsabbau 2.100 bis 3.500 Tokens, Verdichten 2.000 bis 3.000, Auslagern 2.800 bis 4.000, verbleibender Body also **4.200 bis 7.800**. Das Ziel ist erreichbar, aber nicht gesichert; die Spanne beruht auf einer Blockanalyse, nicht auf einem satzweisen Durchgang.
+| # | Skill | Strategien | Ist | Ziel | Risiko |
+|---|---|---|---:|---:|---|
+| 1 | `project-rules` | verdichten, Begründung raus, Auslagern | 14.656 | 5.000 | hoch, 66 Prozent Reduktion |
+| 2 | `project-structure` | verdichten, Begründung raus | 8.452 | 5.000 | mittel, 41 Prozent |
+| 3 | `project-settings` | verdichten | 5.124 | 5.000 | gering, 2 Prozent |
 
-Geht es nicht auf, bleibt der Skill-Zuschnitt, also `project-rules` in mehrere Skills zu teilen. Das ist hier ausdrücklich nicht entschieden und gehört in den Umbauplan.
+Für die letzten beiden ist das plausibel erreichbar. Für `project-rules` ist die Lücke **9.656 Tokens**, also zwei Drittel des Bodys. Eine Grobanalyse grenzt das ein, ohne es zu entscheiden: Rund 36 Prozent des Bodys sind situative Anweisung, die erst ab einem bestimmten Schritt gilt und damit nach `references/` könnte (Abdeckungs-Register aus Schritt 4 mit 20 Prozent, Token-Pass aus Schritt 7 mit 9, Ausgabeformat-Vorlage mit 7). Reine Begründung sind „Warum diese Vorgehensweise" mit 6 Prozent und rund ein Fünftel von „Die Werkzeuge". Geschätzt bliebe ein Body von **4.200 bis 7.800** Tokens. Das Ziel ist erreichbar, aber nicht gesichert; die Spanne beruht auf einer Blockanalyse, nicht auf einem satzweisen Durchgang. Geht es nicht auf, bleibt der Skill-Zuschnitt, also `project-rules` zu teilen. Nicht entschieden.
 
-Die Kette der vier `project-`Skills fiele bei erreichten Zielwerten von 32.960 auf 19.728 Tokens, mit Eintrag 5 auf 15.000.
+`plugin.json` kennt kein Feld für eine Claude-Code-Mindestversion; `dependencies` deckt nur andere Plugins. Wo eine Strategie eine voraussetzt, gehört sie in `README.md` und `CHANGELOG.md`, wie schon bei der `renames`-Map.
 
 ## Konventionen — geteiltes Vokabular
 
