@@ -2,6 +2,14 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.19.1
+
+- **`cmd/README.md` rät jetzt davon ab, die `project-*`-Kette in einer Session zu fahren**, mit der gemessenen Zahl dahinter: Die vier Bodies summieren sich auf rund 33.000 Tokens, mit ihren nachgeladenen Katalogen auf bis zu 59.000, und ein aufgerufener Skill bleibt bis Sessionende im Fenster. Ein Schritt je Session kostet nur den, den man gerade braucht.
+- **`DESIGN.md` hat einen neuen Querschnittsabschnitt „Kontextlast der Skills".** Er hält fest, was wann lädt, die je Skill gemessene Body-Größe, zwei Maßstäbe und ein Urteil je Strategie. Gemessen wurde headless über die `usage`-Summe eines `--max-turns 1`-Laufs gegen eine Baseline; zwei unabhängige Läufe für `project-rules` stimmten auf ein Token überein.
+- **Zwei Befunde kehren gängige Annahmen um.** Erstens kostet das installierte Plugin beim Sessionstart **null Tokens**: Ein Lauf mit `--plugin-dir` und einer ohne unterscheiden sich nicht, weil `disable-model-invocation: true` die Descriptions gar nicht erst lädt. Zweitens kostet ein **mitgelieferter Subagent** unter `agents/` das Gegenteil, nämlich rund 200 Tokens dauerhaft in jeder Session, aufgerufen oder nicht. Die naheliegende Idee, Arbeit in mitgelieferte Subagenten auszulagern, ist damit verworfen.
+- **Die bisher genutzte Schätzung „Zeichen geteilt durch 3,2" war um rund ein Drittel zu optimistisch.** Der an zehn Messwerten kalibrierte Faktor liegt bei 2,04. Drei Skills liegen dadurch über der 5.000-Token-Marke, ab der Claude Code nach einer Verdichtung abschneidet, nicht wie geschätzt zwei.
+- Patch statt Minor: Kein Skill ist angefasst, das Verhalten der Suite ändert sich nicht. Ein Umbau steht aus und braucht einen eigenen Plan; die priorisierte Liste dafür steht in `DESIGN.md`.
+
 ## 0.19.0
 
 - **Die maßgebliche Regeldatei zählt jetzt zu den Artefakten, die der Agent nach Freigabe ändern darf.** `sicherheitsdisziplin.md` sagte „ändere deine eigenen Instruktionen nicht" und nahm davon nur Skills, Subagents und pfad-bezogene Regeln aus — die `CLAUDE.md`/`AGENTS.md` selbst fiel unter das Verbot. In einer Zieldatei gelandet, hinderte der Satz den dortigen Agenten daran, seine eigene Regeldatei auch nur auf Aufforderung zu korrigieren, während `project-rules` genau das tut. Sie steht jetzt in derselben Ausnahme, mit derselben Begründung: versioniert, im Diff sichtbar, per `git restore` rückholbar. Die Freigabepflicht bleibt, und Systeminstruktionen, Freigaben, Berechtigungen und Hook-Konfiguration bleiben unverändert tabu.
