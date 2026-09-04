@@ -14,7 +14,7 @@ Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsn
 | `/cmd:plan-review` | Reviewt den zuletzt erstellten Plan in rotierenden Blickwinkeln und arbeitet die belastbaren Befunde direkt ein. | Sobald ein Plan steht — von `plan-grill` oder `/plan` —, bevor du freigibst. |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan vollständig um und verifiziert jeden Schritt gegen ein beobachtbares Kriterium; hält bei einem Fund außerhalb des Plans oder einer Klassifikator-Blockade an und fragt nach. | **Nach** dem Verlassen des Plan-Modus. |
 | `/cmd:project-setup` | Erhebt vier Fakten am Projekt und gibt die geordnete Aufrufliste der drei Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium. Richtet selbst nichts ein. | **Zuerst**, bevor du die drei anderen `project-`Skills fährst. |
-| `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit sieben Disziplin-Katalogen und verdichtet sie token-effizient. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
+| `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit acht Disziplin-Katalogen und verdichtet sie token-effizient. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon und entdoppelt die Permission-Listen. | **Einmal** beim Einrichten eines Projekts, danach bei Bedarf erneut. |
 | `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon, sammelt Streudateien ein und schlägt projekteigene Skills, Subagents und `paths:`-Regeln vor. Verschiebt nur mit Verlagerungs-Register und Verlustnachweis. | Wenn die `CLAUDE.md` zuwächst oder Wissen verstreut liegt. |
 | `/cmd:session-learn` | Reflektiert die laufende Session, leitet dauerhafte Learnings ab und übergibt sie als Plan an `plan-review`/`plan-execute`. | Am **Ende** einer Session. |
@@ -116,7 +116,7 @@ cmd/
     ├── plan-review/SKILL.md
     ├── project-rules/
     │   ├── SKILL.md
-    │   └── references/                     # sieben Disziplin-Kataloge plus Token-Effizienz-Pass
+    │   └── references/                     # acht Disziplin-Kataloge plus Token-Effizienz-Pass
     ├── project-settings/
     │   ├── SKILL.md
     │   └── references/permission-kanon.md  # die zu setzenden Werte samt Belegen

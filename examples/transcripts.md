@@ -95,7 +95,7 @@ Jedes Kriterium ist gekennzeichnet, ob es **am Projekt** ablesbar ist oder nur *
 ```
 ## Gehärtet: <Pfad zur maßgeblichen Datei>
 Projektprofil: <Profil> (bestätigt: ja/nein)
-Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschlagen / n/a>
+Prosasprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschlagen / n/a>
 
 ### Ergänzt / Geschärft / Bereits vorhanden / Bewusst weggelassen / Konflikte / Verdichtet
 - <Werkzeug> → <Abschnitt>: <Regel in Kurzform, im Projekt verankert>
@@ -104,7 +104,7 @@ Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschla
 - Vorgefunden / Verankert / Auslagerungsreif markiert / Empfohlen anzulegen
 
 ### Abdeckung
-Alle sieben Inhalts-Kataloge durchgegangen, jede Regel in genau einer Kategorie verbucht, Token-Effizienz-Pass angewendet.
+Alle acht Inhalts-Kataloge durchgegangen, jede Regel in genau einer Kategorie verbucht, Token-Effizienz-Pass angewendet.
 ```
 Die letzte Zeile ist der Vollständigkeitsbeleg und trägt **keine Quote**: Was als eine Regel zählt, ist nicht festgelegt, also wäre eine Zahl nicht reproduzierbar und ein Fehlschätzer unauffällig. Sie behauptet nur, was tatsächlich getan wurde; den Nachweis trägt das Abdeckungs-Register.
 

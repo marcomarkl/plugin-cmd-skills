@@ -1,6 +1,6 @@
 # Token-Effizienz — Teil A/B
 
-Dieser Katalog ist anders gebaut als die sieben Inhalts-Kataloge und wird in **Schritt 7** angewendet, nicht in Schritt 4 verbucht. **Teil A** richtet sich an dich als einsetzende KI und kommt **nie** als Text in die Zieldatei; **Teil B** ist der einzige Block, der (bedingt) als Inhalt übernommen wird.
+Dieser Katalog ist anders gebaut als die acht Inhalts-Kataloge und wird in **Schritt 7** angewendet, nicht in Schritt 4 verbucht. **Teil A** richtet sich an dich als einsetzende KI und kommt **nie** als Text in die Zieldatei; **Teil B** ist der einzige Block, der (bedingt) als Inhalt übernommen wird.
 
 ## Teil A — Überarbeitungskatalog (Arbeitsanweisung, nicht Inhalt der Datei)
 

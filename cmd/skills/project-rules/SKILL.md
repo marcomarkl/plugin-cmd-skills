@@ -1,7 +1,7 @@
 ---
 name: project-rules
 description: >-
-  Härtet/optimiert eine bestehende CLAUDE.md oder AGENTS.md mit sieben Disziplin-
+  Härtet/optimiert eine bestehende CLAUDE.md oder AGENTS.md mit acht Disziplin-
   Katalogen plus Token-Effizienz-Pass: fehlende Regeln ergänzen, vage schärfen,
   Konflikte vorlegen, Ablage und projekteigene Artefakte verankern, ohne
   Bedeutungsverlust verdichten.
@@ -13,11 +13,11 @@ Argument (optional, i. d. R. der Pfad zur Zieldatei): $ARGUMENTS — in Schritt 
 
 # CLAUDE.md härten und optimieren
 
-Dieser Command nimmt eine bestehende `CLAUDE.md` (oder `AGENTS.md`), wendet sieben Disziplin-Kataloge auf sie an und verdichtet sie zum Schluss: fehlende Regeln werden ergänzt, vorhandene geschärft, Widersprüche der menschlichen Aufsicht zur Entscheidung vorgelegt, am Ende wird die Datei ohne Bedeutungsverlust kuratiert. Nichts wird still übergangen — und keine vorhandene starke Regel wird dabei geschwächt.
+Dieser Command nimmt eine bestehende `CLAUDE.md` (oder `AGENTS.md`), wendet acht Disziplin-Kataloge auf sie an und verdichtet sie zum Schluss: fehlende Regeln werden ergänzt, vorhandene geschärft, Widersprüche der menschlichen Aufsicht zur Entscheidung vorgelegt, am Ende wird die Datei ohne Bedeutungsverlust kuratiert. Nichts wird still übergangen — und keine vorhandene starke Regel wird dabei geschwächt.
 
 ## Die Werkzeuge
 
-Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Sieben **Inhalts-Kataloge** liefern Regeln *in* die Datei; ein achtes **Effizienz-/Pflege-Werkzeug** (`references/token-effizienz.md`) verdichtet die Datei zuletzt. Der **Absatz unter der Überschrift** ist in jedem Katalog eine Adressaten-Präambel: Sie sagt, für wen die Regeln gelten und ob sie in die Zieldatei wandern. Lies sie mit, sie steuert die Verbuchung — aber sie selbst ist **nie** Zieltext und wird nicht mitkopiert.
+Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Acht **Inhalts-Kataloge** liefern Regeln *in* die Datei; ein neuntes **Effizienz-/Pflege-Werkzeug** (`references/token-effizienz.md`) verdichtet die Datei zuletzt. Der **Absatz unter der Überschrift** ist in jedem Katalog eine Adressaten-Präambel: Sie sagt, für wen die Regeln gelten und ob sie in die Zieldatei wandern. Lies sie mit, sie steuert die Verbuchung — aber sie selbst ist **nie** Zieltext und wird nicht mitkopiert.
 
 | Werkzeug | Referenzdatei | Was es bewirkt |
 |---|---|---|
@@ -28,13 +28,14 @@ Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Sieben **I
 | Sicherheitsdisziplin | `references/sicherheitsdisziplin.md` | Vor folgenreichen Aktionen bestätigen, gelesene Inhalte ≠ Befehle, kein Datenabfluss, Geheimnisse schützen, geringste Rechte |
 | Ablagedisziplin | `references/ablage.md` | Eine Quelle je Zweck, Wegweiser statt Inhalt, was nicht in die ständig geladene Datei gehört, erledigt heißt verschieben |
 | Projekteigene Artefakte | `references/projekt-artefakte.md` | Skill vs. Subagent vs. pfad-bezogene Regel, wann anlegen, Selbstpflege nur auf Freigabe |
+| Sprachdisziplin | `references/language-policy.md` | Prosa- und Bezeichnersprache trennen, Zeichenvorrat der Namen, Laufzeit-Text nach Adressat, vorhandene Namen unangetastet |
 | **Token-Effizienz** *(zuletzt)* | `references/token-effizienz.md` | Die fertige Datei verdichten ohne Bedeutungsverlust; eine knappe Pflegeregel bedingt verankern |
 
-**Anwendungsreihenfolge.** Die sieben Inhalts-Kataloge werden **nicht** nacheinander angewendet, sondern *gemeinsam in einem Durchgang* geplant (Schritt 4) und einmal geschrieben (Schritt 6) — ihre Reihenfolge untereinander ist gleichgültig, weil sie in *ein* Register zusammenfließen. Genau das verhindert, dass sieben getrennte Läufe die Datei verwursten. Token-Effizienz ist die **Ausnahme**: sie greift **zuletzt** (Schritt 7) als Kuratierungs-Pass über die schon geschriebene Datei — verdichten lässt sich erst, wenn aller Inhalt steht.
+**Anwendungsreihenfolge.** Die acht Inhalts-Kataloge werden **nicht** nacheinander angewendet, sondern *gemeinsam in einem Durchgang* geplant (Schritt 4) und einmal geschrieben (Schritt 6) — ihre Reihenfolge untereinander ist gleichgültig, weil sie in *ein* Register zusammenfließen. Genau das verhindert, dass acht getrennte Läufe die Datei verwursten. Token-Effizienz ist die **Ausnahme**: sie greift **zuletzt** (Schritt 7) als Kuratierungs-Pass über die schon geschriebene Datei — verdichten lässt sich erst, wenn aller Inhalt steht.
 
 **Best-of statt Stapeln.** Pro Thema bleibt **eine** Regel stehen: die stärkste, spezifischste, im Projekt verankerte Fassung — gleichgültig, ob sie aus der vorhandenen Datei oder aus einem Katalog stammt. Überschneiden sich zwei Kataloge (z. B. Kontext-, Ablage- und Token-Effizienz bei „schlank halten" und beim Auslagern, Ablage und Artefakte bei „was gehört nicht in die Root-Datei", Artefakte und Sicherheitsdisziplin bei „eigene Instruktionen ändern", Fehler- und Sicherheitsdisziplin bei „anhalten und melden"), führe sie an der thematisch passenden Stelle zusammen, statt zwei Fassungen nebeneinanderzustellen. Hat die vorhandene Datei bereits die härtere oder genauere Regel, **gewinnt sie** — ein Katalog oder die Verdichtung darf sie nie verwässern, abschwächen oder generischer machen (siehe Schritt 4, „Nie schwächen").
 
-**Die Kataloge.** Die sieben Inhalts-Kataloge in `references/` liefern die zu verbuchenden Regeln (Schritt 4). Zwei von ihnen (`ablage.md`, `projekt-artefakte.md`) tragen keine Pfade und Namensschemata; die stehen einmal in den Kanon-Dateien von `project-structure` und werden in Schritt 4 **direkt aus dem Body** geladen, nie über einen Verweis im Katalog. Der Token-Effizienz-Katalog (`references/token-effizienz.md`) ist anders gebaut: **Teil A** ist Arbeitsanweisung an dich (verdichten/formatieren — kommt **nie** als Text in die Datei), **Teil B** ist eine knappe Pflegeregel, die **bedingt** in die Datei wandert (siehe Schritt 7).
+**Die Kataloge.** Die acht Inhalts-Kataloge in `references/` liefern die zu verbuchenden Regeln (Schritt 4). Zwei von ihnen (`ablage.md`, `projekt-artefakte.md`) tragen keine Pfade und Namensschemata; die stehen einmal in den Kanon-Dateien von `project-structure` und werden in Schritt 4 **direkt aus dem Body** geladen, nie über einen Verweis im Katalog. Der Token-Effizienz-Katalog (`references/token-effizienz.md`) ist anders gebaut: **Teil A** ist Arbeitsanweisung an dich (verdichten/formatieren — kommt **nie** als Text in die Datei), **Teil B** ist eine knappe Pflegeregel, die **bedingt** in die Datei wandert (siehe Schritt 7).
 
 ## Warum diese Vorgehensweise
 
@@ -50,7 +51,7 @@ Vier Fehler liegen bei dieser Aufgabe nahe, und die Schritte sind gegen genau si
 1. Zieldatei auflösen und bestätigen (eine Quelle der Wahrheit)
 2. Projektprofil bestimmen (steuert die Relevanzschwelle)
 3. Ist-Stand vollständig lesen, dazu eine knappe Ablage-Inventur
-4. Alle sieben Inhalts-Kataloge gemeinsam planen → Abdeckungs-Register
+4. Alle acht Inhalts-Kataloge gemeinsam planen → Abdeckungs-Register
 5. Konflikte bündeln und der Aufsicht zur Entscheidung vorlegen
 6. Einmal kohärent schreiben
 7. Token-Effizienz-/Kuratierungs-Pass (zuletzt)
@@ -73,7 +74,7 @@ Ist die Zieldatei nicht eindeutig (mehrere Kandidaten, oder die Anfrage nennt ke
 
 ## Schritt 2 — Projektprofil bestimmen
 
-Nicht jede Disziplin wiegt für jede Projektart gleich. Eine CLAUDE.md für einen **autonomen Agenten** lebt von Sicherheits-, Fehler- und Kontextdisziplin; eine für einen **menschengesteuerten Coding-Assistenten** von Zerlegung, Ausführung und Build/Test/Lint. Das Profil setzt die *Relevanzschwelle* pro Regel — es entscheidet **nicht**, ob ein Katalog übersprungen wird. Alle sieben Inhalts-Kataloge werden immer durchgegangen (Schritt 4); das Profil steuert nur, was übernommen und was *begründet* weggelassen wird. Bei Ablage und Artefakten wirkt die Schwelle besonders stark: Ein kleines Repo mit einer Handvoll Dateien braucht weder Ablagestruktur noch eigene Skills, und „begründet weggelassen" ist dort das richtige Ergebnis, nicht ein Versäumnis. **Die Schwelle entscheidet dabei über das Anlegen, nicht über die Regel.** Dass gerade kein Artefakt fällig ist, heißt nicht, dass die Datei die Regel nicht trägt, wann eines fällig wird — die wirkt erst in der Zukunft, in der du nicht mehr danebenstehst. Weglassen ist nur begründet, wenn das Projekt so klein oder kurzlebig ist, dass derselbe Handgriff realistisch kein drittes Mal auftritt. Sonst gehört die Regel in die Datei, auch wenn der Ordner dafür noch leer ist.
+Nicht jede Disziplin wiegt für jede Projektart gleich. Eine CLAUDE.md für einen **autonomen Agenten** lebt von Sicherheits-, Fehler- und Kontextdisziplin; eine für einen **menschengesteuerten Coding-Assistenten** von Zerlegung, Ausführung und Build/Test/Lint. Das Profil setzt die *Relevanzschwelle* pro Regel — es entscheidet **nicht**, ob ein Katalog übersprungen wird. Alle acht Inhalts-Kataloge werden immer durchgegangen (Schritt 4); das Profil steuert nur, was übernommen und was *begründet* weggelassen wird. Bei Ablage und Artefakten wirkt die Schwelle besonders stark: Ein kleines Repo mit einer Handvoll Dateien braucht weder Ablagestruktur noch eigene Skills, und „begründet weggelassen" ist dort das richtige Ergebnis, nicht ein Versäumnis. **Die Schwelle entscheidet dabei über das Anlegen, nicht über die Regel.** Dass gerade kein Artefakt fällig ist, heißt nicht, dass die Datei die Regel nicht trägt, wann eines fällig wird — die wirkt erst in der Zukunft, in der du nicht mehr danebenstehst. Weglassen ist nur begründet, wenn das Projekt so klein oder kurzlebig ist, dass derselbe Handgriff realistisch kein drittes Mal auftritt. Sonst gehört die Regel in die Datei, auch wenn der Ordner dafür noch leer ist.
 
 So bestimmst du das Profil:
 
@@ -84,11 +85,11 @@ Die Profile sind **Denkhilfen, keine starren Tabellen**: Prüfe jede Zuordnung g
 
 | Projektart | Kern (gründlich übernehmen) | Situativ (nur bei Anlass) |
 |---|---|---|
-| **Software/Coding (Mensch im Loop)** | Aufgabenzerlegung, Ausführung (inkl. Build/Test/Lint), Fehler | Sicherheit: commit/push/Geheimnisse ja, MCP/Deploy nur bei Evidenz · Kontext bei großem Repo · Ablage ab mehreren Mitwirkenden oder langer Laufzeit; Artefakte *anlegen* dann, die Regel dafür schon ab langer Laufzeit |
-| **Autonomer Agent / agentisches System** | Sicherheit, Fehler, Kontext, Ausführung, Ablage | Aufgabenzerlegung je nach Aufgabenkomplexität · Artefakte, sobald Abläufe sich wiederholen |
-| **Daten / Analyse / Research** | Ausführung (v. a. keine Erfindung), Kontext, Ablage (Befunde überleben die Session) | Zerlegung · Sicherheit v. a. Datenabfluss/Geheimnisse · Fehler geringer · Artefakte für wiederkehrende Auswertungen |
-| **Infrastruktur / DevOps** | Sicherheit (Deploy, CI, Secrets), Fehler (Rollback), Artefakte (Runbooks als Skill) | Zerlegung, Ausführung · Kontext bei großen Systemen · Ablage v. a. für Entscheidungen |
-| **Bibliothek / Framework** | Ausführung, Aufgabenzerlegung, Ablage (Entscheidungen und öffentliche Doku) | Fehler/Kontext situativ · Sicherheit v. a. Secrets/geringste Rechte · Artefakte *anlegen* selten nötig, die Regel dafür trotzdem ab langer Laufzeit |
+| **Software/Coding (Mensch im Loop)** | Aufgabenzerlegung, Ausführung (inkl. Build/Test/Lint), Fehler, Sprache | Sicherheit: commit/push/Geheimnisse ja, MCP/Deploy nur bei Evidenz · Kontext bei großem Repo · Ablage ab mehreren Mitwirkenden oder langer Laufzeit; Artefakte *anlegen* dann, die Regel dafür schon ab langer Laufzeit |
+| **Autonomer Agent / agentisches System** | Sicherheit, Fehler, Kontext, Ausführung, Ablage | Aufgabenzerlegung je nach Aufgabenkomplexität · Artefakte, sobald Abläufe sich wiederholen · Sprache, sobald das System selbst Code schreibt |
+| **Daten / Analyse / Research** | Ausführung (v. a. keine Erfindung), Kontext, Ablage (Befunde überleben die Session) | Zerlegung · Sicherheit v. a. Datenabfluss/Geheimnisse · Fehler geringer · Artefakte für wiederkehrende Auswertungen · Sprache bei Bezeichnern in Notebooks und Skripten |
+| **Infrastruktur / DevOps** | Sicherheit (Deploy, CI, Secrets), Fehler (Rollback), Artefakte (Runbooks als Skill), Sprache (Branch-Namen, Konfig-Schlüssel, DB-Spalten) | Zerlegung, Ausführung · Kontext bei großen Systemen · Ablage v. a. für Entscheidungen |
+| **Bibliothek / Framework** | Ausführung, Aufgabenzerlegung, Ablage (Entscheidungen und öffentliche Doku), Sprache (öffentliche API-Namen wiegen hier am schwersten) | Fehler/Kontext situativ · Sicherheit v. a. Secrets/geringste Rechte · Artefakte *anlegen* selten nötig, die Regel dafür trotzdem ab langer Laufzeit |
 
 Passt keine Zeile, beschreibe das Profil in eigenen Worten anhand derselben Frage: *Handelt der Agent selbstständig nach außen? Läuft er lang? Berührt er Geheimnisse/Deploys? Wird gebaut und getestet?* Daraus folgt, welche Disziplinen tragen.
 
@@ -107,9 +108,9 @@ Lies die Zieldatei **vollständig**, bevor du planst. Ohne den Ist-Stand kannst 
 
 Halte das eng — ein `ls` der einschlägigen Orte genügt, keine Repo-Tour und keine Inhaltsanalyse. Du brauchst nur die Antwort „existiert / existiert nicht / ist generiert".
 
-## Schritt 4 — Alle sieben Inhalts-Kataloge gemeinsam planen (Abdeckungs-Register)
+## Schritt 4 — Alle acht Inhalts-Kataloge gemeinsam planen (Abdeckungs-Register)
 
-Das ist der Kern. **Lies jetzt die sieben mit diesem Skill gebündelten Inhalts-Kataloge unter `references/`** (`aufgabenzerlegung.md`, `ausfuehrungsdisziplin.md`, `fehlerdisziplin.md`, `kontextdisziplin.md`, `sicherheitsdisziplin.md`, `ablage.md`, `projekt-artefakte.md`; Pfade relativ zum Skill-Ordner). **Lies dazu direkt von hier aus** — nicht über einen Verweis in einem der Kataloge — die beiden Kanon-Dateien `../project-structure/references/ablage-kanon.md` (Orte, Namensschemata, Ladezeitpunkte) und `../project-structure/references/artefakt-kanon.md` (Pfade und Frontmatter-Keys), sobald Katalog 6 oder 7 für dieses Projekt tragen. Sie stehen dort einmal und werden hier nicht dupliziert; von Referenz zu Referenz verkettet würden sie womöglich nur angelesen statt vollständig gelesen. Klassifiziere dann **jede einzelne Regel** in genau eine Kategorie. Das Ergebnis ist ein Register — gleichzeitig dein Arbeitsplan und der Nachweis der Vollständigkeit. Keine Regel verlässt diesen Schritt unverbucht. (Token-Effizienz ist kein Inhalts-Katalog und wird hier nicht verbucht, sondern in Schritt 7 angewendet.)
+Das ist der Kern. **Lies jetzt die acht mit diesem Skill gebündelten Inhalts-Kataloge unter `references/`** (`aufgabenzerlegung.md`, `ausfuehrungsdisziplin.md`, `fehlerdisziplin.md`, `kontextdisziplin.md`, `sicherheitsdisziplin.md`, `ablage.md`, `projekt-artefakte.md`, `language-policy.md`; Pfade relativ zum Skill-Ordner). **Lies dazu direkt von hier aus** — nicht über einen Verweis in einem der Kataloge — die beiden Kanon-Dateien `../project-structure/references/ablage-kanon.md` (Orte, Namensschemata, Ladezeitpunkte) und `../project-structure/references/artefakt-kanon.md` (Pfade und Frontmatter-Keys), sobald Katalog 6 oder 7 für dieses Projekt tragen. Sie stehen dort einmal und werden hier nicht dupliziert; von Referenz zu Referenz verkettet würden sie womöglich nur angelesen statt vollständig gelesen. Klassifiziere dann **jede einzelne Regel** in genau eine Kategorie. Das Ergebnis ist ein Register — gleichzeitig dein Arbeitsplan und der Nachweis der Vollständigkeit. Keine Regel verlässt diesen Schritt unverbucht. (Token-Effizienz ist kein Inhalts-Katalog und wird hier nicht verbucht, sondern in Schritt 7 angewendet.)
 
 Kategorien:
 
@@ -173,7 +174,7 @@ Pflegeregel verankern (Teil B) — **bedingt:**
 
 Lies die geschriebene Datei neu und prüfe:
 
-- **Vollständig:** Steht jede Regel aller sieben Inhalts-Kataloge im Register (in *irgendeiner* der fünf Kategorien)? Eine unverbuchte Regel ist eine Lücke — schließe sie.
+- **Vollständig:** Steht jede Regel aller acht Inhalts-Kataloge im Register (in *irgendeiner* der fünf Kategorien)? Eine unverbuchte Regel ist eine Lücke — schließe sie.
 - **Nichts erfunden, nichts verschoben:** Existiert jeder in der Datei genannte Ablage- oder Artefaktpfad tatsächlich, oder ist er als Empfehlung gekennzeichnet? Wurde keine Datei verschoben, kein Ordner angelegt, kein Inhalt ohne Ziel herausgelöst?
 - **Nicht geschwächt (Best-of):** Wurde keine vorhandene starke Regel verwässert, gelockert oder generischer? Steht jedes Thema in genau einer, der stärksten Fassung — keine zwei konkurrierenden Versionen?
 - **Verdichtet, aber bedeutungstreu:** Keine Redundanz, keine Floskeln, Wichtiges oben, Root möglichst unter ~200 Zeilen — und kein Vorbehalt, keine Disambiguierung, keine entscheidende Ausnahme der Kürze geopfert?
@@ -190,7 +191,7 @@ Gib zum Schluss ein knappes Protokoll aus. Es ist die menschenlesbare Form des A
 ```
 ## Gehärtet: <Pfad zur maßgeblichen Datei>
 Projektprofil: <gewähltes Profil> (bestätigt: ja/nein)
-Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschlagen / n/a>
+Prosasprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschlagen / n/a>
 
 ### Ergänzt
 - <Werkzeug> → <Abschnitt>: <Regel in Kurzform, im Projekt verankert>
@@ -217,7 +218,7 @@ Sprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorgeschla
 - Empfohlen anzulegen: <Ort/Artefakt> — Grund: <…>
 
 ### Abdeckung
-Alle sieben Inhalts-Kataloge durchgegangen, jede Regel in genau einer Kategorie verbucht, Token-Effizienz-Pass angewendet.
+Alle acht Inhalts-Kataloge durchgegangen, jede Regel in genau einer Kategorie verbucht, Token-Effizienz-Pass angewendet.
 ```
 
 **Keine Zahl in dieser Zeile.** Eine Quote wie „38 von 38" sieht nach Messung aus, ist aber keine: Was als *eine* Regel zählt — Listenpunkt, Satz, Unterabschnitt —, ist nirgends festgelegt, also kommt ein zweiter Lauf auf ein anderes Ergebnis, und beide klingen gleich sicher. Ein Fehlschätzer fällt hier nicht auf, weil nichts ihn prüft. Die Zeile behauptet deshalb nur, was du tatsächlich getan hast. Steht auch nur eine Katalogregel unverbucht, ist sie falsch und du korrigierst das Register, statt die Zeile zu relativieren.
