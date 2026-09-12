@@ -4,20 +4,23 @@ Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nic
 
 **Verbuchungshinweis an dich — kommt nicht in die Zieldatei.** Der Anlassvorbehalt unter „Wann anlegen" gilt dem einzelnen Artefakt, nicht diesen Regeln. Ob das Projekt *jetzt* einen Skill braucht, entscheidet ein konkreter Handgriff, und angelegt wird er von `project-structure`; ob die Datei die Regel trägt, *wann* einer fällig ist, entscheidest du — und sie trägt sie, sobald das Projekt lange genug lebt, dass ein dritter gleicher Handgriff realistisch eintritt. „Aktuell ist kein Artefakt fällig" ist deshalb **kein** Grund, „Wann anlegen" wegzulassen: Die Regel wirkt erst in der Zukunft, in der du nicht mehr danebenstehst. Ein Grund wäre allein ein Projekt, das dafür zu klein oder zu kurzlebig ist, und den nennst du im Register. „Selbstpflege" geht ohnehin immer in die Datei — der Abschnitt beschreibt kein Artefakt, sondern das Verhalten des Agenten.
 
+**Bei getrennten Dateien trennen sich auch diese Regeln.** Ist `AGENTS.md` maßgeblich und `CLAUDE.md` Symlink oder Import-Hülle, gehört die tool-neutrale Auslagerungsregel aus der Kontextdisziplin in die werkzeugübergreifende Datei, die Artefaktregeln von hier dagegen unter den Import in die `CLAUDE.md`. Dort zeigen sie für andere Werkzeuge sonst ins Leere.
+
 **Falle bei Projekten, deren Produkt selbst Agenten-Artefakte sind** (Plugin-, Skill-, Agent-Repos). Für die Ablage-Inventur aus Schritt 3 zählt allein `.claude/`. Ein Produktordner voller Skills belegt keinen einzigen eigenen Arbeitsablauf: Das eine wird ausgeliefert und steuert fremde Sessions, das andere steuert die Arbeit in diesem Repo. Beide heißen `skills/` und haben nichts miteinander zu tun. Verbuche Katalog 7 hier nie als „schon abgedeckt", ohne dass ein Artefakt unter `.claude/` den Anlass tatsächlich trägt.
 
 ## Welches Artefakt wofür
 Die drei werden verwechselt und dann doppelt angelegt. Sie unterscheiden sich im Kontext, den sie belegen, und im Zeitpunkt, zu dem sie laden:
 - **Skill** — Instruktion, die in *deinen* Kontext geladen wird, auf Aufruf oder passende `description`. Für einen wiederkehrenden mehrschrittigen Ablauf, den du selbst ausführst.
-- **Subagent** — eigener Kontext, eigenes Toolset; zurück kommt nur eine Zusammenfassung. Für ausgabestarke oder klar abgrenzbare Teilarbeit (Exploration, Recherche, Log- und Testauswertung), deren Rohausgabe deinen Kontext sonst füllt.
+- **Subagent** — eigener Kontext, eigenes Toolset; zurück kommt nur eine Zusammenfassung. Für Teilarbeit, die du nach der Kontextdisziplin ohnehin auslagerst, sobald sie wiederkehrt. Wann ausgelagert wird und wo die Grenze liegt, steht dort, nicht hier.
 - **Regel mit `paths:`** — gilt nur für Dateien im angegebenen Muster und lädt erst, wenn eine davon gelesen wird. Für Konventionen, die an einen Dateibereich gebunden sind.
 
 Faustregel: Ablauf → Skill · Kontextlast → Subagent · Ortsbindung → Regel. Für dieselbe Sache nur eines von dreien.
 
 ## Wann anlegen
+- Auslagern selbst braucht **kein** Artefakt; das tust du ad hoc, sobald es sich lohnt. Eine Agent-Datei wird erst fällig, wenn dieselbe Teilarbeit wiederkehrt oder wenn ihre Rückgabeform festgeschrieben werden muss.
 - Lege ein Artefakt an, wenn derselbe Handgriff zum dritten Mal auftritt oder wenn Wissen nur situativ gebraucht wird und die ständig geladene Datei sonst wächst.
 - Verlange von jedem Artefakt einen Anlass aus diesem Projekt. Eines, das sich unverändert in ein beliebiges anderes Repo kopieren ließe, ist keines wert.
-- Lege keines auf Vorrat an. Jedes kostet Pflege, und ein veraltetes Artefakt ist schlechter als keines.
+- Lege keines auf Vorrat an. Jedes kostet Pflege, und ein veraltetes Artefakt ist schlechter als keines; ein Subagent kostet zusätzlich laufend, weil seine `description` in jeder Sitzung mitlädt, auch wenn er nie läuft.
 - Eine präzise `description` entscheidet, ob ein Skill oder Subagent überhaupt gefunden wird; sie ist der eigentliche Auslöser, nicht der Dateiname.
 
 ## Selbstpflege — vorschlagen, nicht selbst schreiben

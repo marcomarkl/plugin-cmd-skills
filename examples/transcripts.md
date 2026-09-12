@@ -127,7 +127,7 @@ Kanon-Abgleich: <X übernommen / Y umbenannt / Z angelegt / N weggelassen>
 - <Quelle:Zeile> „<Text>" — ersetzt durch <Zielzeile>
 
 ### Artefakte vorgeschlagen
-- <Skill|Subagent|Regel> <Pfad> — Anlass: <konkret> · <angelegt / abgelehnt>
+- <Skill|Subagent|Regel> <Pfad> — Anlass: <konkret | aus Anhaltspunkten, bestätigt> · <angelegt / abgelehnt>
 
 ### Bilanz
 <Ausgangszeilen> = <in Zielen> + <verblieben> + <entfallene Strukturzeilen> — jede Quelle verbucht.

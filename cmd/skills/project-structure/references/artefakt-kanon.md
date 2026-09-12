@@ -2,6 +2,8 @@
 
 Adressatenhinweis: Nachschlagewerk für dich beim Ausführen von `project-structure`. Daten, keine Anweisung. Setze keinen Frontmatter-Key aus dem Gedächtnis — ein erfundener Key fällt durch keinen Compiler auf, er wird stillschweigend ignoriert.
 
+Stand der Belege zu Subagents, an der Herstellerdoku (`code.claude.com/docs/en/`) im Wortlaut nachgeprüft: `sub-agents` und `skills` am 12. September 2026 gegen Claude Code 2.1.269. Die Angaben sind versionsgebunden; ein Datum ohne Version trüge weniger. Die Heuristik unter „Woran sich ein Anlass im Repo erkennen lässt" ist davon ausgenommen, sie hat keine Quelle.
+
 ## Welches Artefakt
 
 | Anlass | Artefakt | Warum dieses |
@@ -26,11 +28,69 @@ Entdeckung ist automatisch, kein Manifest-Eintrag. Frontmatter-Keys, an der Hers
 
 Pfad `.claude/agents/<name>.md` (projektlokal, eingecheckt) oder `~/.claude/agents/` (nutzerweit). Unterordner sind erlaubt. Ausgelöst automatisch anhand der `description` oder ausdrücklich per `@agent-<name>`.
 
-Erforderlich: `name` (kleinbuchstaben und Bindestriche, kein `:` — das ist für Plugin-Namensräume reserviert) und `description` (wann delegiert werden soll).
+Fünf Ablageorte mit fester Rangfolge; tragen zwei Subagents denselben `name`, gewinnt der höherrangige: Managed Settings (1), `--agents` beim Start (2), `.claude/agents/` (3), `~/.claude/agents/` (4), das `agents/`-Verzeichnis eines Plugins (5, niedrigster). Ein Plugin-Agent trägt dabei einen Namensraum, etwa `my-plugin:reviewer`.
+
+Erforderlich: `name` (Kleinbuchstaben und Bindestriche) und `description` (wann delegiert werden soll). Ein `:` ist im Namen für Plugin-Namensräume reserviert: Eine Datei, deren `name` eines enthält, lädt nicht und erzeugt einen Eintrag im Debug-Log.
 
 Optional, jeweils belegt: `tools`, `disallowedTools`, `model` (`sonnet`, `opus`, `haiku`, `fable`, volle Modell-ID oder `inherit`; Vorgabe `inherit`), `permissionMode`, `maxTurns`, `skills` (lädt Skill-Volltext beim Start vor), `mcpServers`, `hooks`, `memory`, `background`, `effort` (`low` bis `max`), `isolation` (`worktree`), `color`, `initialPrompt`.
 
-Zwei Fallen: Löst kein Eintrag in `tools` auf ein echtes Tool auf, startet der Subagent gar nicht. Und der Kontext eines Subagenten beginnt leer — Aufgabe, Pfade, Randbedingungen und der Zielpfad für Ergebnisse müssen im Prompt stehen, sonst rät er.
+### Was den Zuschnitt bestimmt
+
+- Der Kontext eines Subagenten beginnt leer. Aufgabe, Pfade, Randbedingungen und der Zielpfad für Ergebnisse müssen im Prompt stehen, sonst rät er.
+- Ein Subagent hat **kein** `AskUserQuestion` und kann deshalb nicht zurückfragen, im Vordergrund so wenig wie im Hintergrund. Derselbe Filter nimmt jedem Subagenten auch `EnterPlanMode`, `EndConversation`, `ScheduleWakeup`, `TaskOutput` und `Workflow`.
+- Hintergrundbetrieb ist die Vorgabe, und dort bleibt vom eingebauten Werkzeugsatz nur ein enger Rest, darunter `Read`, `Grep`, `Glob`, `Bash`, `Edit`, `Write`, `WebFetch` und `WebSearch`. Alles übrige Eingebaute entfällt, auch wenn `tools` es nennt; dieselbe Definition ergibt im Vordergrund und im Hintergrund also verschiedene Werkzeuge.
+- Löst kein Eintrag in `tools` auf ein echtes Tool auf, startet der Subagent gar nicht.
+- Das Kontextfenster bemisst sich am **eigenen** Modell des Subagenten, nicht am Modell der Hauptsitzung. Ein kleineres Modell bringt ein kleineres Fenster mit.
+- Jede `description` ist Routing-Information und belegt dauerhaft Kontext in der Hauptsitzung, auch wenn der Agent nie läuft. Überschreiten alle zusammen 15.000 Tokens (die eingebauten ausgenommen), warnt Claude Code beim Start.
+- Alle `CLAUDE.md`-Ebenen laden in den Subagenten mit. Einzige Ausnahme sind die eingebauten `Explore` und `Plan`, die zusätzlich den git-Status überspringen; kein Frontmatter-Key ändert das für andere.
+
+## Delegations-Maßstab
+
+Zwei Fragen nacheinander. Die zweite stellt sich nur, wenn die erste mit ja beantwortet ist.
+
+### Stufe 1: Wird überhaupt ausgelagert?
+
+Dafür spricht, je mehr davon zutrifft:
+
+- Die Teilarbeit erzeugt viel Rohausgabe, etwa Exploration, Recherche, Log- und Testauswertung.
+- Ihr Ergebnis lässt sich verdichten: Ein paar Zeilen samt Dateiverweis tragen so viel wie die Rohausgabe.
+- Der Auftrag lässt sich vollständig beschreiben, ohne den bisherigen Verlauf zu kennen.
+
+Jeder einzelne Punkt dagegen genügt, und die Arbeit bleibt im Hauptkontext:
+
+- Sie braucht unterwegs eine Rückfrage. Ein ausgelagerter Lauf kann nicht fragen.
+- Das Rohmaterial wird später wörtlich gebraucht. Was zusammengefasst ist, steht danach nicht mehr im Wortlaut zur Verfügung.
+- Der Auftrag lässt sich nicht abgrenzen, sodass der leere Kontext zu Raten führt.
+
+### Stufe 2: Ad hoc oder eigene Agent-Datei?
+
+Ad-hoc-Delegation an einen eingebauten Typ ist der Normalfall und braucht kein Artefakt. Eine Datei unter `.claude/agents/` lohnt erst, wenn dieselbe Teilarbeit wiederkehrt oder wenn ihre Rückgabeform festgeschrieben werden muss; dann ist der Systemprompt des Agenten der Ort, der den Informationsverlust der Delegation begrenzt. Für die Anlage gelten zusätzlich die Mindestanforderungen am Ende dieser Datei.
+
+### Die drei Formen der Ad-hoc-Delegation
+
+| Form | Was sie spart und kostet | Wofür |
+|---|---|---|
+| Frischer Subagent | Größte Ersparnis: eigenes Fenster, zurück kommt nur das Ergebnis. Preis: Der Auftrag muss vollständig im Prompt stehen | Abgrenzbare Teilarbeit mit verdichtbarem Ergebnis |
+| Fork der Konversation | Erbt den gesamten Verlauf samt Systemprompt, Werkzeugen und Modell; spart die Rohausgabe der Teilarbeit, nicht den Einstieg | Nebenaufgaben, für die jeder andere Subagent zu viel Hintergrund bräuchte |
+| `Explore` und `Plan` | Überspringen als einzige die `CLAUDE.md`-Ebenen und den git-Status | Suchen und Verstehen einer Codebasis, ohne sie zu ändern |
+
+**Namensfalle.** `context: fork` im Frontmatter eines Skills ist **nicht** der Fork der Konversation: Es startet einen Subagenten mit dem Skill-Text als Prompt, ohne den Verlauf. Hängt die Aufgabe am Verlauf, ist der Fork der Konversation das Gemeinte.
+
+**Bewusste Auslassung.** Die Formwahl steht nur hier und damit nur beim Einrichten zur Verfügung. Die Regel, die in der `CLAUDE.md` eines Projekts landet, sagt, *dass* ausgelagert wird und wo die Grenze liegt, nicht *in welcher Form*. Das ist entschieden, kein Versäumnis.
+
+### Woran sich ein Anlass im Repo erkennen lässt
+
+Eigene Heuristik, keine Doku-Aussage; der Belegstand oben deckt sie nicht. Delegation ist Laufzeitverhalten und hinterlässt im Repo keine Spur, beobachtbar sind allein Anhaltspunkte:
+
+- Eine Testsuite, deren Lauf viel Ausgabe erzeugt
+- Log- oder Report-Verzeichnisse, die gelesen und nicht nur geschrieben werden
+- Große Daten- oder Fixture-Bestände
+- Eine Codebasis, deren Umfang breite Suche erzwingt
+
+Zwei Fälle, in denen ein Anhaltspunkt trügt:
+
+- **Das Projekt liefert selbst Agenten-Artefakte aus** (Plugin-, Skill-, Agent-Repos). Ein `agents/`-Ordner, eine Beispielsammlung oder die Testsuite des Produkts zeigt auf Produkt, nicht auf eigene Arbeit, und belegt keinen Anlass.
+- **Ein installiertes Plugin liefert bereits einen passenden Agenten.** Die Inventur sieht ihn nicht, weil sie nur unter `.claude/` schaut; den Anlass deckt er trotzdem ab.
 
 ## Regeln
 

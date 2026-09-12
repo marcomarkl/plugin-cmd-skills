@@ -92,6 +92,8 @@ Regeln, die das Register tragen:
 
 Sichte, was einen Skill, Subagent oder eine `paths:`-Regel rechtfertigt — nach der Entscheidungshilfe in `references/artefakt-kanon.md`. Je Vorschlag nennst du den **Anlass aus diesem Projekt** (welcher Handgriff, wie oft, wo belegt), das gewählte Artefakt mit Begründung und den Zielpfad.
 
+**Für einen Subagent-Vorschlag gilt die Stufung des Delegations-Maßstabs.** Ad-hoc-Delegation braucht kein Artefakt; eine Agent-Datei rechtfertigt erst Wiederkehr oder eine festzuschreibende Rückgabeform. Den Anlass bildest du aus den Anhaltspunkten des Kanons und markierst ihn im Vorschlag als **unbestätigt** — bestätigt wird er in Schritt 5, nicht hier. Findest du keinen Anhaltspunkt, schlägst du nichts vor. Deckt ein installiertes Plugin den Anlass mit einem eigenen Agenten ab, ebenfalls nicht: Die Inventur sieht ihn nicht, er zählt trotzdem.
+
 Angelegt wird ein Artefakt nur mit Freigabe, und nur als tragfähiger Erstentwurf mit vollständigem Frontmatter — kein leeres Gerüst.
 
 **Schreiben unter `.claude/` verlangt eine eigene, interaktive Bestätigung.** `.claude` ist ein geschützter Pfad (wie `.git`), und die Schutzprüfung läuft **vor** der Auswertung der allow-Regeln — eine vorab erteilte Freigabe wie `Edit(.claude/**)` hebt sie deshalb nicht auf. In den Modi `default` und `acceptEdits` kommt ein Prompt, unter `dontAsk` wird abgelehnt; der Prompt bietet an, `.claude/`-Schreibzugriffe für die laufende Sitzung freizugeben. Beides ist dokumentiert und gemessen. Wird sie verweigert oder ist der Lauf unbeaufsichtigt, gilt: **Quelle nicht entfernen.** Den Block aus der `CLAUDE.md` zu löschen, obwohl das Ziel nicht geschrieben werden konnte, wäre genau der Informationsverlust, gegen den dieser Ablauf gebaut ist. Der Vorschlag bleibt dann als offener Punkt im Bericht stehen, mit der nachzuholenden Freigabe. Findest du keinen belegten Anlass, schlägst du nichts vor; das ist ein gültiges Ergebnis, kein Versäumnis.
@@ -103,6 +105,8 @@ Bereits vorhandene Artefakte fasst du nicht an. Sie zu verbessern ist eine eigen
 ## Schritt 5 — Vorschau und Freigabe
 
 **Eine** Vorschau über alles, **eine** Freigabe: anzulegende Ordner, Umbenennungen, das vollständige Verlagerungs-Register, anzupassende Verweise, Artefakt-Vorschläge, die Änderung am Wegweiser.
+
+Trägt ein Subagent-Vorschlag einen unbestätigten Anlass, legst du ihn hier zur Bestätigung vor; ohne sie wird er nicht angelegt und steht auch nicht als offener Punkt, denn dann gab es ihn nie. Eine eigene Rückfrage in Schritt 4 gibt es nicht: Diese Vorschau bleibt die einzige Unterbrechung.
 
 **Rückweg je Datei, nicht pauschal:**
 
@@ -186,7 +190,7 @@ Kanon-Abgleich: <X übernommen / Y umbenannt / Z angelegt / N weggelassen>
 - <Quelle:Zeile> „<Text>" — ersetzt durch <Zielzeile>
 
 ### Artefakte vorgeschlagen
-- <Skill|Subagent|Regel> <Pfad> — Anlass: <konkret aus diesem Projekt> · <angelegt / abgelehnt>
+- <Skill|Subagent|Regel> <Pfad> — Anlass: <konkret aus diesem Projekt | aus Anhaltspunkten, bestätigt> · <angelegt / abgelehnt>
 
 ### Offen
 - <Konflikt, unklares Ziel, abgelehnte Umbenennung>
