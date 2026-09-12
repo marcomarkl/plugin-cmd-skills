@@ -54,6 +54,8 @@ Vorbedingung: keine. Der Schritt läuft auch ohne Repo und in einem leeren Ordne
 
 Fasst an: `.claude/settings.json`. Ob er sie **anlegt oder eine bestehende ergänzt**, sagst du aus Feststellung 4. Trägt das Projekt eine Altlast aus einem früheren Lauf, kommen `.gitignore` und `.claude/skills/` dazu.
 
+Aus derselben Feststellung folgt ein Hinweis, der sonst als Defekt gelesen wird: Der Schritt setzt unter anderem einen Hook, der jedem Turn die Systemzeit gibt. **Legt er die Datei neu an, greift dieser Hook voraussichtlich erst nach `/hooks` oder in einer neuen Session** — der Settings-Watcher beobachtet nur Verzeichnisse, die beim Sessionstart schon eine Settings-Datei hatten. Ergänzt er eine bestehende, greift er sofort. Sag das am Schritt, nicht erst, wenn der Nutzer auf einen fehlenden Zeitstempel sieht.
+
 Abnahme **am Projekt**: `.claude/settings.json` trägt `autoMemoryEnabled: false`. Sag dazu, dass dieser eine Wert eine **Stichprobe** ist und nicht der ganze Permission-Kanon; du vergleichst nicht gegen ihn.
 
 **Schritt 2:** `/cmd:project-structure`, optional mit einem Fokus oder Pfad

@@ -4,6 +4,7 @@ Adressatenhinweis: Diese Datei ist Nachschlagewerk für dich beim Ausführen von
 
 ## Inhalt
 - Projekt: `.claude/settings.json` — die zu setzenden Werte
+- Zeitanker — der Hook, der jedem Turn die Systemzeit gibt, und was er nicht leistet
 - Was bewusst nicht gesetzt wird — und warum
 - Pfad-Präfixe — `//`, `~/`, `/`, `./` und stumme Mischformen
 - Workspace-Trust — wann `allow` greift, und was die Kandidaten-Übernahme daran ändert
@@ -13,7 +14,7 @@ Adressatenhinweis: Diese Datei ist Nachschlagewerk für dich beim Ausführen von
 - Bewusst offene Lücke bei git
 - Regelsyntax, kurz
 
-Stand der Belege: an der Herstellerdoku nachgeprüft am 16. August 2026 (`code.claude.com/docs/en/` — `permissions`, `permission-modes`, `settings`, `tools-reference`).
+Stand der Belege, an der Herstellerdoku (`code.claude.com/docs/en/`) nachgeprüft: `permissions`, `permission-modes`, `settings` und `tools-reference` am 16. August 2026, `hooks` am 12. September 2026. Ein gemeinsames Datum stünde für eine Prüfung, die so nicht stattgefunden hat.
 
 ## Projekt: `.claude/settings.json`
 
@@ -25,6 +26,7 @@ Stand der Belege: an der Herstellerdoku nachgeprüft am 16. August 2026 (`code.c
       "WebSearch",
       "WebFetch(domain:*)",
       "Bash(git *)",
+      "Bash(date:*)",
       "Read(//**)"
     ],
     "ask": [
@@ -59,6 +61,54 @@ Stand der Belege: an der Herstellerdoku nachgeprüft am 16. August 2026 (`code.c
   }
 }
 ```
+
+### Zeitanker: Systemzeit je Turn
+
+Ergänzung **derselben** Datei, kein zweites Ziel: derselbe `.claude/settings.json`, ein weiterer Top-Level-Key neben `permissions`.
+
+```jsonc
+"hooks": {
+  "UserPromptSubmit": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "date '+Current system time: %Y-%m-%d %H:%M:%S %Z' # cmd:project-settings:zeitanker",
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Wozu.** Ein Agent hat keinen Zeitsinn. Der Verlauf ist eine Folge von Turns ohne Uhr: Zwischen zwei Nachrichten können zwanzig Sekunden oder sechs Stunden liegen, und im Kontext sieht beides gleich aus. Ein Messwert aus einem früheren Turn wirkt so frisch wie beim Erheben. Claude Code liefert von sich aus das **Datum** im Systemprompt, nicht die Uhrzeit, und setzt es beim Sessionstart. Der Hook trägt Uhrzeit und Turn-Aktualität nach.
+
+Der Hook macht den Verzug nur *sichtbar*. Die Pflicht, die daraus folgt, formuliert der Regelkatalog von `project-rules` als eigenständige Regel; wer nur diesen Wert entfernt, entfernt die Sichtbarkeit, nicht die Pflicht.
+
+| Entscheidung | Grund |
+|---|---|
+| `UserPromptSubmit` | Eines der wenigen Events, deren stdout beim Modell landet. Doku wörtlich: „For most events, Claude Code writes stdout to the debug log and doesn't show it in the transcript. The exceptions are `UserPromptSubmit`, `UserPromptExpansion`, `SessionStart`, and `PostModelSwitch`, where Claude Code adds plain-text stdout as context that Claude can see and act on." Ein `PostToolUse`-Hook wäre wirkungslos, sein stdout ginge ins Debug-Log. |
+| Kein zusätzlicher `SessionStart` | Stünde in derselben Ausnahmeliste, wäre also möglich, ist aber überflüssig: `UserPromptSubmit` deckt den ersten Turn mit ab. |
+| Plain-Text statt JSON | Für dieses Event genügt reines stdout. Eine strukturierte Ausgabe brächte Quoting und Schema-Validierung mit, und ein Schema-Verstoß fällt **still** aus. Doku wörtlich, für Events mit dem Standard-Entscheidungsmodell: „exit 0 with a parsed object that fails schema validation is a non-blocking error: the action proceeds, and the transcript shows a `<hook name> hook error` notice with the validation message." Der Turn liefe weiter, nur ohne Zeitstempel, und genau dieser Ausfall fällt nicht auf. |
+| Shell Form, kein `args` | Doku wörtlich: „A command hook runs as exec form when `args` is set, and shell form when `args` is omitted." Hier gibt es keinen Pfad-Platzhalter, und `date` braucht eine Shell. |
+| Kein `matcher` | Nicht nur überflüssig, sondern nicht unterstützt. Die Doku führt `UserPromptSubmit` in der Zeile „no matcher support — always fires on every occurrence". Ein `matcher` hier ist ein Denkfehler, kein Feintuning. |
+| Kein `statusMessage` | Der Hook feuert bei jeder Nachricht; ein Spinner-Text pro Turn wäre Lärm ohne Nutzen. |
+| Zeitformat `%Y-%m-%d %H:%M:%S %Z` | Das **Datum gehört zwingend dazu**: Der auslösende Fehlerfall lief über zwei Kalendertage, und eine reine Uhrzeit hätte den Tageswechsel verschleiert. Die Zeitzone macht den Vergleich mit UTC-Zeitstempeln aus Logs möglich. |
+| `timeout: 5` | Für `date` um Größenordnungen genug. Der Default läge auf diesem Event bei 30 (Doku: Claude Code senkt den `command`-Default von 600 auf 30 für `UserPromptSubmit`); der kleinere Wert begrenzt den Schaden, falls der Befehl je durch etwas Aufwendigeres ersetzt wird. |
+| Marke im Kommando | `# cmd:project-settings:zeitanker` als Shell-Kommentar hinter dem Befehl, von der Shell ignoriert und nicht ausgegeben. Ohne sie ist der eigene Eintrag nicht von einem fremden `UserPromptSubmit`-Hook zu unterscheiden, und der Kanon wäre nicht idempotent. |
+| `Bash(date:*)` in `allow` | Damit ein Skill, der denselben Zeitpunkt selbst erhebt, dabei nicht promptet. `date` steht **nicht** im eingebauten Read-only-Bash-Satz (siehe unten), und `allow` erteilt sonst nur `Bash(git *)`. Ob `date` faktisch prompt-frei läuft, ist damit unbelegt, nicht widerlegt: Der Eintrag macht eine Annahme zur gesetzten Bedingung und kostet nichts, weil `date` nichts liest, nichts schreibt und nicht ins Netz geht. |
+
+**Nicht aufladen.** Keine Zusatzinformation in dieses Kommando, also kein git-Branch, keine Uptime, keine offenen Tasks. Zwei Gründe, und der zweite wiegt schwerer: Der Hook läuft bei jeder Nachricht, jede Zeile kostet in jedem Turn Kontext und ein langsamer Befehl verzögert jeden Prompt. Und sobald der Befehl **Fremdinhalt** ausgibt, etwa eine Commit-Betreffzeile oder einen Dateinamen, wandert ungeprüfter Text je Turn in den Kontext, und aus dem Zeitanker wird eine Injektionsfläche. `date` ist genau deshalb geeignet: konstante Form, kein Fremdinhalt.
+
+**Grenzen, und sie gehören in den Bericht statt verschwiegen:**
+
+- **Wirktiefe unbekannt.** Die Doku sagt, der Text werde als Kontext aufgenommen, „that Claude can see and act on"; wie stark er auf das Verhalten durchschlägt, sagt sie nicht. Bleibt der Hinweis folgenlos, trägt die Regel aus `project-rules`, nicht dieser Wert.
+- **Kosten:** ein Prozessaufruf und geschätzt rund fünfzehn Tokens je Turn. Nicht nachgemessen, vernachlässigbar, aber nicht null.
+- **Der Hook misst die Systemzeit des Rechners**, auf dem Claude Code läuft, nicht die eines Zielsystems. Steuert das Projekt ein System in anderer Zeitzone, bleibt die Umrechnung Aufgabe des Agenten.
+- **Über Mitternacht fallen zwei Datumsangaben auseinander.** Das Datum im Systemprompt steht ab Sessionstart fest, der Hook liefert es je Turn neu. Eine Session über den Tageswechsel trägt beide Werte gleichzeitig. Maßgeblich ist der Hook-Wert, und das gehört gesagt: Genau dieser Tageswechsel war der auslösende Fehlerfall, und ein unaufgelöster Widerspruch im Kontext ist schlechter als eine einzige Quelle.
+- **Fehlt `date` oder eine POSIX-Shell**, schlägt der Hook bei **jedem** Turn fehl und erzeugt je Nachricht eine Fehlermeldung. Das ist schlechter als kein Hook. Die Doku nennt für Shell Form `sh -c` auf macOS und Linux, auf Windows Git Bash, und PowerShell, wenn Git Bash fehlt; unter PowerShell ist `date '+…'` nicht dasselbe Kommando. Deshalb: Befehl vorab in der Shell prüfen, eine Zeile und Exit 0 erwarten, und bei Fehlschlag den Wert nicht setzen.
+- **Ungeprüft** bleiben Windows und Linux im Zusammenspiel mit diesem Wert sowie `disableAllHooks` und managed settings, die ihn stumm wirkungslos machen können. `%Y-%m-%d %H:%M:%S %Z` selbst ist POSIX-`date` und GNU-`date` bekannt.
 
 ## Was bewusst nicht gesetzt wird
 
@@ -110,7 +160,7 @@ Die `Read(…)`-Einträge schützen die Datei-Tools, nicht die Shell. `ls`, `cat
 Das ist **kein vollständiger Schutz**, aber die Lücke ist kleiner, als sie klingt — die beiden Fälle sind zu trennen:
 
 - **Prompt-frei und damit wirklich offen** ist nur, was im Read-only-Satz steht: `head ~/.ssh/id_rsa`, `tail`, `grep` und `find` über dieselben Pfade laufen ungefragt.
-- **Nicht prompt-frei**, weil nicht im Satz enthalten, sind `base64`, `xxd`, `od`, `strings` und jedes Skript: Sie sind von keiner deny-Regel gedeckt, prompten aber, weil der Kanon keine allgemeine `Bash`-Freigabe erteilt — allow enthält nur `Bash(git *)`.
+- **Nicht prompt-frei**, weil nicht im Satz enthalten, sind `base64`, `xxd`, `od`, `strings` und jedes Skript: Sie sind von keiner deny-Regel gedeckt, prompten aber, weil der Kanon keine allgemeine `Bash`-Freigabe erteilt — allow enthält an Bash-Regeln nur `Bash(git *)` und `Bash(date:*)`.
 
 Eine vollständige Aufzählung wäre eine Blacklist, die nie fertig wird; die Herstellerdoku warnt ausdrücklich, dass Bash-Regeln, die Argumente einschränken sollen, brüchig sind. Zwei Mechaniken verschieben die Grenze noch: Vor dem Abgleich werden Wrapper wie `timeout`, `nice`, `nohup`, `command` und flagloses `xargs` abgestreckt, `xargs cat ~/.ssh/id_rsa` fällt also unter die deny-Regel. Umgebungsrunner wie `npx`, `docker exec` oder `devbox run` werden **nicht** abgestreckt und führen an ihr vorbei. Der Riegel deckt den naheliegendsten Weg ab; die eigentliche Schranke bleibt, dass solche Dateien ohne Anlass nicht gelesen werden. Nenne die Grenze im Bericht, statt einen Schutz zu suggerieren, den die Konfiguration nicht leistet.
 

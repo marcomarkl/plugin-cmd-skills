@@ -45,7 +45,7 @@ Alle werden mit dem Namespace-Präfix aufgerufen und laden **nur auf deinen Aufr
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan um, jeden Schritt gegen ein beobachtbares Kriterium verifiziert | nach dem Plan-Modus |
 | `/cmd:project-setup` | Gibt die geordnete Aufrufliste der drei Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium; richtet selbst nichts ein | vor der Einrichtung eines Projekts |
 | `/cmd:project-rules` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit acht Disziplin-Katalogen | eigenständig |
-| `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon | beim Einrichten eines Projekts |
+| `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon, samt Zeitanker-Hook | beim Einrichten eines Projekts |
 | `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon und schlägt projekteigene Skills, Subagents und Regeln vor | wenn die `CLAUDE.md` zuwächst |
 | `/cmd:session-learn` | Reflektiert die Session und macht Learnings zu einem Plan | am Sessionende |
 | `/cmd:session-handoff` | Verdichtet den Arbeitsstand in eine kurze `HANDOFF.md` fürs nächste Fenster | wenn der Kontext knapp wird |
@@ -58,6 +58,8 @@ Details, Pipeline und Voraussetzungen: **[`cmd/README.md`](cmd/README.md)**.
 `plan-execute` zielt auf Claude Codes **Auto mode**. Auto mode ist ein **Research Preview ohne Sicherheitsgarantie** — nutze ihn nur in einer isolierten Umgebung. Ohne Auto mode läuft der Skill ebenfalls, dann mit normalen Permission-Prompts.
 
 `project-settings` schreibt **Permission-Regeln**, darunter ein weit gefasstes `Read(//**)` mit einer deny-Liste für Schlüssel und Credentials. Dieser Kanon ist eine Entscheidung für meine Maschine und mein Arbeitsprofil, **keine allgemeine Empfehlung**. Lies `cmd/skills/project-settings/references/permission-kanon.md`, bevor du ihn übernimmst — dort steht zu jeder Regel, was sie leistet und was sie ausdrücklich nicht leistet.
+
+Seit 0.21.0 setzt derselbe Skill zusätzlich einen **Hook**, und das ist eine andere Klasse als eine Permission-Regel: Eine Regel erlaubt etwas, ein Hook führt etwas aus, hier `date` bei **jeder** Nachricht in diesem Projekt. Er gibt dem Modell die Systemzeit, weil Claude Code von sich aus nur das Datum liefert und es beim Sessionstart festschreibt. Er liest nichts, schreibt nichts und geht nicht ins Netz; wer ihn dennoch nicht will, nimmt ihn aus dem Kanon, bevor er den Skill laufen lässt, denn aus der Datei entfernt holt ihn der nächste Lauf zurück.
 
 `project-settings` **entfernt Altlasten früherer Läufe**: den `SessionStart`-Hook und `.claude/skills/session-protocol/SKILL.md` des inzwischen gestrichenen Kommunikationsprotokolls (in Projekten, die vor Version 0.10.0 eingerichtet wurden), das dort sonst bei jedem Sessionstart weiterlädt — und seit 0.18.0 den Key `plansDirectory`, sofern er exakt auf `"./plans"` steht, wie ihn ein Lauf bis 0.17.0 gesetzt hat. Die `.gitignore`-Zeile geht nur zusammen mit diesem Key und nur, wenn `plans/` leer ist; den Ordner selbst fasst der Skill nie an, vorhandene Pläne bleiben liegen. Erkannt wird alles an einer festen Marke oder am exakten Wert, fremde `SessionStart`-Hooks und abweichende Werte bleiben stehen, und die Entfernung steht in derselben Vorschau wie alles andere. In einem Projekt ohne diese Spuren passiert nichts.
 

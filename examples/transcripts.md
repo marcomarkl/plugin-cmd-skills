@@ -78,7 +78,7 @@ Der Plan selbst wurde in den Runden direkt geändert. Rücknahme per Kennung: �
 
 Die Vorbedingungen sind **Reihenfolge-Hinweise, keine Sperren** — jeder der drei läuft auch für sich. Die Reihenfolge trägt einen Halbsatz je *belegter* Abhängigkeit; für die Naht Schritt 1 → Schritt 2 gibt es keine, und der Skill sagt das, statt sie zu erfinden.
 
-Jedes Kriterium ist gekennzeichnet, ob es **am Projekt** ablesbar ist oder nur **im Bericht** des Laufs steht. Randfälle erscheinen als Zusatz am betroffenen Schritt: fehlendes Repo, Aufruf aus einem Unterordner (mit offengelegtem Repo-Root und beiden Deutungen), `CLAUDE.md` und `AGENTS.md` als getrennte echte Dateien, leerer Ordner ohne erhebbares Projektprofil.
+Jedes Kriterium ist gekennzeichnet, ob es **am Projekt** ablesbar ist oder nur **im Bericht** des Laufs steht. Randfälle erscheinen als Zusatz am betroffenen Schritt: fehlendes Repo, Aufruf aus einem Unterordner (mit offengelegtem Repo-Root und beiden Deutungen), `CLAUDE.md` und `AGENTS.md` als getrennte echte Dateien, leerer Ordner ohne erhebbares Projektprofil, und an Schritt 1 der Vorbehalt, dass der Zeitanker-Hook bei **neu angelegter** `settings.json` erst nach `/hooks` oder in einer neuen Session greift.
 
 **Was der Skill nicht tut:** ausführen, schreiben, anlegen, und feststellen, was schon gelaufen ist. Er kann die drei nicht aufrufen (ihre Sperre `disable-model-invocation`) und macht ihre Arbeit auch nicht selbst nach. Ein Schritt wird nie weggelassen, weil er erledigt aussieht — was die Erhebung ergibt, wird zum Hinweis am Schritt.
 
@@ -143,11 +143,13 @@ Geht die Bilanz nicht auf, meldet der Skill den Lauf als fehlerhaft, statt die D
 
 **Eröffnungszug:** Bestandsaufnahme statt Schreiben — welche der Zieldateien existieren, welche von git getrackt werden, was im Auto-Memory dieses Projekts liegt. Danach die gesammelte Vorschau aller Änderungen zur Freigabe. Nicht parsebares JSON in einer Zieldatei bricht hier ab, ohne etwas zu überschreiben.
 
+**Der Zeitanker-Hook steht in der Vorschau eigens ausgewiesen**, nicht als weiterer Wert in der Aufzählung: Eine Permission-Regel erlaubt etwas, dieser Hook führt bei jeder Nachricht `date` aus. Dazu der Halbsatz, dass er nichts liest, nichts schreibt und nicht ins Netz geht.
+
 **In Projekten, die früher eingerichtet wurden, steht in der Vorschau zusätzlich die Räumung.** Vor 0.10.0 das Kommunikationsprotokoll — der `SessionStart`-Hook mit der Marke `# cmd:project-settings:session-protocol` und `.claude/skills/session-protocol/SKILL.md`, erst der Hook, dann die Datei, dabei der Hinweis, dass der Skill nicht prüfen kann, ob die Datei noch dem ausgelieferten Stand entspricht. Bis 0.17.0 das projektlokale Planverzeichnis — der Key `plansDirectory` bei exakt `"./plans"`, danach die `.gitignore`-Zeile, aber nur mit gefundenem Key und nur bei leerem `plans/`; der Ordner selbst bleibt unangetastet, mit dem Hinweis, wo neue Pläne künftig entstehen. Findet er keine Spur, kommt der Punkt in Vorschau und Bericht nicht vor.
 
 **Zwischenschritte, die eine Rückfrage erzeugen:** übernehmbare Kandidaten aus `.claude/settings.local.json`; jede Wildcard-Zusammenfassung, die mehr freigäbe als die Summe der Einzeleinträge (mit benanntem Zugewinn); jeder Auto-Memory-Eintrag mit Zielvorschlag.
 
-**Abschlussbericht** (Chat-Notiz): angelegt, geändert, übersprungen, abgelehnt — je mit Rückweg (`git restore <datei>` bei getrackten, `.bak`-Pfad bei untrackten). Dazu drei Punkte, die sonst als Fehlschlag gelesen werden:
+**Abschlussbericht** (Chat-Notiz): angelegt, geändert, übersprungen, abgelehnt — je mit Rückweg (`git restore <datei>` bei getrackten, `.bak`-Pfad bei untrackten). Dazu fünf Punkte, die sonst als Fehlschlag gelesen werden:
 
 ```
 Entfernt:        SessionStart-Hook + .claude/skills/session-protocol/ (nur wenn vorhanden)
@@ -155,6 +157,9 @@ Befund:          crossSessionInbound / isolatePeerMachines in ~/.claude/settings
 Wirkt erst nach dem Workspace-Trust-Dialog: permissions.allow (deny/ask sofort)
 Nicht abgedeckt: deny schützt das Read-Tool, nicht die Shell (cat & Co.)
 Bewusst offen:   git restore / git checkout -- laufen ungefragt
+Zeitanker:       bei neu angelegter settings.json erst nach /hooks oder in neuer Session;
+                 unter disableAllHooks bleibt der Wert stumm
+Kanonwert:       aus der Datei entfernt holt ihn der nächste Lauf zurück
 ```
 Ein zweiter Lauf ohne zwischenzeitliche Änderung meldet, dass nichts zu tun war, und erzeugt keinen Diff.
 
@@ -185,6 +190,8 @@ Der einzige Skill, dessen **voller Flow in einem Zug endet** — Eröffnungszug 
 
 ```
 # Session-Handoff — <Thema>
+
+Stand: <Datum, Uhrzeit, Zeitzone>
 
 ## Ziel
 <ein bis drei Zeilen>
@@ -221,6 +228,7 @@ Die Überschriften sind **Richtschnur, kein Schema**: Ein Abschnitt, der für da
 ## Übergabe aufgenommen: <Pfad>
 
 ### Abgeglichen
+- Alter: erhoben <Zeitpunkt aus der Datei>, jetzt <Systemzeit> → <Alter> / Zeile fehlt
 - Versionsstand: <Datei sagt X> · <Projekt zeigt Y> → deckungsgleich / abweichend
 - Genannte Dateien: <alle vorhanden / diese fehlen>
 
