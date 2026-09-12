@@ -2,6 +2,14 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.21.1
+
+- **Die Begründung zu `Bash(date:*)` nennt jetzt ihre Grenze.** Gemessen am 12. September 2026: Ein Lauf in einem **nicht getrusteten** Verzeichnis meldet ausdrücklich „Ignoring N permissions.allow entries from .claude/settings.json: this workspace has not been trusted" und nennt neben dem Dialog einen zweiten Weg, `projects[<pfad>].hasTrustDialogAccepted: true` in `~/.claude.json`. Die Freigabe wirkt also erst nach dem Trust, und das trifft genau den Normalfall unmittelbar nach der Einrichtung. Der bisherige Satz, ohne die Regel prompte die Zeiterhebung, war damit zu absolut: Bis zum Trust trägt allein die **Fallback-Kette** der erhebenden Skills. Immerhin ist der Zustand nicht stumm, die Meldung erscheint beim Start samt Anzahl.
+- **Die Abnahme des Zeitankers ist gelaufen und in `DESIGN.md` festgehalten.** Bestanden: die Verschachtelung als eigenes Gruppen-Objekt, die Idempotenz (zweiter Lauf ohne Diff, Marke genau einmal, Meldung ausdrücklich) und das Stehenbleiben eines fremden `UserPromptSubmit`-Hooks samt fremdem Permission-Eintrag. Die zweistufige Abnahme griff, `jq` vorhanden, Verschachtelung belegt.
+- **Die Messmethode ist Teil des Befunds.** Ein headless-Einzelaufruf kann die schreibende Hälfte dieser Skills nicht prüfen, und zwar nicht wegen fehlender Rechte, sondern weil der Skill planmäßig eine Freigabe einholt und in `claude -p` keine zweite Nachricht kommt. Nötig sind zwei Turns, der zweite über `-c`. Das gilt für jeden freigabepflichtigen Skill der Suite.
+- **Nicht belegt bleibt, ob `Bash(date:*)` nötig ist.** Der Versuch scheiterte zweimal an derselben Stelle und wurde abgebrochen: Nutzerweit gilt hier `permissions.defaultMode: "auto"`, damit fehlt die zu messende Prompt-Ebene, was der Kontrollfall `base64 --version` belegt. Der Eintrag bleibt, weil er nichts kostet; seine Begründung ist weiterhin als unbelegt gekennzeichnet.
+- Kein Skill-Verhalten geändert, nur Begründungstext im Kanon. Entfallende Kettenglieder nach §9: beide READMEs und `examples/transcripts.md` (geprüft, keines nennt `Bash(date:*)`; die pauschalen Trust-Aussagen dort bleiben gültig), `scripts/smoke.sh`, `project-setup` samt Kopien-Checkliste sowie beide Manifest-`description`s.
+
 ## 0.21.0
 
 - **Zeitanker gegen alternde Messwerte, in zwei bewusst getrennten Sicherungen.** Anlass ist ein belegter Fehlerfall aus einem anderen Projekt: Ein Agent maß einen Gerätezustand, der Nutzer griff Stunden später selbst ein, und der Agent behauptete den alten Zustand danach in einem **Nebensatz** weiter, über einen Tageswechsel hinweg. Ein Agent hat keinen Zeitsinn, und Claude Code liefert von sich aus nur das **Datum**, festgeschrieben beim Sessionstart — gerade der Tageswechsel bleibt also unsichtbar.
