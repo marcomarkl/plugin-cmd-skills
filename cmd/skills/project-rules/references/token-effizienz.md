@@ -28,6 +28,7 @@ Die folgenden Regeln richten sich an dich als einsetzende KI und steuern, wie du
 ### Bedeutung bewahren (die Grenze)
 - Lass Vorbehalte bei korrektheitskritischer Arbeit, nötige Disambiguierung und die entscheidende Ausnahme stehen, auch wenn sie Tokens kosten. Ein weggelassener Vorbehalt oder eine zweideutige Anweisung kostet über Fehlversuche und Rework mehr, als die Kürzung spart.
 - Kürzen hat eine Grenze, und sie verläuft an der Korrektheit. Im Zweifel zugunsten der eindeutigen, vollständigen Aussage entscheiden, nicht zugunsten der kürzeren.
+- Kataloge markieren einzelne Regeln in ihrem Verbuchungshinweis als nicht kürzbar. Diese Marken gelten hier: Eine so markierte Regel wird weder gekürzt noch mit einer Nachbarregel zusammengezogen, auch wenn sie wie eine Aufzählung aussieht.
 
 ## Teil B — Verankerte Pflegeregel (Inhalt, der in die Datei übernommen wird)
 

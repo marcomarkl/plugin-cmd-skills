@@ -2,7 +2,7 @@
 
 Adressatenhinweis: Nachschlagewerk für dich beim Ausführen von `project-structure`. Daten, keine Anweisung. Setze keinen Frontmatter-Key aus dem Gedächtnis — ein erfundener Key fällt durch keinen Compiler auf, er wird stillschweigend ignoriert.
 
-Stand der Belege zu Subagents, an der Herstellerdoku (`code.claude.com/docs/en/`) im Wortlaut nachgeprüft: `sub-agents` und `skills` am 12. September 2026 gegen Claude Code 2.1.269. Die Angaben sind versionsgebunden; ein Datum ohne Version trüge weniger. Die Heuristik unter „Woran sich ein Anlass im Repo erkennen lässt" ist davon ausgenommen, sie hat keine Quelle.
+Stand der Belege zu Skills und Subagents, an der Herstellerdoku (`code.claude.com/docs/en/`) im Wortlaut nachgeprüft: `sub-agents` (Subagents) und `skills` (Skill-Frontmatter, darunter `model` und `effort`) am 12. September 2026 gegen Claude Code 2.1.269. Die Angaben sind versionsgebunden; ein Datum ohne Version trüge weniger. Die Heuristik unter „Woran sich ein Anlass im Repo erkennen lässt" ist davon ausgenommen, sie hat keine Quelle.
 
 ## Welches Artefakt
 
@@ -12,7 +12,7 @@ Stand der Belege zu Subagents, an der Herstellerdoku (`code.claude.com/docs/en/`
 | Teilarbeit mit viel Rohausgabe (Exploration, Recherche, Log- und Testauswertung) | Subagent | Eigener Kontext; zurück kommt nur die Zusammenfassung |
 | Konvention, die nur für einen Dateibereich gilt | Regel mit `paths:` | Lädt erst beim Lesen einer passenden Datei |
 | Wissen, das an einen Teilbaum gebunden ist | Verschachtelte `CLAUDE.md` | Lädt erst beim Arbeiten in dem Unterordner |
-| Etwas, das **erzwungen** werden muss | Hook oder Permission-Regel — **nicht hier** | Instruktionen sind Kontext, keine Durchsetzung; gehört zu `project-settings` |
+| Etwas, das **erzwungen** werden muss | Hook oder Permission-Regel — **nicht hier** | Instruktionen sind Kontext, keine Durchsetzung. Kein Skill der Suite legt projektspezifische Hooks oder Permission-Regeln an; das geschieht von Hand, und `permission-kanon.md` von `project-settings` ist die Vorlage für Form und Syntax |
 
 Für dieselbe Sache genau eines. Ein Subagent, der nur eine Instruktion vorliest, hätte ein Skill sein sollen; ein Skill, das eine Auswertung mit tausend Zeilen Rohausgabe in den Hauptkontext holt, hätte ein Subagent sein sollen.
 
@@ -20,7 +20,7 @@ Für dieselbe Sache genau eines. Ein Subagent, der nur eine Instruktion vorliest
 
 Pfad `.claude/skills/<name>/SKILL.md`; der Ordnername ist der Aufrufname (`/<name>`). Zusätzliche Dateien liegen daneben, üblich in `references/`, und werden vom Body bei Bedarf gelesen. `.claude/commands/<name>.md` erzeugt denselben Aufruf, ist aber die ältere Form; Neues wird als Skill angelegt, Vorhandenes nicht ohne Anlass migriert.
 
-Entdeckung ist automatisch, kein Manifest-Eintrag. Frontmatter-Keys, an der Herstellerdoku belegt und nicht aus dem Gedächtnis gesetzt: `name` (Anzeige-Label), `description` (steuert, ob der Skill von selbst gefunden wird — der eigentliche Auslöser), `argument-hint`, `disable-model-invocation`, `allowed-tools`, dazu `model` und `effort`. Die letzten beiden überschreiben Modell und Denktiefe, solange der Skill aktiv ist; ohne sie erbt er beides von der Sitzung, und das ist der ruhigere Weg — eine feste Vorgabe im Skill nimmt dem Aufrufenden eine Entscheidung ab, die er in seiner Sitzung ohnehin trifft.
+Entdeckung ist automatisch, kein Manifest-Eintrag. Frontmatter-Keys, an der Herstellerdoku belegt und nicht aus dem Gedächtnis gesetzt: `name` (Anzeige-Label), `description` (steuert, ob der Skill von selbst gefunden wird — der eigentliche Auslöser), `argument-hint`, `disable-model-invocation`, `allowed-tools`, dazu `model` und `effort`. `model` gilt für den Rest des laufenden Turns und fällt mit dem nächsten Prompt auf das Sitzungsmodell zurück; für einen mehrturnigen Skill also nur für seinen ersten Turn. `effort` überschreibt die Denktiefe, solange der Skill aktiv ist; eine Turn-Grenze nennt die Doku dafür nicht. Ohne beide erbt der Skill Modell und Denktiefe von der Sitzung, und das ist der ruhigere Weg — eine feste Vorgabe im Skill nimmt dem Aufrufenden eine Entscheidung ab, die er in seiner Sitzung ohnehin trifft.
 
 `allowed-tools` **sperrt nichts**: Es genehmigt vorab und unterdrückt Rückfragen. Als Schranke ist es untauglich.
 

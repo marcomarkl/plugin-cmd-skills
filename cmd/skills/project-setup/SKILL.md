@@ -46,7 +46,7 @@ Die Vorbedingungen sind **Reihenfolge-Hinweise, keine Sperren**: Jeder der drei 
 
 Vorbedingung: keine. Fasst an: das Verzeichnis selbst. Abnahme **am Projekt**: `.git/` existiert.
 
-Der Grund muss stimmen, sonst drängst du zu etwas mit einem Argument, das nicht trägt. Beide schreibenden Skills laufen auch ohne Repo; sie sichern dann untrackte Dateien vorher als `.bak`. Was ohne Repo fehlt, ist zweierlei: `project-structure` verschiebt nicht per `git mv`, die Historie geht also verloren, und `git restore` als bequemer Rückweg entfällt. Ob der Ordner ein eigenes Repo werden soll, entscheidet der Nutzer, nicht du.
+Der Grund muss stimmen, sonst drängst du zu etwas mit einem Argument, das nicht trägt. Alle drei schreibenden Skills laufen auch ohne Repo; sie sichern dann untrackte Dateien vorher als `.bak`. Was ohne Repo fehlt, ist zweierlei und betrifft zwei von ihnen: `project-structure` verschiebt nicht per `git mv`, die Historie geht also verloren, und `git restore` als bequemer Rückweg entfällt. Ob der Ordner ein eigenes Repo werden soll, entscheidet der Nutzer, nicht du.
 
 **Schritt 1:** `/cmd:project-settings` — kein Argument möglich, der Skill nimmt keines
 
@@ -64,7 +64,7 @@ Vorbedingung: keine gegenüber Schritt 1. Die beiden sind untereinander unabhän
 
 Fasst an: die Ablage des Projekts, verschiebt Bestand, schreibt den Wegweiser `## Ablage` in die maßgebliche `CLAUDE.md`.
 
-Abnahme **am Projekt**: dieser Abschnitt steht danach in der Datei. Abnahme **im Bericht**: die Zeilenbilanz des Laufs geht auf. **Im leeren Ordner ist die Abnahme am Projekt unbestimmt** — die maßgebliche `CLAUDE.md` entsteht dort erst in Schritt 3, und ob `project-structure` sie in dieser Lage selbst anlegt, ist nicht belegt. Kennzeichne sie dann als unbestimmt und verweise auf die Zeilenbilanz, statt eine Datei als Nachweis zu nennen, die es zu diesem Zeitpunkt nicht gibt.
+Abnahme **am Projekt**: dieser Abschnitt steht danach in der Datei. Abnahme **im Bericht**: die Zeilenbilanz des Laufs geht auf. **Im leeren Ordner legt `project-structure` die `CLAUDE.md` selbst an**, mit nichts als dem Wegweiser; die Abnahme am Projekt ist dann diese Datei mit `## Ablage`, und der Bericht nennt sie unter „Angelegt" mit dem Rückweg `rm`. Existiert nur eine `AGENTS.md`, trägt sie den Wegweiser, und nichts wird angelegt.
 
 **Schritt 3:** `/cmd:project-rules`, optional mit dem Pfad zur Zieldatei
 
@@ -86,7 +86,7 @@ Jeder erzeugt einen konkreten Zusatz am betroffenen Schritt, keinen allgemeinen 
 - **Kein git-Repo.** Projekt-Root ist dann das Startverzeichnis von Claude Code. Nenne das, weil die Pfadbezüge der Folgeschritte daran hängen.
 - **`CLAUDE.md` und `AGENTS.md` existieren beide als echte Dateien.** Rate nicht, welche gemeint ist. `project-rules` verlangt in dieser Lage, das Drift-Risiko zu benennen und nur die maßgebliche Datei zu härten. Gib den Konflikt an Schritt 3 weiter, statt das Argument zu setzen.
 - **`AGENTS.md` maßgeblich, oder `CLAUDE.md` ist Symlink oder Import-Hülle.** Setz das Argument von Schritt 3 entsprechend.
-- **Leerer Ordner.** `project-structure` findet nichts einzusammeln und legt nur an; seine Abnahme am Projekt ist hier unbestimmt (siehe Schritt 2). `project-rules` erzeugt die Datei aus seinen Katalogen, verlangt dafür aber das Projektprofil, das ein leerer Ordner nicht hergibt: Das muss vom Nutzer kommen. Sag ihm das am Schritt, nicht erst wenn er dort steht.
+- **Leerer Ordner.** `project-structure` findet nichts einzusammeln und legt die `CLAUDE.md` mit dem Wegweiser selbst an (siehe Schritt 2); existiert nur eine `AGENTS.md`, geht der Wegweiser dorthin, und das Argument von Schritt 3 zeigt auf sie. `project-rules` härtet die Datei danach, verlangt dafür aber das Projektprofil, das ein leerer Ordner nicht hergibt: Das muss vom Nutzer kommen. Sag ihm das am Schritt, nicht erst wenn er dort steht.
 
 ## Abschluss
 

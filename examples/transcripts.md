@@ -18,11 +18,11 @@ Offen: <noch im Plan zu klären>
 ```
 Danach die Bitte um Bestätigung des gemeinsamen Verständnisses — und hier endet der Zug. Rücknahme per Kennung: „nimm Entscheidung 2 zurück".
 
-**Nach der Bestätigung** — der zweite und letzte Schreibzug: Ist der Plan-Modus nicht aktiv, wird zuerst `EnterPlanMode` angeboten; ist er aktiv, entfällt das. Dann entsteht die Plandatei mit **Context** (Ziel und Anlass), den zu Umsetzungsschritten ausgeformten Vorgaben, dem **Entscheidungs-Ledger** als eigenem Abschnitt und den **Belegen aus dem Faktenvorlauf** samt Quelle, dazu die offenen Punkte. Abschließend der Verweis auf `plan-review`. Umgesetzt wird nichts — auch nicht auf Bitte.
+**Nach der Bestätigung** — der zweite und letzte Schreibzug: Ist der Plan-Modus nicht aktiv, wird zuerst `EnterPlanMode` angeboten; ist er aktiv, entfällt das. Dann entsteht die Plandatei mit **Context** (Ziel und Anlass), den zu Umsetzungsschritten ausgeformten Vorgaben, dem **Entscheidungs-Ledger** als eigenem Abschnitt und den **Belegen aus dem Faktenvorlauf** samt Quelle, dazu die offenen Punkte. Abschließend der Verweis auf `plan-review`; `ExitPlanMode` wird nicht aufgerufen, die Freigabe kommt erst vor `plan-execute`. Umgesetzt wird nichts — auch nicht auf Bitte.
 
 ## plan-review
 
-**Eröffnungszug:** Einordnung (Aufgabenart in einem Satz, Ziel als Steelman, Kandidaten-Pool an Blickwinkeln) und der erste Blickwinkel. Ohne vorhandenen Plan: Hinweis, dass es einen zu reviewenden Plan braucht.
+**Eröffnungszug:** Einordnung (Aufgabenart in einem Satz, Ziel als Steelman, Kandidaten-Pool an Blickwinkeln) und der erste Blickwinkel. Ohne vorhandenen Plan: Hinweis, dass es einen zu reviewenden Plan braucht. Stammt der Plan aus `/plan` oder wurde er direkt geschrieben, endet der Plan-Modus davor mit seiner Freigabefrage; die wird abgelehnt, dann `plan-review` aufgerufen.
 
 **Schlussnotiz** (nach erschöpften Blickwinkeln), als Chat-Notiz, nicht in den Plan:
 
@@ -65,7 +65,7 @@ Der Plan selbst wurde in den Runden direkt geändert. Rücknahme per Kennung: �
    Vorbedingung: keine gegenüber Schritt 1 — die beiden sind unabhängig
    Fasst an: ...
    Abnahme (am Projekt): Abschnitt `## Ablage` in der maßgeblichen CLAUDE.md
-          — im leeren Ordner unbestimmt, dort trägt nur die Zeilenbilanz
+          — im leeren Ordner legt project-structure die Datei selbst an, nur `## Ablage`
    Abnahme (im Bericht): die Zeilenbilanz geht auf
 
 3. /cmd:project-rules             (optional: Pfad zur Zieldatei, hier gefüllt)
@@ -133,7 +133,7 @@ Kanon-Abgleich: <X übernommen / Y umbenannt / Z angelegt / N weggelassen>
 <Ausgangszeilen> = <in Zielen> + <verblieben> + <entfallene Strukturzeilen> — jede Quelle verbucht.
 Zweiter Lauf ohne zwischenzeitliche Änderung: diff-frei.
 ```
-Geht die Bilanz nicht auf, meldet der Skill den Lauf als fehlerhaft, statt die Differenz zu glätten. Ein zweiter Lauf ohne zwischenzeitliche Änderung erzeugt keinen Diff.
+Geht die Bilanz nicht auf, meldet der Skill den Lauf als fehlerhaft, statt die Differenz zu glätten. Ein zweiter Lauf ohne zwischenzeitliche Änderung erzeugt keinen Diff. Fehlt jede Regeldatei, steht unter „Angelegt" auch die `CLAUDE.md` selbst, mit nichts als dem Wegweiser und dem Rückweg `rm`.
 
 **Zwei Rückwege, nicht einer:** Eine 1:1-Verschiebung läuft über `git mv` und wird mit `git restore <datei>` zurückgenommen. Eine Aufteilung auf mehrere Ziele kennt kein `git mv` — dort gibt es kein eindeutiges Ziel für die Historie —, die Quelle wird per `git rm` entfernt und der Rückweg heißt `git restore --staged --worktree <quelle>`.
 
@@ -220,7 +220,7 @@ Die Überschriften sind **Richtschnur, kein Schema**: Ein Abschnitt, der für da
 
 ## session-resume
 
-**Eröffnungszug:** der Fundort der Übergabedatei, benannt statt vorausgesetzt — Projektroot, Planverzeichnis des Projekts (hier `plans/`) oder ein Doku-Verzeichnis. Ohne Fund die Feststellung, dass keine da ist, und Ende; bei mehreren Kandidaten alle mit Pfad, ohne Wahl. Eine `.bak` ist kein Kandidat, und eine bloße Plandatei auch nicht: Die Datei muss sich als Übergabe ausweisen.
+**Eröffnungszug:** der Fundort der Übergabedatei, benannt statt vorausgesetzt — Projektroot, der Ort, auf den der `## Ablage`-Wegweiser für Wissen zeigt, oder ein Doku-Verzeichnis. Ohne Fund die Feststellung, dass keine da ist, und Ende; bei mehreren Kandidaten alle mit Pfad, ohne Wahl. Eine `.bak` ist kein Kandidat, und eine bloße Plandatei auch nicht: Die Datei muss sich als Übergabe ausweisen.
 
 **Dann die Gegenprobe**, der Kern des Skills:
 

@@ -1,7 +1,7 @@
 ---
 name: project-rules
 description: >-
-  Härtet/optimiert eine bestehende CLAUDE.md oder AGENTS.md mit acht Disziplin-
+  Härtet/optimiert eine bestehende oder neu anzulegende CLAUDE.md oder AGENTS.md mit acht Disziplin-
   Katalogen plus Token-Effizienz-Pass: fehlende Regeln ergänzen, vage schärfen,
   Konflikte vorlegen, Ablage und projekteigene Artefakte verankern, ohne
   Bedeutungsverlust verdichten.
@@ -17,7 +17,7 @@ Dieser Command nimmt eine bestehende `CLAUDE.md` (oder `AGENTS.md`), wendet acht
 
 ## Die Werkzeuge
 
-Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Acht **Inhalts-Kataloge** liefern Regeln *in* die Datei; ein neuntes **Effizienz-/Pflege-Werkzeug** (`references/token-effizienz.md`) verdichtet die Datei zuletzt. Der **Absatz unter der Überschrift** ist in jedem Katalog eine Adressaten-Präambel: Sie sagt, für wen die Regeln gelten und ob sie in die Zieldatei wandern. Lies sie mit, sie steuert die Verbuchung — aber sie selbst ist **nie** Zieltext und wird nicht mitkopiert.
+Die Katalog-Regeln liegen in `references/` — je Katalog eine Datei. Acht **Inhalts-Kataloge** liefern Regeln *in* die Datei; ein neuntes **Effizienz-/Pflege-Werkzeug** (`references/token-effizienz.md`) verdichtet die Datei zuletzt. Der **Absatz unter der Überschrift** ist in jedem Katalog eine Adressaten-Präambel: Sie sagt, für wen die Regeln gelten und ob sie in die Zieldatei wandern. Lies sie mit, sie steuert die Verbuchung — aber sie selbst ist **nie** Zieltext und wird nicht mitkopiert. Die Kataloge und die beiden Kanon-Dateien liegen im Plugin-Verzeichnis außerhalb des Arbeitsverzeichnisses; das Lesen braucht dort eine Freigabe, die headless fehlt und interaktiv erfragt wird. Wird sie verweigert, halte an und nenne den Pfad, statt den Inhalt aus dem Gedächtnis zu ersetzen: Eine Härtung ohne gelesene Kataloge wäre erfunden.
 
 | Werkzeug | Referenzdatei | Was es bewirkt |
 |---|---|---|

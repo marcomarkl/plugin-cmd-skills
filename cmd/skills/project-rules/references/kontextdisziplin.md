@@ -1,6 +1,8 @@
 # Kontextdisziplin
 
-Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie regeln, wie der Agent sein Hauptkontextfenster über lange Aufgaben hinweg schlank hält. **Verbuchungshinweis an dich, nicht in die Zieldatei:** Dieser Katalog regelt allein, **ob** ausgelagert wird und wo die Grenze liegt. Ob aus wiederkehrender Auslagerung ein eigenes Artefakt wird, regelt `projekt-artefakte.md`. Führe beide nicht zusammen und wiederhole die Beispielliste der Teilarbeiten nicht in beiden.
+Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie regeln, wie der Agent sein Hauptkontextfenster über lange Aufgaben hinweg schlank hält.
+
+**Verbuchungshinweis an dich — kommt nicht in die Zieldatei.** Dieser Katalog regelt allein, **ob** ausgelagert wird und wo die Grenze liegt; ob aus wiederkehrender Auslagerung ein eigenes Artefakt wird, regelt `projekt-artefakte.md`. Führe beide nicht zusammen und wiederhole die Beispielliste der Teilarbeiten nicht in beiden. Die drei Ausnahmen unter „Verbose Arbeit in separaten Kontext auslagern" werden nicht gekürzt und nicht zusammengezogen, auch nicht im Token-Effizienz-Pass: Ohne sie gilt die Auslagerungsregel auch für Arbeit, die eine Rückfrage braucht oder deren Rohmaterial ohnehin in den Hauptkontext muss, und dort übersteigt der Schaden die Ersparnis. Kürzbar sind dagegen die Beispiele der Teilarbeiten.
 
 ## Nur einlesen, was nötig ist
 - Lies große Dateien und rohe Tool-Ausgaben nicht vollständig ein. Begrenze jeden Read auf den benötigten Bereich und filtere umfangreiche Kommando-Ausgaben, bevor sie in den Kontext gelangen.
@@ -10,10 +12,9 @@ Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nic
 ## Verbose Arbeit in separaten Kontext auslagern
 - Lagere ausgabestarke Teilarbeiten (Exploration, Recherche, Log- und Testauswertung) in einen separaten Kontext aus, statt sie im Hauptkontext anzuhäufen.
 - Prüfe dabei zweierlei: ob sich das Ergebnis auf wenige Zeilen samt Dateiverweis verdichten lässt, und ob der Auftrag vollständig übergeben werden kann. Trifft beides zu, lagere aus.
-- **Drei Ausnahmen, in denen die Arbeit im Hauptkontext bleibt:** Sie braucht unterwegs eine Rückfrage, denn ein ausgelagerter Lauf kann nicht fragen; ihr Rohmaterial wird später wörtlich gebraucht, denn was zusammengefasst ist, steht nicht mehr im Wortlaut zur Verfügung; oder der Auftrag lässt sich nicht abgrenzen, sodass der leere Kontext zu Raten führt.
+- **Drei Ausnahmen, in denen die Arbeit im Hauptkontext bleibt:** Sie braucht unterwegs eine Rückfrage, denn ein ausgelagerter Lauf kann nicht fragen; ihr Rohmaterial muss ohnehin in den Hauptkontext, denn dann spart die Auslagerung nichts und kostet den Umweg; oder der Auftrag lässt sich nicht abgrenzen, sodass der leere Kontext zu Raten führt.
 - Gib einem ausgelagerten Lauf alles Nötige explizit mit: Aufgabe, Pfade, Constraints und den Zielpfad für Ergebnisse. Sein Kontext startet leer; der Prompt ist der einzige Kanal.
 - Lass ihn Details in eine Datei schreiben und nur eine Zusammenfassung samt Dateiverweis zurückgeben.
-- **Die drei Ausnahmen werden nicht gekürzt und nicht zusammengezogen.** Ohne sie gilt die Auslagerungsregel auch für Arbeit, die eine Rückfrage braucht oder deren Rohmaterial gebraucht wird, und dort übersteigt der Schaden die Ersparnis. Kürzbar sind dagegen die Beispiele der Teilarbeiten.
 
 ## Untersuchungen eng fassen
 - Erkunde nicht ungescoped das ganze Projekt. Benenne konkrete Dateien, Pfade oder Bereiche, statt breit zu explorieren und das Fenster mit irrelevantem Material zu fluten.

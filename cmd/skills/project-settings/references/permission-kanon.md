@@ -62,6 +62,19 @@ Stand der Belege, an der Herstellerdoku (`code.claude.com/docs/en/`) nachgeprüf
 }
 ```
 
+### Was die allow-Regeln leisten
+
+Je Regel, was sie freigibt, was sie nicht freigibt, und warum sie im Kanon steht. Getrennt ist dabei, was die Skills dieser Suite **brauchen**, und was der Kanon **darüber hinaus** freigibt; das Zweite ist eine Entscheidung des Maintainers für seine Maschine, keine Anforderung der Suite, und wer den Kanon übernimmt, trifft sie neu.
+
+| Regel | Leistet | Leistet nicht | Warum im Kanon |
+|---|---|---|---|
+| `WebSearch` | Websuche ohne Prompt | Keinen Seitenabruf; das ist `WebFetch` | Bedarf der Suite: der Faktenvorlauf von `plan-grill` und die Belegpflicht der Ausführungsdisziplin, die Versionsnummern und Fakten per Websuche verifizieren lässt, statt sie zu raten |
+| `WebFetch(domain:*)` | Abruf jeder Domain ohne Prompt | Keine Downloads oder Skripte über die Shell | Bedarf der Suite: nur Doku-Domains wie `code.claude.com`. **Alle** Domains sind darüber hinaus Entscheidung des Maintainers; eine Liste der Doku-Domains wäre für die Suite gleichwertig |
+| `Bash(git *)` | Jedes git-Kommando ohne Prompt, soweit keine `ask`-Regel greift | Nicht die sechs Formen der `ask`-Liste; nicht `cd <anderswo> && git …`, das wegen fremder Hooks prompt | Bedarf der Suite: Inventur (`git status`, `git log`, `git remote -v`), Verschieben mit Historie (`git mv`) und der Rückweg (`git restore`) in `project-structure`, `project-settings` und `session-handoff` |
+| `Read(//**)` | Lesen im ganzen Dateisystem ohne Prompt, soweit keine `deny`-Regel greift | Nicht die dreizehn `deny`-Pfade; nicht die Shell (`cat`, siehe unten) | Bedarf der Suite, gemessen am 12. September 2026 gegen Claude Code 2.1.269: Vier Skills laden zwölf `references/`-Dateien aus dem Plugin-Cache unter `~/.claude/plugins/` nach, außerhalb des Arbeitsverzeichnisses. Im Standardmodus prompt jeder dieser Zugriffe und scheitert headless („Claude requested permissions to read from …, but you haven't granted it yet"). Fremde Repos und `~/.claude/` darüber hinaus zu lesen ist Entscheidung des Maintainers |
+
+Alle vier wirken erst nach angenommenem Workspace-Trust (siehe unten). Bis dahin prompten die Zugriffe, und `Read(//**)` deckt das Nachladen der `references/` erst danach; unmittelbar nach der Einrichtung trägt es also noch nicht.
+
 ### Zeitanker: Systemzeit je Turn
 
 Ergänzung **derselben** Datei, kein zweites Ziel: derselbe `.claude/settings.json`, ein weiterer Top-Level-Key neben `permissions`.
