@@ -2,7 +2,7 @@
 name: project-curate
 description: >-
   Kuratiert eine fertig gehärtete CLAUDE.md oder AGENTS.md ohne Bedeutungsverlust: Floskeln
-  und Redundanz raus, Vages faktisch machen, Format nach Inhalt, Wichtiges nach oben,
+  und Redundanz raus, Format nach Inhalt, Wichtiges nach oben,
   auslagerungsreife Blöcke markieren und eine knappe Pflegeregel bedingt verankern. Schwächt
   keine Regel, verschiebt nichts, legt nichts an. Der letzte Schritt nach project-rules.
 argument-hint: "[optional: Pfad zur CLAUDE.md/AGENTS.md]"
@@ -34,7 +34,7 @@ Eine markierte Regel wird **weder gekürzt noch mit einer Nachbarregel zusammeng
 
 ## Schritt 3 — Kuratieren (Teil A)
 
-Wende Teil A des Katalogs auf die ganze Datei an, ohne die Bedeutung zu verändern: knappe Fachnotiz statt Floskeln und Höflichkeitsrahmen, Verben statt Nominalisierungen, Redundanz weg (dieselbe Regel zweimal in anderen Worten kostet doppelt und schärft nichts), Vages faktisch machen, Format nach Inhalt wählen, Wichtiges nach oben. Den Maßstab im Einzelnen gibt der Katalog, nicht dieser Absatz.
+Wende Teil A des Katalogs auf die ganze Datei an, ohne die Bedeutung zu verändern: knappe Fachnotiz statt Floskeln und Höflichkeitsrahmen, Verben statt Nominalisierungen, Redundanz weg (dieselbe Regel zweimal in anderen Worten kostet doppelt und schärft nichts), Format nach Inhalt wählen, Wichtiges nach oben. **Vage Regeln schärfst du nicht** — das verlangt ein im Projekt belegtes Werkzeug und gehört zu `/cmd:project-rules`; der Katalog sagt, warum. Den Maßstab im Einzelnen gibt der Katalog, nicht dieser Absatz.
 
 **Gezielt editieren, nicht neu schreiben.** Ändere die Stellen, die fallen, statt die Datei als Ganzes neu zu setzen: Ein Komplett-Diff verdeckt, was die Kuratierung geändert hat, und genau daran hängt die Treue-Prüfung aus Schritt 6. Fällt bei einer durchgreifenden Umstrukturierung fast jede Zeile, ist Neuschreiben zulässig — dann vermerkst du es im Protokoll.
 
@@ -78,9 +78,6 @@ Schreibweise: <gezielt editiert / neu geschrieben, weil …>
 
 ### Gekürzt
 - <Abschnitt>: <was raus ist — Floskel, Dopplung, ableitbare Stack-Angabe>
-
-### Faktisch gemacht
-- <vorher vage „…" → jetzt prüfbar „…">
 
 ### Unangetastet geblieben
 - <Regel/Block> — Grund: <Marke / Originalblock / Vorbehalt / Ausnahme>

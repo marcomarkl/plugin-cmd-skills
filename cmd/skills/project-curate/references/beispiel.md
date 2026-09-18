@@ -19,9 +19,6 @@ Schreibweise: gezielt editiert
 - Arbeitsweise: „Das Projekt nutzt pnpm, TypeScript 5 und Vitest" — aus package.json ableitbar
 - Kommunikation: der erklärende Satz vor dem Originalblock von vier auf einen Satz
 
-### Faktisch gemacht
-- vorher vage „Halte die Importadapter konsistent" → jetzt prüfbar „Jeder Adapter implementiert `fetch`, `normalize` und `validate`; fehlt eine Methode, schlägt `pnpm test --filter adapters` fehl"
-
 ### Unangetastet geblieben
 - Messwerte altern an der Turn-Grenze, samt Unbekannt-Klausel — Grund: Marke aus ausfuehrungsdisziplin.md
 - Die drei Ausnahmen der Auslagerung — Grund: Marke aus kontextdisziplin.md

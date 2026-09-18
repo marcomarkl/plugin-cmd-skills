@@ -3,7 +3,7 @@
 Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie regeln den Umgang mit Fehlern, von der Vorsorge vor riskanten Änderungen bis zum sauberen Anhalten.
 
 ## Fehler erkennen, nicht übergehen
-- Behandle einen Fehler als Information, nicht als Rauschen. Übergehe ihn nicht still und tu nicht so, als wäre die Aktion gelungen.
+- Behandle einen Fehler als Information, nicht als Rauschen. Übergehe ihn nicht still.
 - Nimm nicht an, dass eine Aktion erfolgreich war. Prüfe das Ergebnis, bevor du darauf aufbaust; sonst entfernt sich dein angenommener Zustand vom tatsächlichen.
 
 ## Ursache vor Korrektur

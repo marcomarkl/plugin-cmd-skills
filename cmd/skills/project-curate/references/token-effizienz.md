@@ -14,7 +14,7 @@ Die folgenden Regeln richten sich an dich als einsetzende KI und steuern, wie du
 ### Dichter formulieren, nicht Inhalt streichen
 - Schreib wie eine knappe Fachnotiz: Floskeln und Höflichkeitsrahmen raus, überflüssige Qualifizierer und Füllwörter streichen, Verben statt Nominalisierungen.
 - Entferne Redundanz. Dieselbe Regel zweimal in anderen Worten kostet doppelt und schärft nichts.
-- Ersetze vage Vorgaben durch faktische, überprüfbare. "2 Leerzeichen einrücken" statt "sauber formatieren", "vor dem Commit die Tests laufen lassen" statt "deine Änderungen testen". Das spart Wörter und verbessert zugleich die Befolgbarkeit.
+- **Vage Vorgaben schärfst du hier nicht.** Aus „sauber formatieren" eine prüfbare Regel zu machen verlangt ein im Projekt belegtes Werkzeug, und dieser Skill inspiziert das Projekt nicht — er liest die Zieldatei und diesen Katalog. Das Schärfen gehört zu `/cmd:project-rules`, wo das Abdeckungs-Register die Kategorie `geschärft` und die Verankerung in den konkreten Begriffen des Projekts führt. Fällt dir beim Verdichten eine vage Stelle auf, lass sie stehen: Eine Umformulierung ohne Beleg wäre eine Erfindung, keine Verdichtung.
 
 ### Format nach Inhalt wählen
 - Markdown als Standard, weil token-leicht und zugleich strukturiert. Schwerere Formate (JSON, XML, HTML) nur, wo sie einen echten Zweck haben; sie blähen denselben Inhalt auf.

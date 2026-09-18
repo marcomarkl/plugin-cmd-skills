@@ -46,7 +46,7 @@ Alle werden mit dem Namespace-Präfix aufgerufen und laden **nur auf deinen Aufr
 | `/cmd:project-setup` | Gibt die geordnete Aufrufliste der fünf Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium; richtet selbst nichts ein | vor der Einrichtung eines Projekts |
 | `/cmd:project-audit` | Prüft den projekteigenen Prompttext gegen die Prompting-Leitfäden und legt veraltetes Über-Prompting als Plan zur Entfernung vor | vor `project-rules`, und für jedes Projekt, das früher schon gehärtet wurde |
 | `/cmd:project-rules` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit zehn Disziplin-Katalogen | eigenständig |
-| `/cmd:project-curate` | Kuratiert die gehärtete Datei ohne Bedeutungsverlust: Floskeln und Redundanz raus, Vages faktisch, auslagerungsreife Blöcke markiert | direkt nach `project-rules` |
+| `/cmd:project-curate` | Kuratiert die gehärtete Datei ohne Bedeutungsverlust: Floskeln und Redundanz raus, Format nach Inhalt, auslagerungsreife Blöcke markiert | direkt nach `project-rules` |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon, samt Zeitanker-Hook | beim Einrichten eines Projekts |
 | `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon und schlägt projekteigene Skills, Subagents und Regeln vor | wenn die `CLAUDE.md` zuwächst |
 | `/cmd:session-learn` | Reflektiert die Session und macht Learnings zu einem Plan | am Sessionende |
