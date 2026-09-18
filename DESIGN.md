@@ -450,7 +450,7 @@ Vier Befunde, alle am 18. September 2026 gegen Claude Code 2.1.276 erhoben. Sie 
 
 Alle Grader sind deterministisch (`regex`, `tool_used`), es kommt kein Urteilsmodell vor. Die Suite kostet rund zwölf US-Dollar je vollem Lauf über vier Fälle mit je drei Läufen.
 
-**Umgebungsbedingter Blocker.** Eine Bash-freigebende Auswertung läuft auf der Maschine des Autors nicht: Der Docker-Credential-Store enthält einen Symlink, weshalb die Bash-Sandbox ihn nicht ausschließen kann, und jeder Fall bricht mit 0 Turns und 0 Kosten ab. `Write` und `Edit` sind zulässig. `project-structure` (verschiebt per `git mv`) und `session-resume` (hält „Fertig" gegen den git-Stand) messen ohne Bash nur ihren Ersatzpfad und bleiben deshalb ungemessen; beide Fälle tragen `tags: [project, braucht-bash]`, die messbaren `tags: [project, messbar]`.
+**Umgebungsbedingter Blocker, dauerhaft.** Eine Bash-freigebende Auswertung läuft auf der Maschine des Autors nicht: Der Docker-Credential-Store enthält einen Symlink, weshalb die Bash-Sandbox ihn nicht ausschließen kann, und jeder Fall bricht mit 0 Turns und 0 Kosten ab. `Write` und `Edit` sind zulässig. `project-structure` (verschiebt per `git mv`) und `session-resume` (hält „Fertig" gegen den git-Stand) messen ohne Bash nur ihren Ersatzpfad und bleiben deshalb ungemessen; beide Fälle tragen `tags: [project, braucht-bash]`, die messbaren `tags: [project, messbar]`.
 
 ## Konventionen — geteiltes Vokabular
 
