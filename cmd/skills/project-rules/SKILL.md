@@ -113,7 +113,7 @@ Jetzt erst editierst du die Datei — in *einem* Durchgang, der das ganze Regist
 - Ergänzungen unter den thematisch passenden Abschnitt, neue Abschnitte nur, wenn nötig. Verwandte Regeln aus verschiedenen Katalogen gehören zusammen (z. B. alle Sicherheitsregeln in einen Abschnitt), nicht in nach Werkzeug getrennte Blöcke.
 - Schärfungen ersetzen die vage Fassung an Ort und Stelle — immer vage→testbar, nie umgekehrt. Eine vorhandene starke Regel bleibt stark (Best-of, Schritt 4).
 - Konfliktauflösungen nach der Entscheidung aus Schritt 5.
-- **Im Projekt verankern (siehe Schritt 4):** Schreibe jede Regel in den konkreten Begriffen des Projekts — echte Befehle, Tools, Dateitypen, Workflows, Risiken — statt in generischen Formeln. Erhalte und schärfe die projektspezifische Substanz, die schon in der Datei steht, statt sie auf ein Disziplin-Gerüst einzudampfen. Eine gehärtete Datei soll konkreter und tragfähiger sein als vorher, nicht dünner.
+- **Im Projekt verankern (siehe Schritt 4):** Schreibe jede Regel in den konkreten Begriffen des Projekts — echte Befehle, Tools, Dateitypen, Workflows, Risiken — statt in generischen Formeln. Erhalte und schärfe die projektspezifische Substanz, die schon in der Datei steht, statt sie auf ein Disziplin-Gerüst zu reduzieren. Eine gehärtete Datei soll konkreter und tragfähiger sein als vorher, nicht dünner.
 - Struktur und Ton der vorhandenen Datei beibehalten. Formuliere Regeln als faktische, überprüfbare Aussagen, nicht als vage Vorgaben. (Den Feinschliff der Form macht `/cmd:project-curate` — hier zählt erst der Inhalt.)
 
 

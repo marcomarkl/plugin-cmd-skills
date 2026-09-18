@@ -8,7 +8,7 @@ Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nic
 - Lies große Dateien und rohe Tool-Ausgaben nicht vollständig ein. Begrenze jeden Read auf den benötigten Bereich und filtere umfangreiche Kommando-Ausgaben, bevor sie in den Kontext gelangen.
 - Nutze bei der Suche den schlanksten Ausgabemodus (nur Trefferdateien oder Anzahl), solange der volle Inhalt nicht gebraucht wird.
 - Halte vor einer Runde Tool-Aufrufe zunächst für dich fest, was du als Nächstes brauchst, und fordere dann alles in einem Zug an, was nicht auf dem Ergebnis eines anderen Aufrufs aufbaut. Jeder zusätzliche Zug kostet Tokens, eine Laufzeit und eine Runde.
-- Was einmal im Kontext liegt, kostet bis zur nächsten Verdichtung auf jedem Schritt erneut. Hol es deshalb gar nicht erst unnötig herein.
+- Was einmal im Kontext liegt, kostet bis zur nächsten Verdichtung auf jedem Schritt erneut. Hol deshalb nur herein, was du brauchst.
 
 ## Verbose Arbeit in separaten Kontext auslagern
 - Lagere ausgabestarke Teilarbeiten (Exploration, Recherche, Log- und Testauswertung) in einen separaten Kontext aus, statt sie im Hauptkontext anzuhäufen.

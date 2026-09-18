@@ -64,7 +64,7 @@ Darunter jeweils eine `#`-Überschrift mit dem Titel im Klartext. Bei Entscheidu
 |---|---|
 | Ein Sammelordner für alles | Die Zwecke folgen verschiedenen etablierten Konventionen; eine eigene Vereinheitlichung verwürfe deren Werkzeugunterstützung |
 | Ordner für Erledigtes außerhalb von `backlog/completed/` | `CHANGELOG.md` und git-Historie decken das ab; ein dritter Ort driftet |
-| Ein eigener `archive/`-Schritt neben `completed/` | Backlog.md trennt beides (Erledigen vs. aus dem Datensatz nehmen); für einen Kanon ohne dieses Werkzeug ist der zweite Schritt Zeremonie ohne Nutzen |
+| Ein eigener `archive/`-Schritt neben `completed/` | Backlog.md trennt beides (Erledigen vs. aus dem Datensatz nehmen); für einen Kanon ohne dieses Werkzeug ist der zweite Schritt eine Formalität ohne Nutzen |
 | `docs/` als Ablage, wenn es generiert wird | Ein Generator überschreibt den Ordner; erkennbar an dessen Konfiguration im Repo |
 | Statusfelder in Wissensdateien | Wissen veraltet, es wird nicht erledigt; ein Status verleitete zu Pflege ohne Nutzen |
 | Vier leere Diátaxis-Ordner auf Vorrat | Diátaxis warnt davor wörtlich und nennt es „horrible". Die Struktur soll von innen wachsen, wenn Material da ist — ein leeres Gerüst ist das Gegenteil der Methode |

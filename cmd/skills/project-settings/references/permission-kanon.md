@@ -185,7 +185,7 @@ Umgekehrt wirkt sie an einer Stelle weiter als geschrieben: Eine `Read`-deny-Reg
 
 `Bash(git restore *)` und `Bash(git checkout -- *)` stehen **nicht** in der ask-Liste und laufen unter `Bash(git *)` ungefragt, obwohl beide uncommittete Arbeit unwiederbringlich löschen — sachlich dieselbe Klasse wie `git clean`.
 
-Sie bleiben draußen, weil `git restore` der dokumentierte Rückweg aus einem Fehlversuch ist; eine ask-Regel unterbräche die Notbremse bei jedem Gebrauch. Die Regelsyntax kann „restore gegen einen Commit" nicht von „restore über uncommittete Arbeit" trennen. Der Schutz liegt damit außerhalb der Konfiguration, in der Arbeitsweise: ein funktionierender Stand ist committet, bevor großflächig umgeschrieben wird. Ob das Zielprojekt diese Regel führt, weißt du nicht — nenne die Lücke im Bericht und sag dazu, dass sie genau darauf angewiesen ist, damit sie eine sichtbare Entscheidung bleibt und keine Auslassung.
+Sie bleiben draußen, weil `git restore` der dokumentierte Rückweg aus einem Fehlversuch ist; eine ask-Regel unterbräche den Rückweg bei jedem Gebrauch mit einer Rückfrage. Die Regelsyntax kann „restore gegen einen Commit" nicht von „restore über uncommittete Arbeit" trennen. Der Schutz liegt damit außerhalb der Konfiguration, in der Arbeitsweise: ein funktionierender Stand ist committet, bevor großflächig umgeschrieben wird. Ob das Zielprojekt diese Regel führt, weißt du nicht — nenne die Lücke im Bericht und sag dazu, dass sie genau darauf angewiesen ist, damit sie eine sichtbare Entscheidung bleibt und keine Auslassung.
 
 ## Regelsyntax, kurz
 
