@@ -25,4 +25,6 @@ Schritt B, Einarbeiten. Arbeite alle belastbaren Befunde dieser Runde in den Pla
 
 Schlussnotiz, als Chat-Notiz ausgeben, nicht in den Plan schreiben: die je Runde genutzten Blickwinkel in Reihenfolge, das vollständige Ledger aller eingearbeiteten Befunde, die verworfenen Befunde je Runde mit Begründung, sowie den Status Blickwinkel erschöpft plus Anzahl gelaufener Runden. Über die Kennung kannst du danach gezielt zurücknehmen, indem du mir als Folgeanweisung etwa sagst: nimm Änderung 2.3 im Plan zurück.
 
+Eine vollständig ausgefüllte Schlussnotiz steht in `references/beispiel.md` (Pfad relativ zum Skill-Ordner); lies sie, bevor du deine schreibst.
+
 Zusatzfokus für die Reviews, falls angegeben: $ARGUMENTS

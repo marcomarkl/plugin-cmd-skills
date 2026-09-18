@@ -114,6 +114,7 @@ Jetzt erst editierst du die Datei — in *einem* Durchgang, der das ganze Regist
 - Schärfungen ersetzen die vage Fassung an Ort und Stelle — immer vage→testbar, nie umgekehrt. Eine vorhandene starke Regel bleibt stark (Best-of, Schritt 4).
 - Konfliktauflösungen nach der Entscheidung aus Schritt 5.
 - **Im Projekt verankern (siehe Schritt 4):** Schreibe jede Regel in den konkreten Begriffen des Projekts — echte Befehle, Tools, Dateitypen, Workflows, Risiken — statt in generischen Formeln. Erhalte und schärfe die projektspezifische Substanz, die schon in der Datei steht, statt sie auf ein Disziplin-Gerüst zu reduzieren. Eine gehärtete Datei soll konkreter und tragfähiger sein als vorher, nicht dünner.
+- **Gezielt editieren, nicht neu schreiben.** Ändere die Stellen, die das Register nennt, statt die Datei als Ganzes neu zu setzen: Ein Komplett-Diff verdeckt, was dieser Lauf geändert hat, und genau daran hängen die Prüfungen aus Schritt 7 auf „nichts erfunden" und „nicht geschwächt". Für eine Datei, die du in Schritt 1 selbst anlegst, gilt das nicht — dort gibt es keinen Bestand, der verloren gehen könnte.
 - Struktur und Ton der vorhandenen Datei beibehalten. Formuliere Regeln als faktische, überprüfbare Aussagen, nicht als vage Vorgaben. (Den Feinschliff der Form macht `/cmd:project-curate` — hier zählt erst der Inhalt.)
 
 
@@ -134,7 +135,7 @@ Bei einem Fund: korrigieren, dann erneut prüfen — nicht auf unsauberem Stand 
 
 Gib zum Schluss ein knappes Protokoll aus. Es ist die menschenlesbare Form des Abdeckungs-Registers und macht das Ergebnis prüfbar:
 
-Die Form des Protokolls steht in `references/protokollvorlage.md`; lies sie hier und gib das Protokoll in dieser Form aus.
+Die Form des Protokolls steht in `references/protokollvorlage.md`; lies sie hier und gib das Protokoll in dieser Form aus. Ein vollständig ausgefülltes Beispiel steht in `references/beispiel.md`; lies es mit, sonst triffst du die Form, aber nicht die Konkretheit, an der das Protokoll prüfbar wird.
 
 **Keine Zahl in dieser Zeile.** Eine Quote wie „38 von 38" sieht nach Messung aus, ist aber keine: Was als *eine* Regel zählt — Listenpunkt, Satz, Unterabschnitt —, ist nirgends festgelegt, also kommt ein zweiter Lauf auf ein anderes Ergebnis, und beide klingen gleich sicher. Ein Fehlschätzer fällt hier nicht auf, weil nichts ihn prüft. Die Zeile behauptet deshalb nur, was du tatsächlich getan hast. Steht auch nur eine Katalogregel unverbucht, ist sie falsch und du korrigierst das Register, statt die Zeile zu relativieren.
 

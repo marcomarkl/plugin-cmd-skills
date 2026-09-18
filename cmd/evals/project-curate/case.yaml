@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: project-curate
+tags: [project, messbar]
+context:
+  scaffold_script: fixture.sh
+description: "Kuratiert eine fertig gehaertete CLAUDE.md nach dem Skilltext: verdichtet, ohne eine Regel zu schwaechen, und laesst die markierten Stellen unangetastet."

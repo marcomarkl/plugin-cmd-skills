@@ -199,6 +199,8 @@ Zweiter Lauf ohne zwischenzeitliche Änderung: diff-frei.
 
 Die Bilanzzeile ist der Vollständigkeitsbeleg. Geht sie nicht auf, ist der Lauf nicht fertig, sondern fehlerhaft — sag das so, statt die Differenz zu glätten.
 
+Ein vollständig ausgefüllter Bericht mit aufgehender Bilanz steht in `references/beispiel.md`; lies ihn, bevor du den Bericht schreibst.
+
 **Idempotenz ist Abnahmekriterium:** Ein zweiter Lauf ohne zwischenzeitliche Änderung erzeugt in keiner Datei einen Diff, und du meldest das ausdrücklich.
 
 **Bei jedem Abbruch** — Fehler, Ablehnung, Unterbrechung — gibst du dieselbe Bilanz: was geschrieben ist, was offen blieb, und der Rückweg für das bereits Geschriebene.

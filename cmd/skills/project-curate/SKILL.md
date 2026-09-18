@@ -36,6 +36,8 @@ Eine markierte Regel wird **weder gekürzt noch mit einer Nachbarregel zusammeng
 
 Wende Teil A des Katalogs auf die ganze Datei an, ohne die Bedeutung zu verändern: knappe Fachnotiz statt Floskeln und Höflichkeitsrahmen, Verben statt Nominalisierungen, Redundanz weg (dieselbe Regel zweimal in anderen Worten kostet doppelt und schärft nichts), Vages faktisch machen, Format nach Inhalt wählen, Wichtiges nach oben. Den Maßstab im Einzelnen gibt der Katalog, nicht dieser Absatz.
 
+**Gezielt editieren, nicht neu schreiben.** Ändere die Stellen, die fallen, statt die Datei als Ganzes neu zu setzen: Ein Komplett-Diff verdeckt, was die Kuratierung geändert hat, und genau daran hängt die Treue-Prüfung aus Schritt 6. Fällt bei einer durchgreifenden Umstrukturierung fast jede Zeile, ist Neuschreiben zulässig — dann vermerkst du es im Protokoll.
+
 **Die Grenze — hier hört Kürzen auf:**
 
 - Verdichten ist reine Formarbeit. Verändert eine Umformulierung die Aussage, ist sie keine Verdichtung — lass die Stelle stehen.
@@ -69,6 +71,7 @@ Bei einem Fund: korrigieren, dann erneut prüfen.
 ## Kuratiert: <Pfad zur maßgeblichen Datei>
 Maß: <Zeilen vorher> → <Zeilen nachher> · <Zeichen vorher> → <Zeichen nachher>
 Marken: <aus dem Protokoll von project-rules / selbst aus den Katalogen gelesen / nicht erreichbar>
+Schreibweise: <gezielt editiert / neu geschrieben, weil …>
 
 ### Zusammengeführt
 - <Thema>: <zwei Fassungen> → <eine>, am Ort <Abschnitt>
@@ -91,4 +94,4 @@ Marken: <aus dem Protokoll von project-rules / selbst aus den Katalogen gelesen 
 
 Steht unter „Auslagerungsreif markiert" mindestens ein Eintrag, empfiehl einen Lauf von `/cmd:project-structure`. Lief der in diesem Projekt schon — erkennbar am Wegweiser-Abschnitt `## Ablage` —, leg die Entscheidung vor („dieser Block gehört nach X, dort wurde er bisher nicht hingelegt — soll er?"), statt einen weiteren Lauf zu empfehlen. Zwei Skills, die einander im Wechsel empfehlen, schicken den Nutzer im Kreis.
 
-Die Maß-Zeile ist der Beleg, nicht die Behauptung: Sie nennt gemessene Werte aus Schritt 1 und vom Ende. Geht die Datei dabei nicht zurück, sag das so — eine Datei, die schon knapp war, wird durch Kuratieren nicht kürzer, und ein erfundener Gewinn wäre schlimmer als keiner.
+Die Maß-Zeile ist der Beleg, nicht die Behauptung: Sie nennt gemessene Werte aus Schritt 1 und vom Ende. Ein vollständig ausgefülltes Protokoll steht in `references/beispiel.md`; lies es, bevor du deines schreibst. Geht die Datei dabei nicht zurück, sag das so — eine Datei, die schon knapp war, wird durch Kuratieren nicht kürzer, und ein erfundener Gewinn wäre schlimmer als keiner.
