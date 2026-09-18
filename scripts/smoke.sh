@@ -13,10 +13,14 @@
 # ein eigenes leeres Wegwerf-Verzeichnis ausgelagert (siehe SMOKE_TMP); die uebrigen
 # Eintraege laufen weiter im Repo.
 #
-# Prueft NUR den Eroeffnungszug je Skill (laedt der Skill, produziert er seine
-# charakteristische erste Ausgabe), NICHT die Schluss-/Abschlussnotiz: die
-# erreicht ein Einzelaufruf bei den mehrschrittigen Skills nicht. Die erwartete
-# Form der vollen Flows steht in examples/transcripts.md.
+# Drei Testartefakte, drei Zustaendigkeiten, und keines ersetzt ein anderes:
+# Dieses Skript ist der billige LADECHECK — ein Lauf je Skill, Mustervergleich auf
+# den Eroeffnungszug (laedt der Skill, produziert er seine charakteristische erste
+# Ausgabe). Die QUALITAET der Ausgabe besitzt die Eval-Suite unter cmd/evals/:
+# drei Laeufe je Fall, Grader gegen Datei, Verlauf und Antwort, Vergleich Stand
+# gegen Stand. Die FORM der vollen mehrturnigen Flows besitzt
+# examples/transcripts.md — die erreicht ein Einzelaufruf bei den mehrschrittigen
+# Skills nicht, dieses Skript prueft sie deshalb NICHT.
 set -u
 
 PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)/cmd"
@@ -35,7 +39,7 @@ fi
 # der nachfolgende session-resume-Lauf finden, dessen Muster "keine gefunden" erwartet.
 # Ein gemeinsames Verzeichnis verschoebe die Kopplung nur aus dem Repo heraus.
 SMOKE_TMP="$(mktemp -d)" || { echo "FAIL: kein temporaeres Arbeitsverzeichnis"; exit 1; }
-mkdir -p "$SMOKE_TMP/handoff" "$SMOKE_TMP/resume"
+mkdir -p "$SMOKE_TMP/handoff" "$SMOKE_TMP/resume" "$SMOKE_TMP/audit" "$SMOKE_TMP/curate"
 
 # Vierter Parameter: Arbeitsverzeichnis des Laufs, Default das aktuelle. Der Wechsel
 # bleibt in der Kommandosubstitution lokal, PLUGIN_DIR ist ohnehin absolut.
@@ -108,6 +112,17 @@ run "project-settings" "/cmd:project-settings" "settings\.json|bestandsaufnahme|
 # die Freigabe, nicht die fehlende Write-Berechtigung. Bewegt sich nach dem Lauf eine Datei
 # im Repo, ist das ein Befund am Skill, kein Testartefakt.
 run "project-structure" "/cmd:project-structure" "inventur|ablage|kanon|vorgefunden|backlog|docs/"
+# project-audit: laeuft in einem leeren Wegwerf-Verzeichnis, aus zwei Gruenden. Im Repo
+# waere der Gegenstand der Prompttext dieses Projekts selbst — ein langer, teurer Lauf,
+# und sein Ergebnis haenge davon ab, was gerade unter .claude/ liegt. Geprueft wird
+# stattdessen der Randfall ohne Bestand: Der Skill muss sagen, dass es nichts zu pruefen
+# gibt, und KEINEN Plan erzeugen, statt einen mit erfundenen Befunden zu schreiben.
+run "project-audit" "/cmd:project-audit" "kein(en)? (plan|prompttext|gegenstand)|nichts zu pruefen|nichts zu prüfen|keine regeldatei|kein bestand" "$SMOKE_TMP/audit"
+# project-curate: ebenfalls im Wegwerf-Verzeichnis. Im Repo wuerde der Skill die
+# CLAUDE.md dieses Projekts als Zieldatei nehmen und sie bei schreibfreundlicher
+# Konfiguration tatsaechlich verdichten (siehe ACHTUNG 2). Geprueft wird der Zweig ohne
+# Zieldatei: Der Skill muss das sagen oder nachfragen, statt sich eine Datei zu waehlen.
+run "project-curate" "/cmd:project-curate" "keine .{0,25}(claude\.md|agents\.md|regeldatei|zieldatei|datei)|nicht gefunden|welche datei|kein(e)? (zieldatei|regeldatei)" "$SMOKE_TMP/curate"
 # session-handoff: Sonderfall. Der Skill SCHREIBT normalerweise eine HANDOFF.md.
 # Geprueft wird hier der andere Zweig: Ein "claude -p"-Lauf hat keinen Gespraechs-
 # verlauf, also keinen uebergebbaren Stand, und der Skill muss das sagen statt einen

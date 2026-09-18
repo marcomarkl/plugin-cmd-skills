@@ -257,6 +257,30 @@ Ein `references/` wird bedarfsgeladen: `permission-kanon.md` (die zu setzenden W
 
 **Warum „Erzwingen" nicht mehr auf `project-settings` zeigt.** Der Artefakt-Kanon verwies für Hooks und Permission-Regeln auf diesen Skill, der aber einen festen Kanon setzt und nichts Projektspezifisches anlegt; kein Skill der Suite tut das. Der Verweis führte ins Leere. Ein Umbau von `project-settings` zu einem Skill für projektspezifische Hooks stand nicht zur Wahl, er bräche „Der Kanon steht fest". Der Kanon sagt es jetzt ehrlich: von Hand, mit `permission-kanon.md` als Vorlage für Form und Syntax.
 
+### project-audit
+
+Prüft den projekteigenen Prompttext gegen die vier Prompting-Leitfäden und legt veraltetes Über-Prompting zur Entfernung vor. Frontmatter: `disable-model-invocation: true`, `argument-hint`. Body 3.752 Tokens, `references/befundklassen.md` 4.390, `references/beispiel.md` 2.115.
+
+**Warum er nichts schreibt.** Seine Befunde schlagen vor, Text zu **entfernen**, und eine ungeprüfte Entfernung ist der teuerste Fehler dieses Formats. Die Wirkweise ist deshalb die von `session-learn`: Der Skill erzeugt einen Plan mit stabiler Kennung je Befund, `plan-review` härtet ihn, `plan-execute` wendet ihn an. Über die Kennung nimmt der Nutzer jeden Vorschlag einzeln zurück. `.claude/settings.json` liest er, weil prompt-einspeisende Hooks zum Prompttext gehören; geschrieben wird sie von `project-settings`.
+
+**Die Abgrenzung, ohne die der Skill schadet.** Klasse A streicht Verifikations-Scaffolding, aber ausdrücklich **nicht** Prüfungen mit einem Kriterium von außen: Testlauf, Exit-Code, Build, Zeilenbilanz, Abdeckungs-Register, erwarteter Dateizustand sind Messungen und keine Selbstkritik. Ohne diese Grenze nähme ein Audit dem Projekt genau den Korrektheitsmechanismus, den `project-rules` vorher eingebaut hat. Belegt im headless-Lauf: Der Skill verwarf `cargo test` mit Exit-Code von sich aus als Nicht-Befund.
+
+**Warum die Belege in `references/` liegen.** Jede der elf Klassen trägt den englischen Originalsatz samt Leitfaden und Abschnitt. Im Body hätten sie ihn über die Re-Attach-Marke getragen, und ohne sie setzte der Skill Befunde aus dem Gedächtnis — bei einer Anweisung, Text zu löschen, ist das der Unterschied zwischen Prüfung und Behauptung.
+
+**Gruppe K ist der eigentliche Nutzen.** Sie nennt die vier Wortlaute, die frühere Fassungen dieses Plugins selbst in fremde Regeldateien geschrieben haben, samt der Zeile, die beim Entfernen stehen bleibt. Ein neuer `project-rules`-Lauf holt sie nicht zurück, weil die Best-of-Regel Vorhandenes als `bereits vorhanden` verbucht. Deshalb steht der Skill in der Kette **vor** `project-rules` und ist zugleich der Weg für jedes Projekt, das früher schon gehärtet wurde.
+
+### project-curate
+
+Kuratiert die fertig gehärtete Regeldatei, ohne eine Regel zu schwächen. Entstanden in 0.24.0 aus der Teilung von `project-rules`, das mit 15.681 Tokens weit über der Re-Attach-Marke lag. Body 4.107 Tokens, `references/token-effizienz.md` samt Beispiel 3.993.
+
+**Was die Teilung schneidet.** Bei `project-rules` bleiben Register, Konfliktrunde, Best-of-Prüfung und Änderungsprotokoll; hierher gehen der Verdichtungs-Pass, die Verdichtungsprüfung und ein eigenes, kürzeres Protokoll. Der Grund für die Reihenfolge ist einfach: Verdichten geht erst, wenn aller Inhalt steht.
+
+**Die Nichtkürzbarkeits-Marken haben zwei Wege, und der zweite trägt.** Einzelne Katalogregeln sind im Verbuchungshinweis als nicht kürzbar markiert — in der Zieldatei steht diese Marke nicht. Lief `project-rules` in derselben Sitzung, nennt sein Protokoll die Marken als Liste. Liegt keine vor, liest `project-curate` die Verbuchungshinweise unter `../project-rules/references/` selbst. Der zweite Weg ist der verlässliche, weil der erste eine Sitzung nicht überlebt, und er nutzt dasselbe Muster, mit dem `project-rules` die Kanon-Dateien von `project-structure` lädt.
+
+**Die Editierregel kam aus der Messung, nicht aus der Planung.** Der erste Probelauf des Eval-Falls schrieb die Zieldatei komplett neu statt gezielt zu editieren — ein Komplett-Diff, in dem die Treue-Prüfung aus Schritt 6 nicht mehr nachvollziehbar ist. Seit der Regel in Schritt 3 editiert der Lauf gezielt (`Edit called 4x`), und dieselbe Regel hat `project-rules` bekommen, wo derselbe Fehlgriff in einem von drei Läufen auftrat: Dort stieg der Score von 0,905 auf 1,000 und die Spanne fiel von 0,29 auf null.
+
+**Eine Aufgabe ohne Grundlage, offen (O2).** „Vages faktisch machen" steht im Verdichtungskatalog und gehört damit hierher, aber die Projektverankerung blieb bei `project-rules`. Dieser Skill inspiziert das Projekt nicht; eine vage Regel faktisch zu machen verlangt ein belegtes Werkzeug, und ohne Beleg verbietet die eigene Grenze aus Schritt 3 die Änderung. Drei Auswege stehen zur Wahl: die Aufgabe zurückgeben, dem Skill einen engen Lesezugriff auf belegte Projektbefehle geben, oder die Regel auf „vage Formulierungen kennzeichnen statt ersetzen" zurücknehmen.
+
 ## Kein Frontmatter- oder Hook-Schutz gegen Schreibzugriffe
 
 `session-learn` darf nichts schreiben, `plan-grill` während des Interviews nichts und danach ausschließlich die Plandatei. Diese Regeln tragen **allein die Body-Prosa** — nicht das Frontmatter und kein Hook. Alle Kandidaten wurden geprüft und verworfen:
@@ -309,18 +333,22 @@ Zwei Folgerungen, die den Rest dieses Abschnitts ordnen. Erstens wirkt jede Stra
 
 Diese Tabelle misst die **statische** Last, also jene 5 Prozent. `references/` sind geschätzt mit dem an den Messwerten kalibrierten Faktor **2,04 Zeichen pro Token** (über alle zehn Skills zwischen 1,98 und 2,10). Der zuvor angesetzte Faktor 3,2 unterschätzte den Verbrauch um rund ein Drittel.
 
-| Skill | Body (gemessen) | `references/` (geschätzt) | Verlauf nötig | breite Exploration | `references`-Nachlad | mehrere Turns |
+| Skill | Body | `references/` | Verlauf nötig | breite Exploration | `references`-Nachlad | mehrere Turns |
 |---|---:|---:|---|---|---|---|
-| `project-rules` | 14.656 | 13.350 | nein | nein | 8 Dateien | ja |
-| `project-structure` | 8.452 | 7.198 | nein | ja | 2 Dateien | ja |
-| `project-settings` | 5.124 | 5.768 | nein | nein | 1 Datei | ja |
-| `project-setup` | 4.728 | — | nein | nein | keiner | nein |
-| `session-resume` | 3.142 | — | nein | nein | keiner | ja |
-| `session-handoff` | 3.122 | — | ja | nein | keiner | nein |
-| `session-learn` | 3.107 | — | ja | nein | keiner | ja |
-| `plan-grill` | 2.508 | — | nein | ja | keiner | ja |
-| `plan-review` | 2.351 | — | nein | nein | keiner | ja |
-| `plan-execute` | 2.131 | 515 | nein | nein | 1 Datei, nur bei Blockade | ja |
+| `project-structure` | 9.775 | 11.702 | nein | ja | 3 Dateien | ja |
+| `project-rules` | 9.550 | 29.486 | nein | nein | bis 16 Dateien | ja |
+| `project-settings` | 7.330 | 10.784 | nein | nein | 1 Datei | ja |
+| `project-setup` | 4.993 | — | nein | nein | keiner | nein |
+| `session-handoff` | 4.738 | — | ja | nein | keiner | nein |
+| `session-resume` | 4.158 | — | nein | nein | keiner | ja |
+| `project-curate` | 4.107 | 3.993 | nein | nein | 2 Dateien, dazu situativ die Kataloge | ja |
+| `project-audit` | 3.752 | 6.506 | nein | nein | 2 Dateien | ja |
+| `session-learn` | 3.685 | — | ja | nein | keiner | ja |
+| `plan-grill` | 3.451 | 1.456 | nein | ja | 1 Datei | ja |
+| `plan-review` | 2.846 | 1.270 | nein | nein | 1 Datei | ja |
+| `plan-execute` | 2.761 | 515 | nein | nein | 1 Datei, nur bei Blockade | ja |
+
+Stand 18. September 2026, aus der Zeichenzahl mit dem kalibrierten Faktor. Die `references/`-Spalte summiert alle Dateien eines Skills; geladen wird davon je Lauf nur, was der Body anfordert. Bei `project-rules` sind das die zehn Kataloge plus die situativ nötigen Registerdateien, nie alle sechzehn.
 
 ### Drei Maßstäbe, und was sie wirklich messen
 
@@ -367,12 +395,14 @@ Getrennt von der Kontextlast zu behandeln. Hier geht es nicht um Tokens, sondern
 
 Die Ist-Werte sind am 18. September 2026 neu erhoben, aus der Zeichenzahl mit dem kalibrierten Faktor 2,04 (Spanne 1,98 bis 2,10). Sie liegen über den headless gemessenen Werten von August, weil die Bodies seither gewachsen sind; `project-setup` hat die Marke dabei überschritten, ohne dass es auffiel.
 
-| # | Skill | Strategien | Ist (18.09.) | gemessen (Aug.) | Ziel | Risiko |
+| # | Skill | Strategien | vor 0.24.0 | nach 0.24.0 | Ziel | Ergebnis |
 |---|---|---|---:|---:|---:|---|
-| 1 | `project-rules` | teilen, verdichten, Auslagern | 15.681 | 14.656 | 5.000 | hoch, 68 Prozent Reduktion |
-| 2 | `project-structure` | verdichten, Begründung raus | 10.078 | 8.452 | 5.000 | mittel, 50 Prozent |
-| 3 | `project-settings` | verdichten | 7.336 | 5.124 | 5.000 | mittel, 32 Prozent |
-| 4 | `project-setup` | verdichten | 5.260 | 4.728 | 5.000 | gering, 5 Prozent |
+| 1 | `project-rules` | teilen, verdichten, Auslagern | 15.681 | 9.550 | 5.000 | **Ziel aufgegeben** (Entscheidung zu O1): ohne Auslagern von Ablaufschritten nicht erreichbar, und eine nachgeladene Datei kommt nach einer Verdichtung nicht zurück. 39 Prozent Reduktion erreicht |
+| 2 | `project-structure` | verdichten, Begründung raus | 10.078 | 9.775 | 5.000 | offen, in diesem Vorhaben nur gestreift |
+| 3 | `project-settings` | verdichten | 7.336 | 7.330 | 5.000 | offen |
+| 4 | `project-setup` | Tabellenform statt Prosa | 5.260 | 4.993 | 5.000 | **erreicht**, trotz Erweiterung von drei auf fünf Kettenglieder |
+| 5 | `project-curate` | neu aus der Teilung | — | 4.107 | 5.000 | **erreicht** |
+| 6 | `project-audit` | neu | — | 3.752 | 5.000 | **erreicht** |
 
 Für die letzten beiden ist das plausibel erreichbar. Für `project-rules` ist die Lücke **9.656 Tokens**, also zwei Drittel des Bodys. Eine Grobanalyse grenzt das ein, ohne es zu entscheiden: Rund 36 Prozent des Bodys sind situative Anweisung, die erst ab einem bestimmten Schritt gilt und damit nach `references/` könnte (Abdeckungs-Register aus Schritt 4 mit 20 Prozent, Token-Pass aus Schritt 7 mit 9, Ausgabeformat-Vorlage mit 7). Reine Begründung sind „Warum diese Vorgehensweise" mit 6 Prozent und rund ein Fünftel von „Die Werkzeuge". Geschätzt bliebe ein Body von **4.200 bis 7.800** Tokens. Das Ziel ist erreichbar, aber nicht gesichert; die Spanne beruht auf einer Blockanalyse, nicht auf einem satzweisen Durchgang. Geht es nicht auf, bleibt der Skill-Zuschnitt, also `project-rules` zu teilen. Nicht entschieden.
 
@@ -431,6 +461,11 @@ Die Skills teilen Vokabular. Diese Begriffe wortgleich halten, damit die Suite n
 - **beobachtbares Kriterium** — ein prüfbarer Beleg (Testlauf, Exit-Code, Datei-/Lesezustand), kein „fehlerfrei"-Versprechen (execute; verwandt reviews „Befund am konkreten Schritt belegen").
 - **stabile Kennung / revidierbar** — jedem eingearbeiteten Punkt eine über den Lauf stabile Kennung geben, damit gezielt zurückgenommen werden kann.
 - **sichtbare Fortschrittsliste** — der Vorbehalt „falls deine Session eine anbietet, sonst im Text" in `plan-execute` und `session-resume`, wortgleich zu halten. **Bewusst ohne Tool-Namen:** Das Todo-System hieß bis Januar 2026 `TodoWrite` und wurde durch `TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` ersetzt; seit Claude Code 2.1.233 fehlen alle fünf auf den neueren Modellfamilien, sofern man sie nicht ausdrücklich einschaltet, weil diese Modelle mehrstufige Arbeit ohne geschriebene Liste verfolgen. In Background-Sessions und im Web sind sie dagegen auf jedem Modell da. Ein Skill, der Namen nennt, altert mit dem nächsten Wechsel; einer, der zum Einschalten auffordert, griffe in die Umgebung des Nutzers ein. Deshalb nur der Zweck und der Vorbehalt.
+
+- **Kriterium von außen** — ein Beleg, der nicht aus der Selbstprüfung stammt: Testlauf, Exit-Code, Build, Zeilenbilanz, Register, erwarteter Dateizustand. Der Begriff trägt zwei Lasten: Er ist bei `plan-execute` das Abnahmekriterium je Schritt und bei `project-audit` die Grenze, an der die Streichung von Verifikations-Scaffolding endet.
+- **Befundklasse** — bei `project-audit` eine der elf belegten Klassen aus `references/befundklassen.md`. Was zu keiner passt, ist **Beobachtung**, nicht Befund, und wandert nicht in den Plan.
+- **Maß-Zeile** — bei `project-curate` die Zeile mit Zeilen und Zeichen vorher und nachher. Sie ist der Beleg, nicht die Behauptung: Geht die Datei nicht zurück, steht das so da.
+- **Schreibweise** — ebenfalls bei `project-curate`: ob der Lauf gezielt editiert oder die Datei neu geschrieben hat, mit Grund. Der Vermerk existiert, weil ein Komplett-Diff die Treue-Prüfung unprüfbar macht.
 
 Drei Divergenzen sind **absichtlich** — nicht angleichen:
 

@@ -13,17 +13,19 @@ Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsn
 | `/cmd:plan-grill` | Interviewt dich zu einem Vorhaben, löst die Entscheidungen einzeln in Abhängigkeits- und Tragweitenreihenfolge auf, protokolliert sie revidierbar und legt sie nach deiner Bestätigung als Plan an. | **Am Anfang**, wenn das Vorhaben noch unscharf ist. |
 | `/cmd:plan-review` | Reviewt den zuletzt erstellten Plan in rotierenden Blickwinkeln und arbeitet die belastbaren Befunde direkt ein. | Sobald ein Plan steht — von `plan-grill` oder `/plan` —, bevor du freigibst. |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan vollständig um und verifiziert jeden Schritt gegen ein beobachtbares Kriterium; hält bei einem Fund außerhalb des Plans oder einer Klassifikator-Blockade an und fragt nach. | **Nach** dem Verlassen des Plan-Modus. |
-| `/cmd:project-setup` | Erhebt vier Fakten am Projekt und gibt die geordnete Aufrufliste der drei Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium. Richtet selbst nichts ein. | **Zuerst**, bevor du die drei anderen `project-`Skills fährst. |
-| `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit zehn Disziplin-Katalogen und verdichtet sie token-effizient. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
+| `/cmd:project-setup` | Erhebt vier Fakten am Projekt und gibt die geordnete Aufrufliste der fünf Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium. Richtet selbst nichts ein. | **Zuerst**, bevor du die drei anderen `project-`Skills fährst. |
+| `/cmd:project-audit` | Prüft den projekteigenen Prompttext gegen die vier Prompting-Leitfäden — Verifikations-Scaffolding, wiederholte Selbstprüfung, Formatierungsverbote, Denk-Wiedergabe, Narrations-Unterdrückung — und legt die Befunde als Plan zur Entfernung vor. Schreibt an keinen Zielort. | Vor `project-rules`, und der Weg für ein Projekt, das früher schon gehärtet wurde. |
+| `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit zehn Disziplin-Katalogen. Verdichtet selbst nicht — das ist der Lauf von `project-curate` danach. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
+| `/cmd:project-curate` | Kuratiert die fertig gehärtete Datei ohne Bedeutungsverlust: Floskeln und Redundanz raus, Vages faktisch machen, Format nach Inhalt, auslagerungsreife Blöcke markieren. Schwächt keine Regel und verschiebt nichts. | Direkt nach `project-rules`; verdichten geht erst, wenn aller Inhalt steht. |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon, entdoppelt die Permission-Listen und legt den Zeitanker-Hook. | **Einmal** beim Einrichten eines Projekts, danach bei Bedarf erneut. |
 | `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon, sammelt Streudateien ein und schlägt projekteigene Skills, Subagents und `paths:`-Regeln vor, Subagents entlang eines Delegations-Maßstabs. Verschiebt nur mit Verlagerungs-Register und Verlustnachweis. | Wenn die `CLAUDE.md` zuwächst oder Wissen verstreut liegt. |
 | `/cmd:session-learn` | Reflektiert die laufende Session, leitet dauerhafte Learnings ab, legt sie als Plan an und verweist auf `/cmd:plan-review` und `/cmd:plan-execute`, die du selbst aufrufst. | Am **Ende** einer Session. |
 | `/cmd:session-handoff` | Verdichtet den laufenden Arbeitsstand in eine kurze `HANDOFF.md`, damit ein frisches Fenster ohne den bisherigen Verlauf weiterarbeiten kann. | Wenn das **Kontextfenster knapp** wird. |
 | `/cmd:session-resume` | Nimmt die Übergabedatei im frischen Fenster auf, prüft ihren Stand gegen das Projekt, legt den nächsten Schritt vor und räumt die Datei nach deiner Bestätigung weg. | **Im neuen Fenster**, direkt nach einem Handoff. |
 
-Alle zehn sind `disable-model-invocation: true` — sie laden **nur auf deinen Aufruf hin**, nie automatisch. Das ist Absicht: es sind timing-kontrollierte Workflows.
+Alle zwölf sind `disable-model-invocation: true` — sie laden **nur auf deinen Aufruf hin**, nie automatisch. Das ist Absicht: es sind timing-kontrollierte Workflows.
 
-Keiner setzt ein Modell oder eine Denktiefe: Sie laufen mit der Einstellung deiner Session. Willst du für einen Lauf mehr Tiefe — `plan-review` und `project-rules` sind die aufwendigsten —, heb den Effort der Session, statt im Skill zu suchen.
+Keiner setzt ein Modell oder eine Denktiefe: Sie laufen mit der Einstellung deiner Session. Willst du für einen Lauf mehr Tiefe — `plan-review`, `project-rules` und `project-audit` sind die aufwendigsten —, heb den Effort der Session, statt im Skill zu suchen.
 
 **grill und review teilen sich den Plan nach Gegenstand**, nicht nach Reihenfolge: grill klärt die **Entscheidungen** und legt sie als Plan an, review prüft den **fertigen Plan** in Runden und härtet ihn. Beide schreiben in dieselbe Plandatei, und beide machen ihr Ergebnis über **stabile Kennungen** zurücknehmbar (grill „nimm Entscheidung 3 zurück", review „nimm Änderung 2.3 zurück").
 
@@ -48,12 +50,12 @@ Jeder Skill ist einzeln nutzbar; die Kette ist die Kür, nicht die Pflicht.
 
 **Zwei der drei `session-*`-Skills teilen sich die Session nach Haltbarkeit**, und danach wählst du: `session-learn` nimmt das **Dauerhafte** (Learnings, die künftige Sessions besser machen) und legt es projektlokal ab; `session-handoff` nimmt das **Flüchtige** (wo die Arbeit gerade steht) und gibt es ans nächste Fenster. Am Sessionende sinnvoll beides, in dieser Reihenfolge — `session-learn` belegt die Plandatei, auf die `session-handoff` danach nur noch verweisen muss. `session-resume` teilt dagegen nichts: Es ist das **zeitliche Gegenstück** zu `session-handoff`, derselbe Stand eine Sitzung später und in die andere Richtung.
 
-Die `project-*`-Skills stehen **vor** der Kette und sind keine Pipeline-Glieder: **drei** richten ein, ein **vierter** lotst nur durch die drei. Unter den einrichtenden gilt eine Reihenfolge, und zwar aus je eigenem Grund:
+Die `project-*`-Skills stehen **vor** der Kette und sind keine Pipeline-Glieder: **fünf** bilden die Einrichtungsreihe, ein **sechster** lotst nur durch sie. Unter den einrichtenden gilt eine Reihenfolge, und zwar aus je eigenem Grund:
 
 ```
-project-setup  ⇢  project-settings  →  project-structure  →  project-rules
- (lotst, führt      (Settings, holt      (Ablage, lagert      (härtet und
-  nichts aus)        Auto-Memory rein)     Inhalt aus)          verdichtet)
+project-setup  ⇢  project-settings  →  project-structure  →  project-audit  →  project-rules  →  project-curate
+ (lotst, führt      (Settings, holt      (Ablage, lagert      (prüft den        (härtet)        (verdichtet)
+  nichts aus)        Auto-Memory rein)     Inhalt aus)          Prompttext)
 ```
 
 `project-setup` steht davor, ist aber **kein Glied**: Es erhebt vier Fakten am Projekt und gibt die Reihe als Liste aus, mit dem Argument je Aufruf, der Vorbedingung und dem Abnahmekriterium. Ausgeführt wird nichts, deshalb der gestrichelte Pfeil. Aufrufen musst du die drei weiterhin selbst, und genau das ist Absicht: Ihre Sperre `disable-model-invocation` hält Claude von ihnen fern, und sie aufzuheben, um eine Verkettung zu ermöglichen, öffnete ausgerechnet die schreibenden Skills fürs automatische Laden.
@@ -81,6 +83,13 @@ Auto mode aktivieren (einmaliges Opt-in):
 ## Voraussetzung für die Skills mit `references/`
 
 Vier Skills laden Referenzdateien nach, sobald sie laufen: `plan-execute` (eine, nur bei einer Klassifikator-Blockade), `project-rules` (neun Kataloge plus die zwei Kanon-Dateien von `project-structure`), `project-settings` (eine) und `project-structure` (zwei). Diese zwölf Dateien liegen im Plugin-Verzeichnis, also außerhalb deines Projekts, im Normalfall unter `~/.claude/plugins/cache/`. **Lesen außerhalb des Arbeitsverzeichnisses braucht eine Freigabe.** Gemessen am 12. September 2026 gegen Claude Code 2.1.269, im Standardmodus, ohne Projekt-Settings: Interaktiv kommt je Datei ein Prompt, headless (`claude -p`) scheitert jeder Zugriff, und der Skill hält an, statt aus dem Gedächtnis zu arbeiten. `project-settings` setzt mit `Read(//**)` genau die Regel, die das deckt; sie wirkt aber erst nach dem Workspace-Trust-Dialog, also nicht im Lauf, der sie gerade schreibt. Rechne beim ersten Lauf im Projekt mit den Prompts, oder nimm sie über den Trust-Dialog vorweg. Im Dev-Loop mit `--plugin-dir` gilt dasselbe; dort hilft `--add-dir` auf das Plugin-Verzeichnis.
+
+## Wenn dein Projekt schon einmal gehärtet wurde
+
+Zwei Dinge holt ein neuer `project-rules`-Lauf **nicht** nach. Beide sind erwartetes Verhalten, kein Fehler:
+
+- **Was ein früherer Lauf geschrieben hat, bleibt stehen.** Die Best-of-Regel verbucht Vorhandenes als `bereits vorhanden` und schwächt es nie — das schützt deine eigenen Regeln, hält aber auch Text fest, den die Prompting-Leitfäden inzwischen zum Entfernen empfehlen. Frühere Fassungen dieses Plugins haben unter anderem einen Abschnitt `## Vor "fertig" verifizieren`, eine Teilaufgaben-Verifikation und den Satz „Verfeinere das Verständnis, bis kein Raum für Fehldeutung bleibt" in fremde Regeldateien geschrieben. Dafür ist **`/cmd:project-audit`** da: Es findet diese Stellen im Wortlaut, prüft jede gegen den Beleg und legt sie als Plan zur Entfernung vor. Ein Lauf lohnt sich auch dann, wenn die Datei sonst in Ordnung wirkt.
+- **Eine deutsche Paraphrase wird nicht durch das englische Original ersetzt.** Steht in deiner Datei eine eigene Fassung einer Regel, die die Kataloge heute als unübersetzten Originalblock führen, lässt `project-rules` sie stehen. Der Grund ist derselbe: Vorhandenes wird nicht überschrieben. Willst du den gemessenen Wortlaut, entfernst du die Paraphrase selbst und lässt den Lauf die Lücke füllen.
 
 ## Gut zu wissen
 
@@ -120,9 +129,15 @@ cmd/
     │   └── references/auto-mode.md         # bedarfsgeladen bei Klassifikator-Blockade
     ├── plan-grill/SKILL.md
     ├── plan-review/SKILL.md
+    ├── project-audit/
+    │   ├── SKILL.md
+    │   └── references/                     # Befundklassen mit Originalbelegen, Beispiel
+    ├── project-curate/
+    │   ├── SKILL.md
+    │   └── references/                     # Token-Effizienz-Pass, Beispiel
     ├── project-rules/
     │   ├── SKILL.md
-    │   └── references/                     # zehn Disziplin-Kataloge plus Token-Effizienz-Pass
+    │   └── references/                     # zehn Disziplin-Kataloge, Registermechanik, Beispiel
     ├── project-settings/
     │   ├── SKILL.md
     │   └── references/permission-kanon.md  # die zu setzenden Werte samt Belegen

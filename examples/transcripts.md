@@ -2,6 +2,8 @@
 
 Dokumentiert die erwartete Form der Flows, die `scripts/smoke.sh` nicht erreicht: Bei den mehrschrittigen Skills sieht ein `claude -p`-Einzelaufruf nur den Eröffnungszug, bei `session-handoff` nur den Zweig ohne Gesprächsverlauf. Kein Test, sondern Referenz: So soll die Ausgabe strukturiert sein.
 
+**Drei Testartefakte, drei Zuständigkeiten.** Diese Datei besitzt die **Form der vollen mehrturnigen Flows**. Den Ladecheck besitzt `scripts/smoke.sh` (ein Lauf je Skill, Mustervergleich auf den Eröffnungszug), die **Qualität** der Ausgabe besitzt die Eval-Suite unter `cmd/evals/` (drei Läufe je Fall, Grader gegen Datei, Verlauf und Antwort, Vergleich Stand gegen Stand). Ein vollständig ausgefülltes Einzelbeispiel je Skill steht seit 0.24.0 in dessen `references/beispiel.md` und wird zur Laufzeit geladen; diese Datei zeigt dagegen den Ablauf über mehrere Turns.
+
 ## plan-grill
 
 **Eröffnungszug** (was ein Einzelaufruf zeigt): Gegenstand in einem Satz wohlwollend wiedergegeben (Steelman) plus **genau eine** offene Frage — bei abzählbaren Optionen via `AskUserQuestion`, sonst als Prosa. Keine Datei wird geschrieben.
@@ -179,6 +181,52 @@ Verworfen: <Kandidat> — <Grund>
 Dann das Angebot, den Plan über `plan-review` zu härten und `plan-execute` anzuwenden. Übersteht kein Kandidat den Filter: Hinweis „keine dauerhaften Learnings", kein Plan.
 
 **Keine Rückfrage vor dem Plan.** Schlussnotiz und geschriebener Plan kommen im selben Zug — die Learnings werden nicht vorab zur Bestätigung vorgelegt. Die einzige Zustimmung ist der Wechsel in den Plan-Modus, und die entfällt, wenn er schon aktiv ist oder wenn kein Learning den Filter übersteht. Zurückgenommen wird am Plan: „nimm L2 zurück".
+
+## project-audit
+
+**Eröffnungszug** (was ein Einzelaufruf zeigt): der erhobene Bestand mit Pfaden und Zeilenzahlen — Regeldatei, `.claude/skills/`, `.claude/agents/`, `.claude/rules/`, dazu `.claude/settings.json` als *gelesen*. Keine Datei wird geschrieben, in keinem Zweig.
+
+**Mehrturnig** ist der Weg zum Plan: Der Skill ruft `EnterPlanMode` auf und wartet die Zustimmung ab, bevor er die Befunde in die Plandatei fasst. Ein `-p`-Lauf erreicht das nicht und endet nach der Schlussnotiz.
+
+**Schlussnotiz**, als Chat-Notiz —
+
+```
+## Geprüfter Bestand
+<Datei (Zeilen)> · <Datei (Zeilen)> · … · Nicht geprüft: <was und warum>
+
+## Befunde, als Plan angelegt
+| Kennung | Datei:Zeile | Klasse | Wortlaut | Vorschlag | Schwere |
+
+## Verworfen, mit Begründung
+- <Datei:Zeile> „<Wortlaut>" — <Klasse erwogen und warum sie nicht trägt>
+
+## Beobachtungen ohne Klasse
+- <was auffiel, aber keine Klasse trifft>
+
+## Nächster Schritt
+Plan mit <n> Befunden. Härten mit `/cmd:plan-review`, danach `/cmd:plan-execute`.
+```
+
+**Der Leerfall ist ein eigener Zweig**, den `smoke.sh` prüft: Ohne Regeldatei und ohne `.claude/` sagt der Skill das und erzeugt **keinen** Plan. Ebenso, wenn zwar ein Bestand da ist, aber kein Befund die Prüfung aus Schritt 3 übersteht — dann bleibt er ehrlich leer, statt einen Plan mit erfundenen Befunden zu schreiben.
+
+## project-curate
+
+**Eröffnungszug** (was ein Einzelaufruf zeigt): die Klärung der Zieldatei samt Ausgangsmaß, und — noch vor der ersten Änderung — die Beschaffung der nicht kürzbaren Marken. Der Skill nennt dabei ausdrücklich, **welchen Weg** er genommen hat: die Liste aus dem Protokoll von `project-rules`, oder der Rückfallweg über die Verbuchungshinweise unter `../project-rules/references/`. Ohne Zieldatei fragt er nach, statt sich eine zu wählen.
+
+**Schlussnotiz**, als Chat-Notiz — die vollständige Form steht in `cmd/skills/project-curate/references/beispiel.md`; hier nur das Gerüst:
+
+```
+## Kuratiert: <Pfad>
+Maß: <Zeilen vorher> → <nachher> · <Zeichen vorher> → <nachher>
+Marken: <Protokoll von project-rules / selbst aus den Katalogen gelesen / nicht erreichbar>
+Schreibweise: <gezielt editiert / neu geschrieben, weil …>
+
+### Zusammengeführt / Gekürzt / Faktisch gemacht / Unangetastet geblieben
+### Auslagerungsreif markiert (nicht verschoben)
+### Pflegeregel
+```
+
+**Was der Flow zeigt und ein Einzellauf nicht:** Die Maß-Zeile nennt gemessene Werte aus Schritt 1 und vom Ende — ein Lauf, der nur die Zieldatei klärt, hat den zweiten Wert noch nicht. Geht die Datei nicht zurück, steht das so da, statt einen Gewinn zu behaupten.
 
 ## session-handoff
 
