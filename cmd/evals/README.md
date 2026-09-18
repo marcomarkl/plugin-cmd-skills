@@ -18,6 +18,7 @@ claude plugin eval ./cmd --case <name> --runs 1 --max-cost-usd 5 \
 - **Fünf Skills haben keinen Fall.** `plan-grill`, `plan-review` und `plan-execute` hängen an Harness-Zuständen, die ein Lauf nicht herstellt; `session-learn` und `session-handoff` an einem Gesprächsverlauf, ohne den sie nach eigener Regel ehrlich leer bleiben.
 - **Der Plan-Modus fehlt.** Ein Fall, dessen Skill einen Plan erzeugt, misst die Schlussnotiz statt der Plandatei und weist den Lauf im Prompt an, `EnterPlanMode` zu überspringen.
 - **Grader prüfen per Default die letzte Chat-Nachricht.** Das Produkt der meisten Skills ist eine Datei, deshalb steht bei jedem Grader ausdrücklich, was er prüft: `target: { source: file, path: … }`, `target: trace` oder die Antwort.
+- **Unter `.claude/` kann kein Lauf schreiben.** Der Pfad ist geschützt, die Schutzprüfung läuft **vor** den allow-Regeln, und der Runner arbeitet im `dontAsk`-Modus — der Schreibversuch wird abgelehnt, auch mit `--allow-tools Write Edit`. Am Trace belegt (18.09.2026): `project-settings` erstellt die Vorschau, sichert korrekt zuerst die `.bak` und wird dann abgewiesen. Ein Grader, der eine Datei unter `.claude/` prüft, misst deshalb den Modus des Runners und nicht den Skill; solche Fälle prüfen den Verlauf.
 - **`tool_used` mit nur `max: 0`** wird als `1..0` gelesen und ist unerfüllbar. Wer „ruft dieses Tool nie auf" prüfen will, setzt `min: 0` dazu.
 
 Ergebnisse liegen unter `results/` und sind per `.gitignore` ausgenommen.
