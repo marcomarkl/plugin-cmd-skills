@@ -120,7 +120,7 @@ Ein Ausweg **könnte** sein, die beiden `argument-hint`-Werte zur Laufzeit aus `
 
 ### project-rules
 
-Wendet acht Disziplin-Kataloge gemeinsam auf eine bestehende `CLAUDE.md`/`AGENTS.md` an und verdichtet die Datei zuletzt in einem Token-Effizienz-Pass. Die Kataloge liegen in `references/` und werden **bedarfsgeladen** — der Body liest sie erst in Schritt 4 bzw. 7, nicht beim Aufruf.
+Wendet zehn Disziplin-Kataloge gemeinsam auf eine bestehende `CLAUDE.md`/`AGENTS.md` an und verdichtet die Datei zuletzt in einem Token-Effizienz-Pass. Die Kataloge liegen in `references/` und werden **bedarfsgeladen** — der Body liest sie erst in Schritt 4 bzw. 7, nicht beim Aufruf.
 
 Der Skill plant alle Kataloge in *einem* Durchgang und schreibt die Datei einmal kohärent; das ist der aufwendigste Einzelschritt der Suite.
 
@@ -160,6 +160,15 @@ Der Skill plant alle Kataloge in *einem* Durchgang und schreibt die Datei einmal
 
 **Warum Kürzungsverbote Verbuchungshinweise sind und keine Listenpunkte.** Bis 0.22.0 standen zwei Kürzungsverbote (Turn-Grenze in der Ausführungsdisziplin, drei Ausnahmen in der Kontextdisziplin) als Punkte in den Regellisten, deren Präambel sagt „übernimm sie als Inhalt in die Zieldatei". Der Testlauf vom 12. September 2026 hat beide korrekt nicht kopiert, aber aus Urteil, nicht aus Form; der Skill besteht sonst überall darauf, dass die Präambel den Adressaten bestimmt. Seit 0.23.0 stehen sie im Verbuchungshinweis unter der Präambel, wie in `language-policy.md` und `projekt-artefakte.md`. Weil der Verbuchungshinweis in Schritt 4 gelesen wird, das Verbot aber in Schritt 7 wirken muss, trägt `token-effizienz.md` seither den Satz, dass solche Marken dort gelten. Ohne ihn stünden die Verbote in Dateien, die Schritt 7 nicht mehr liest.
 
+
+**Warum der Ablauf so gebaut ist** (wörtlich aus dem Skill-Body übernommen, als dieser in 0.24.0 entlastet wurde; der Text steuerte kein Verhalten, sondern erklärte den Entwurf):
+
+Vier Fehler liegen bei dieser Aufgabe nahe, und die Schritte sind gegen genau sie gebaut:
+
+- **Getrennte Durchläufe je Katalog** verwursten die Datei: jeder Lauf hängt einen eigenen Block an, dieselbe Überschrift erscheint mehrfach, die Datei wird inkohärent. Gegenmittel: **einmal lesen → alle Kataloge gemeinsam planen → einmal schreiben → zuletzt verdichten.**
+- **Stilles Weglassen** untergräbt „vollständig". Wenn du eine Katalogregel übergehst, ohne es zu vermerken, kann niemand prüfen, ob die Datei wirklich gehärtet ist. Gegenmittel: ein **Abdeckungs-Register**, das jede einzelne Katalogregel verbucht.
+- **Alles blind übernehmen** bläht die Datei auf und verwässert die Regeln, die zählen — jede Zeile kostet Kontext in *jeder* Session. Streiche, was Claude ohnehin richtig macht oder aus Code und Konfiguration ableiten kann (Stack-Fakten, Build-Befehle als bloße Aufzählung); behalte nur die wirklich tragenden, nicht ableitbaren Regeln. **Eine kurze, kuratierte Datei schlägt eine lange generierte.** Gegenmittel: die **Projektart** setzt die Relevanzschwelle, `/cmd:project-curate` verdichtet danach; was das Projekt nachweislich nicht braucht, wird *begründet* weggelassen.
+- **Nur generische Disziplinen einsetzen** ergibt eine dünne, beliebige Datei — ein Katalog-Skelett, das in jedes Repo passte und dem konkreten Projekt nichts gibt. Kürzen heißt also *kuratieren, nicht abmagern*: jede übernommene Regel im Projekt verankern (in dessen Befehlen, Tools, Dateitypen, Workflows, Risiken), nicht nur Zeilen zählen. Eine Regel, die sich unverändert in jedes Repo kopieren ließe, ist noch nicht fertig. Dieser Punkt und der vorige spannen den Zielkorridor auf: **kurz und konkret und tragend** — nicht aufgebläht, aber auch nicht dünn-generisch.
 ### project-structure
 
 Zwei bedarfsgeladene References: `ablage-kanon.md` (Orte, Namensschemata, Ladezeitpunkte samt Belegen) und `artefakt-kanon.md` (Skills, Subagents, `paths:`-Regeln).
@@ -194,6 +203,14 @@ Die vierte Kategorie `entfällt` kam aus dem Testlauf, nicht aus dem Entwurf. Mi
 
 **Warum der Skill im leeren Ordner die Regeldatei selbst anlegt.** `project-setup` führte die Abnahme dort bis 0.22.0 als „unbestimmt", weil nicht belegt war, ob `project-structure` ohne Zieldatei den Wegweiser überhaupt schreibt; der Skill selbst schwieg zu dem Fall. Drei Wege standen offen. Nicht anlegen und den Wegweiser offen melden hieße, dass `project-rules` ihn aus einem Bericht übernehmen müsste, den es nicht sieht, und genau dagegen steht oben, dass nur `project-structure` weiß, was angelegt wurde. Die Reihenfolge im leeren Ordner zu drehen kippte die belegte Abhängigkeit „structure vor rules" und ließe die Datei unverdichtet zurück. Übrig bleibt: minimal anlegen, nichts als `## Ablage`, und `project-rules` härtet danach. Die Datei entsteht auch dann, wenn der Wegweiser nur eine Zeile trägt, weil die Kette an der Überschrift hängt; damit das nicht als Artefakt auf Vorrat gelesen wird, sagt der Bericht es dazu. Existiert nur eine `AGENTS.md`, ist sie die maßgebliche Datei und bekommt den Wegweiser; eine `CLAUDE.md` daneben wäre der Drift aus Schritt 1 von `project-rules`.
 
+
+**Warum der Ablauf so gebaut ist** (wörtlich aus dem Skill-Body übernommen, als dieser in 0.24.0 entlastet wurde):
+
+Drei Fehler liegen hier nahe, und die Schritte sind gegen genau sie gebaut:
+
+- **Blind anlegen.** Ein Projekt mit Issue-Tracker bekommt kein `backlog/`, eines mit `docs/adr/` kein zweites `docs/decisions/`. Zwei Orte für einen Zweck laufen auseinander — das ist derselbe Drift, den die Ablagedisziplin verbietet. Gegenmittel: Schritt 1 erkennt, Schritt 2 bildet ab, angelegt wird nur, was fehlt.
+- **Verschieben ohne Nachweis.** „Ich habe alles übernommen" ist keine Prüfung. Gegenmittel: das **Verlagerungs-Register** in Schritt 3 und die Bilanz in Schritt 7.
+- **Zusammenfassen statt verschieben.** Wer beim Umzug kürzt, verliert genau die Vorbehalte und Ausnahmen, deretwegen der Text geschrieben wurde. Gegenmittel: Verschieben ist reine Ortsänderung; Umformulieren ist ein getrennter, hier nicht vorgesehener Schritt.
 ### project-settings
 
 Ein `references/` wird bedarfsgeladen: `permission-kanon.md` (die zu setzenden Werte samt Belegen).
@@ -309,7 +326,7 @@ Diese Tabelle misst die **statische** Last, also jene 5 Prozent. `references/` s
 
 **Die tatsächliche Belastung je Aufruf** ist der Maßstab, der zählt, wenn es um das Fenster des Zielprojekts geht: rund 76.700 Tokens für einen `plan-grill`-Lauf, davon 3 Prozent Skilltext.
 
-**5.000 Tokens je Skill ist kein Kostenargument, sondern ein Funktionsrisiko.** Wer darüber liegt, verliert nach einer Verdichtung den Rest seiner eigenen Anweisung und läuft gekürzt weiter, ohne dass es auffällt. Betroffen sind drei Skills: `project-rules` verlöre 9.656 Tokens, `project-structure` 3.452, `project-settings` 124.
+**5.000 Tokens je Skill ist kein Kostenargument, sondern ein Funktionsrisiko.** Wer darüber liegt, verliert nach einer Verdichtung den Rest seiner eigenen Anweisung und läuft gekürzt weiter, ohne dass es auffällt. Betroffen sind **vier** Skills, nicht drei: `project-setup` hat die Marke nach der Messung von August überschritten (siehe die Tabelle unter „Funktionsrisiko an der 5.000er-Marke").
 
 **Die statische Kettenlast ist die laufende Belegung, nicht das Re-Attach-Budget.** Die von `project-setup` vorgegebene Kette belegt mit ihren vier Bodies **32.960 Tokens**, mit allen `references/` bis zu 59.276. Das ist die Untergrenze: Was die vier Skills an Arbeit auslösen, kommt nach der Messung oben um ein Vielfaches obendrauf. Das 25.000er-Budget wird dabei nie bindend, weil die 5.000er-Kappung vorher greift und vier Skills damit höchstens 20.000 erreichen; bindend würde es erst ab sechs aufgerufenen Skills.
 
@@ -346,17 +363,64 @@ Der Gewinn der Delegation ist **gerechnet, nicht belegt**: Die 76.700 Tokens sin
 
 ### Nebenbaustelle: das Funktionsrisiko an der 5.000er-Marke
 
-Getrennt von der Kontextlast zu behandeln. Hier geht es nicht um Tokens, sondern darum, dass drei Skills nach einer Verdichtung gekürzt weiterlaufen.
+Getrennt von der Kontextlast zu behandeln. Hier geht es nicht um Tokens, sondern darum, dass **vier** Skills nach einer Verdichtung gekürzt weiterlaufen.
 
-| # | Skill | Strategien | Ist | Ziel | Risiko |
-|---|---|---|---:|---:|---|
-| 1 | `project-rules` | verdichten, Begründung raus, Auslagern | 14.656 | 5.000 | hoch, 66 Prozent Reduktion |
-| 2 | `project-structure` | verdichten, Begründung raus | 8.452 | 5.000 | mittel, 41 Prozent |
-| 3 | `project-settings` | verdichten | 5.124 | 5.000 | gering, 2 Prozent |
+Die Ist-Werte sind am 18. September 2026 neu erhoben, aus der Zeichenzahl mit dem kalibrierten Faktor 2,04 (Spanne 1,98 bis 2,10). Sie liegen über den headless gemessenen Werten von August, weil die Bodies seither gewachsen sind; `project-setup` hat die Marke dabei überschritten, ohne dass es auffiel.
+
+| # | Skill | Strategien | Ist (18.09.) | gemessen (Aug.) | Ziel | Risiko |
+|---|---|---|---:|---:|---:|---|
+| 1 | `project-rules` | teilen, verdichten, Auslagern | 15.681 | 14.656 | 5.000 | hoch, 68 Prozent Reduktion |
+| 2 | `project-structure` | verdichten, Begründung raus | 10.078 | 8.452 | 5.000 | mittel, 50 Prozent |
+| 3 | `project-settings` | verdichten | 7.336 | 5.124 | 5.000 | mittel, 32 Prozent |
+| 4 | `project-setup` | verdichten | 5.260 | 4.728 | 5.000 | gering, 5 Prozent |
 
 Für die letzten beiden ist das plausibel erreichbar. Für `project-rules` ist die Lücke **9.656 Tokens**, also zwei Drittel des Bodys. Eine Grobanalyse grenzt das ein, ohne es zu entscheiden: Rund 36 Prozent des Bodys sind situative Anweisung, die erst ab einem bestimmten Schritt gilt und damit nach `references/` könnte (Abdeckungs-Register aus Schritt 4 mit 20 Prozent, Token-Pass aus Schritt 7 mit 9, Ausgabeformat-Vorlage mit 7). Reine Begründung sind „Warum diese Vorgehensweise" mit 6 Prozent und rund ein Fünftel von „Die Werkzeuge". Geschätzt bliebe ein Body von **4.200 bis 7.800** Tokens. Das Ziel ist erreichbar, aber nicht gesichert; die Spanne beruht auf einer Blockanalyse, nicht auf einem satzweisen Durchgang. Geht es nicht auf, bleibt der Skill-Zuschnitt, also `project-rules` zu teilen. Nicht entschieden.
 
 `plugin.json` kennt kein Feld für eine Claude-Code-Mindestversion; `dependencies` deckt nur andere Plugins. Wo eine Strategie eine voraussetzt, gehört sie in `README.md` und `CHANGELOG.md`, wie schon bei der `renames`-Map.
+
+## Abgleich mit den Prompting-Leitfäden
+
+Am 18. September 2026 gegen die vier offiziellen Leitfäden abgeglichen, jeweils als Roh-Markdown der `.md`-Variante von `platform.claude.com/docs/en/build-with-claude/prompt-engineering/` geholt und vollständig gelesen: `claude-prompting-best-practices`, `prompting-claude-opus-5`, `prompting-claude-fable-5-1`, `prompting-claude-fable-5`. Die Leitfäden sind versionsgebunden; wer hier aufsetzt, prüft sie neu, statt diesen Stand zu zitieren.
+
+### Leitmodell Opus 5, und was das kostet
+
+Die Leitfäden widersprechen sich an vier Punkten zwischen Opus 5 und Fable 5/5.1, und Opus 5 entscheidet sie, weil es der Claude-Code-Default ist. Nicht widersprechendes Fable-Material ist trotzdem übernommen. Die vier Punkte samt bewusster Abweichung:
+
+| Punkt | Opus 5 | Fable 5/5.1 | Übernommen |
+|---|---|---|---|
+| Verifikation | Anweisungen entfernen, sie erzeugen Über-Verifikation | Selbstverifikation für lange Läufe explizit machen | Opus: `ausfuehrungsdisziplin.md` verlor „Vor fertig verifizieren", `aufgabenzerlegung.md` die Teilaufgaben-Verifikation |
+| Fortschrittstext | narriert von selbst, Kadenz vorgeben | schreibt zu wenig, ausdrücklich anfordern | Opus: Kadenz statt Unterdrückung, in den Skills mit langen Tool-Ketten |
+| Subagenten | Delegation begrenzen | häufig delegieren | Opus: der Delegations-Maßstab im Artefakt-Kanon bleibt stufend |
+| Ausführlichkeit | läuft lang, Kürze erbitten | dichter, Anti-Formatierungsregeln entfernen | Opus: Längenkalibrierung statt Formatierungsverbote |
+
+Register- und bilanzgestützte Prüfungen sind von der Verifikations-Streichung **nicht** betroffen: Ihr Kriterium kommt von außen (Testlauf, Exit-Code, Zeilenbilanz, Abdeckungs-Register), sie sind keine Selbstkritik. Der Opus-5-Leitfaden stützt das an anderer Stelle selbst, indem er für Review-Arbeit ausdrücklich empfiehlt, alles zu melden und in einem getrennten Durchgang zu filtern.
+
+### Ungeprüfte Herstellerangabe: `reasoning_extraction`
+
+Der Fable-5-Leitfaden hält fest, dass Anweisungen, das eigene Denken wiederzugeben oder zu erklären, die Ablehnungskategorie `reasoning_extraction` auslösen und Rückfälle auf ein älteres Modell erzeugen können, und verlangt, Skills darauf zu prüfen. Das ist nicht nachprüfbar und bleibt Herstellerangabe. Betroffen war `session-learn`, dessen Beschreibung mit „Reflektiert die laufende Session" begann. Umgestellt auf Auswertung des Verlaufs: gearbeitet wird an Aufträgen, Korrekturen, Tool-Ergebnissen und Dateizuständen. Das deckt sich mit der Regel, die der Skill ohnehin aufstellt („Jedes Learning nennt seinen Beleg aus der Session"), kostet also keinen Inhalt. Die Nennungen von „Retrospektive" bleiben: ein Rückblick auf Ereignisse ist keine Wiedergabe von Denken.
+
+### Geprüft und verworfen
+
+- **Kontextbudget-Befund (Fable 5).** Der Leitfaden warnt, das Modell könne in langen Sitzungen eine neue Sitzung vorschlagen oder eigene Arbeit kürzen, und empfiehlt eine Beruhigungszeile. `kontextdisziplin.md` trägt keine Anweisung zum frühen Aufhören, der Befund trifft dort nicht. Die Beruhigungszeile selbst stünde doppelt zum Claude-Code-Systemprompt, der sie führt.
+- **Harness-Dopplungen.** Der Systemprompt von Claude Code trägt mehrere Leitfaden-Blöcke bereits nahezu wortgleich: den Fable-5-Block gegen Überplanung, den Fable-5.1-Abschnitt „Delivering work", den Opus-5-Block zur Korrektur-Narration, die Fable-5-Zeile zur belegten Fortschrittsmeldung, die Delegationsdämpfung, die Kontextbudget-Beruhigung und die Parallel-Tool-Regel. Artikelmaterial wandert deshalb in die Kataloge, die in fremde Regeldateien schreiben und auch für Werkzeuge ohne solchen Harness gelten, nicht in die Skill-Bodies. Nachgewiesen nur für die damals laufende Claude-Code-Fassung auf Opus 5.
+- **Vorgeschriebene Schritte.** Der Best-Practices-Leitfaden zieht allgemeine Anweisungen vorgeschriebenen Schritten vor. Der Satz steht im Abschnitt zum Denken und meint vorgeschriebene **Denk**schritte; die Schrittketten hier schreiben einen Arbeitsablauf vor, dessen Register und Bilanzen der Korrektheitsmechanismus sind. Die Ketten bleiben, und die Frage ist messbar gemacht (siehe unten).
+
+### Sprache der übernommenen Blöcke
+
+Blöcke, die ein Leitfaden als fertigen Prompttext liefert, stehen in den Katalogen **unübersetzt**, mit einem deutschen Einleitungssatz davor, der benennt, was der Block regelt und woher er stammt. Grund ist der gemessene Wortlaut; eine Paraphrase gäbe ihn auf, und `project-rules` schreibt diese Blöcke in fremde Regeldateien. Überschriften, Adressaten-Präambel und Verbuchungshinweise bleiben deutsch, weil sie sich an die einsetzende KI richten. In eine deutschsprachige Zieldatei wandert der Block mit seiner deutschen Einleitung, damit der Sprachwechsel als Absicht erkennbar ist. Die Skill-Bodies sind davon nicht betroffen: Sie sind Anweisung an den Agenten und durchgehend deutsch.
+
+### Was die Eval-Suite messen kann und was nicht
+
+Vier Befunde, alle am 18. September 2026 gegen Claude Code 2.1.276 erhoben. Sie gelten für jeden künftigen Suite-Lauf.
+
+- **Ein Slash-Aufruf löst im Eval-Runner keinen gesperrten Skill aus.** Dreifach belegt: Ein Grader `tool_used: Skill` ohne `input_match`, der jeden Aufruf zählt, meldet „Skill called 0x", auch nach einem `append_system_prompt`, der ausdrücklich zum Skill-Tool anweist. Kein Lauffehler. Plausibler Grund, nicht belegt: Bei gesperrter Modell-Invocation steht die Beschreibung nicht im Kontext, das Modell kennt den Skill nicht als Option. Die Doku schweigt dazu.
+- **Der Plugin-Text ist im Lauf nicht lesbar.** Ein Trace zeigt vier verweigerte Pfade. `context.add_dirs` hilft nicht, es ist auf Verzeichnisse innerhalb des Fallverzeichnisses beschränkt. Tragfähig ist `context.scaffold_script`: Ein Skript kopiert den `skills/`-Baum in den leeren Workspace, wodurch auch die relativen Verweise zwischen den Skills intakt bleiben, und der Prompt zeigt darauf. Der Lauf braucht `--scaffold`. **Vorbehalt:** Damit bewertet die Suite den gelesenen Skilltext, nicht den Ladeweg über das Skill-Tool. Der Text im Kontext ist derselbe, der Weg dorthin nicht.
+- **Fünf Skills sind mit einem Einzellauf nicht messbar.** `plan-grill`, `plan-review` und `plan-execute` hängen an Harness-Zuständen (Plan-Modus, zuletzt erstellter Plan, freigegebener Plan), die ein Lauf nicht herstellt. `session-learn` und `session-handoff` hängen an einem Gesprächsverlauf und bleiben ohne ihn nach eigener Regel ehrlich leer, ein Lauf würde also den Leerfall messen.
+- **Grader prüfen per Default nur die letzte Chat-Nachricht.** Das Produkt dieser Skills ist eine Datei, deshalb prüfen die Grader je nach Gegenstand den Dateiinhalt (`target: { source: file, path: … }`), den Verlauf (`target: trace`) oder die Antwort. Vor der Korrektur erreichte `project-rules` 0,133, danach 1,000 bei unverändertem Skilltext. Dazu: `timeout_seconds` steht per Default auf 300 und schnitt den Lauf mitten durch, während `max_turns` nie erreicht wurde; alle Fälle tragen jetzt 1200.
+
+Alle Grader sind deterministisch (`regex`, `tool_used`), es kommt kein Urteilsmodell vor. Die Suite kostet rund zwölf US-Dollar je vollem Lauf über vier Fälle mit je drei Läufen.
+
+**Umgebungsbedingter Blocker.** Eine Bash-freigebende Auswertung läuft auf der Maschine des Autors nicht: Der Docker-Credential-Store enthält einen Symlink, weshalb die Bash-Sandbox ihn nicht ausschließen kann, und jeder Fall bricht mit 0 Turns und 0 Kosten ab. `Write` und `Edit` sind zulässig. `project-structure` (verschiebt per `git mv`) und `session-resume` (hält „Fertig" gegen den git-Stand) messen ohne Bash nur ihren Ersatzpfad und bleiben deshalb ungemessen; beide Fälle tragen `tags: [project, braucht-bash]`, die messbaren `tags: [project, messbar]`.
 
 ## Konventionen — geteiltes Vokabular
 

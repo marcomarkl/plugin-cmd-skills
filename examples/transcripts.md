@@ -104,7 +104,7 @@ Prosasprache: <de/en> · AGENTS.md/CLAUDE.md-Drift: <eine Quelle / Symlink vorge
 - Vorgefunden / Verankert / Auslagerungsreif markiert / Empfohlen anzulegen
 
 ### Abdeckung
-Alle acht Inhalts-Kataloge durchgegangen, jede Regel in genau einer Kategorie verbucht, Token-Effizienz-Pass angewendet.
+Alle zehn Inhalts-Kataloge durchgegangen, jede Regel in genau einer Kategorie verbucht, Token-Effizienz-Pass angewendet.
 ```
 Die letzte Zeile ist der Vollständigkeitsbeleg und trägt **keine Quote**: Was als eine Regel zählt, ist nicht festgelegt, also wäre eine Zahl nicht reproduzierbar und ein Fehlschätzer unauffällig. Sie behauptet nur, was tatsächlich getan wurde; den Nachweis trägt das Abdeckungs-Register.
 
@@ -165,7 +165,7 @@ Ein zweiter Lauf ohne zwischenzeitliche Änderung meldet, dass nichts zu tun war
 
 ## session-learn
 
-**Eröffnungszug:** beginnt die Reflexion der Session — Einordnung, was zu betrachten ist. Bei leerer/kurzer Session der Hinweis, dass (noch) nichts Dauerhaftes zu lernen ist.
+**Eröffnungszug:** beginnt die Auswertung des Verlaufs — Einordnung, was daran zu betrachten ist. Bei leerer/kurzer Session der Hinweis, dass (noch) nichts Dauerhaftes zu lernen ist.
 
 **Schlussnotiz** (nach erschöpften Learnings), als Chat-Notiz, plus der erzeugte Plan:
 
@@ -208,6 +208,9 @@ Stand: <Datum, Uhrzeit, Zeitzone>
 ## Unsicher
 - <Vermutung> — Quelle: <woher> — prüfbar an: <woran>
 
+## Verworfen, mit Grund
+- <erwogener oder versuchter Weg> — beiseitegelegt, weil <Grund>
+
 ## Wichtige Dateien und Befehle
 <Pfade, Testbefehle; Verweis auf Plandatei statt Nacherzählung>
 ```
@@ -215,6 +218,8 @@ Stand: <Datum, Uhrzeit, Zeitzone>
 Die Überschriften sind **Richtschnur, kein Schema**: Ein Abschnitt, der für das Projekt nichts trägt, bleibt weg; einmal gewählte Überschriften bleiben über Läufe hinweg stehen. Ohne Git-Repo tritt der Datei- und Ausgabezustand an die Stelle des Commit-Stands, und die Datei vermerkt das ausdrücklich.
 
 **„Unsicher" ist der Abschnitt, der diesen Skill von einer Zusammenfassung unterscheidet.** Dorthin gehört, was der gekürzte Verlauf verschluckt hat — Entscheidungen ohne erkennbare Begründung, vage erinnerte Absprachen, aus dem Diff rekonstruierter Zweck. Er darf leer bleiben, aber nur wenn das stimmt: Sein Fehlen behauptet, dass nichts unsicher war, und das ist nach einem gekürzten Verlauf selten wahr.
+
+**„Verworfen" hält den Grund, nicht nur den Verzicht.** Ohne ihn probiert das nächste Fenster dieselbe Sackgasse erneut. Dazu die Gewichtung der beiden Stimmen: Was der Nutzer verlangt, entschieden oder ausgeschlossen hat, steht nah an seinem Wortlaut, während die eigenen Erklärungen auf ihr Ergebnis eingedampft werden.
 
 **Schlussnotiz** (Chat-Notiz, nicht in die Datei): der Pfad der Datei und der nächste Schritt in einem Satz. Dazu der Weg, damit die Übergabe nicht bei einer Datei endet, die niemand aufnimmt: neues Fenster, dort `/cmd:session-resume`, plus ein Halbsatz zu Gegenprobe und Aufräumen. Mehr ist nicht verlangt — den Inhalt trägt die Datei. Dazu der Rückweg (löschen / `git restore` / `.bak`), aber nur, wenn die Datei neu angelegt oder ganz überschrieben wurde. Ein fertiger Einstiegssatz zum Kopieren wird **nicht** verlangt: Er dupliziert die Datei, die ohnehin für sich stehen muss.
 

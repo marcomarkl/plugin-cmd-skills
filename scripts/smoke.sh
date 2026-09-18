@@ -78,12 +78,12 @@ run "project-setup" "/cmd:project-setup" "aufrufliste|reihenfolge|project-settin
 # ein "-p"-Lauf nicht liefert. Ohne Argument gibt es zudem keinen Pfad, also greift der
 # Rueckfrage-Zweig ("frag kurz nach, statt zu raten").
 run "project-rules" "/cmd:project-rules" "zieldatei|claude\.md|agents\.md|projektprofil|welche datei"
-# session-learn: reflektiert die Session (headless kaum Historie -> nur Laden/Eroeffnung).
+# session-learn: wertet den Verlauf aus (headless kaum Historie -> nur Laden/Eroeffnung).
 # Seit 0.14.0 schreibt der Skill den Plan OHNE vorherige Bestaetigung. Dieser Pfad wird hier
 # nicht erreicht: Er setzt tragfaehige Learnings aus einem Gespraechsverlauf voraus, den ein
 # "-p"-Lauf nicht hat, und der Plan entsteht ueber EnterPlanMode, dessen Zustimmung headless
 # ebenfalls fehlt. Ohne Learnings bleibt der Skill laut Body ausdruecklich ohne Plan.
-run "session-learn" "/cmd:session-learn" "learning|session|reflex|plan|keine"
+run "session-learn" "/cmd:session-learn" "learning|session|verlauf|plan|keine"
 # project-settings: Sonderfall wie session-handoff. Der Skill SCHREIBT normalerweise
 # .claude/settings.json, bei Altlast auch .gitignore und .claude/skills/ — hier laeuft er
 # im Repo selbst, also wird bewusst NUR der nebenwirkungsfreie Eroeffnungszug geprueft:

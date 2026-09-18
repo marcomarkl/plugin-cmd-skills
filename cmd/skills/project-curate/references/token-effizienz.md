@@ -1,6 +1,6 @@
 # Token-Effizienz — Teil A/B
 
-Dieser Katalog ist anders gebaut als die acht Inhalts-Kataloge und wird in **Schritt 7** angewendet, nicht in Schritt 4 verbucht. **Teil A** richtet sich an dich als einsetzende KI und kommt **nie** als Text in die Zieldatei; **Teil B** ist der einzige Block, der (bedingt) als Inhalt übernommen wird.
+Dieser Katalog ist anders gebaut als die zehn Inhalts-Kataloge und wird in **Schritt 7** angewendet, nicht in Schritt 4 verbucht. **Teil A** richtet sich an dich als einsetzende KI und kommt **nie** als Text in die Zieldatei; **Teil B** ist der einzige Block, der (bedingt) als Inhalt übernommen wird.
 
 ## Teil A — Überarbeitungskatalog (Arbeitsanweisung, nicht Inhalt der Datei)
 
@@ -28,7 +28,7 @@ Die folgenden Regeln richten sich an dich als einsetzende KI und steuern, wie du
 ### Bedeutung bewahren (die Grenze)
 - Lass Vorbehalte bei korrektheitskritischer Arbeit, nötige Disambiguierung und die entscheidende Ausnahme stehen, auch wenn sie Tokens kosten. Ein weggelassener Vorbehalt oder eine zweideutige Anweisung kostet über Fehlversuche und Rework mehr, als die Kürzung spart.
 - Kürzen hat eine Grenze, und sie verläuft an der Korrektheit. Im Zweifel zugunsten der eindeutigen, vollständigen Aussage entscheiden, nicht zugunsten der kürzeren.
-- Kataloge markieren einzelne Regeln in ihrem Verbuchungshinweis als nicht kürzbar. Diese Marken gelten hier: Eine so markierte Regel wird weder gekürzt noch mit einer Nachbarregel zusammengezogen, auch wenn sie wie eine Aufzählung aussieht.
+- Kataloge markieren einzelne Regeln in ihrem Verbuchungshinweis als nicht kürzbar. Diese Marken gelten hier: Eine so markierte Regel wird weder gekürzt noch mit einer Nachbarregel zusammengezogen, auch wenn sie wie eine Aufzählung aussieht. Die Marken stehen nicht in der Zieldatei, sondern im Verbuchungshinweis der Kataloge unter `../project-rules/references/`; wie du sie beschaffst, steht in Schritt 2 des Skill-Bodys.
 
 ## Teil B — Verankerte Pflegeregel (Inhalt, der in die Datei übernommen wird)
 

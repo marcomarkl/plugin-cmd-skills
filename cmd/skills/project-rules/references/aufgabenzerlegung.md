@@ -2,9 +2,8 @@
 
 Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nicht an dich als einsetzende KI; übernimm sie als Inhalt in die Zieldatei. Sie sorgen dafür, dass Aufgaben vor der Ausführung geklärt und zerlegt und größere Vorhaben spezifiziert werden.
 
-## Mehrdeutigkeit zuerst klären
-- Kläre unklare oder mehrdeutige Anforderungen, bevor du zerlegst oder spezifizierst. Würde eine offene Frage das Ergebnis verändern, frag nach, statt sie mit einer Annahme zu schließen.
-- Verfeinere das Verständnis, bis kein Raum für Fehldeutung bleibt. Erst dann zerlegen und planen.
+## Mehrdeutigkeit nach Wirkung klären
+- Triff routinemäßige Auslegungsentscheidungen selbst und frag nur dort nach, wo verschiedene Lesarten zu wesentlich verschiedener Arbeit führen. Sonst nenne die gewählte Lesart und arbeite weiter, statt das Verständnis über den Bedarf hinaus zu verfeinern.
 
 ## Vor dem Bauen zerlegen
 - Zerlege eine nicht-triviale Aufgabe vor der Ausführung in kleinere Teilaufgaben. Eine zu groß angefasste Aufgabe ist eine der häufigsten Fehlerquellen.
@@ -16,9 +15,8 @@ Die folgenden Regeln richten sich an den später gesteuerten Agenten ("du"), nic
 - Lege die Reihenfolge nach den Abhängigkeiten fest, nicht nach Bequemlichkeit. Bedenke, wie ein Fehler in einem Schritt die folgenden trifft, statt blind weiterzulaufen.
 - Prüfe die Zerlegung auf Vollständigkeit: Deckt sie alle Teile des Ziels ab? Selbst erzeugte Zerlegungen lassen leicht Schritte aus.
 
-## Fortschritt verfolgen und unterwegs prüfen
+## Fortschritt verfolgen
 - Arbeite die Teilaufgaben in der festgelegten Reihenfolge ab und halte ihren Stand fest (offen, in Arbeit, erledigt), damit über lange Aufgaben nichts verloren geht oder doppelt läuft.
-- Verifiziere jede Teilaufgabe gegen ihr Kriterium, bevor du zur nächsten gehst, statt erst am Ende.
 
 ## Bei größeren Vorhaben erst spezifizieren
 - Schreibe für ein größeres Vorhaben vor dem Code eine knappe, eigenständige Spezifikation und arbeite gegen sie. Sie ist die gemeinsame Referenz, nicht der erste Prompt.

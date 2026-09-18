@@ -26,6 +26,8 @@ Das ist der Kern. Die Datei ist ein verdichtetes Bild, das eine Session unter Ko
 - **Genannte Dateien und Pfade.** Existieren sie noch?
 - **Der Abschnitt „Unsicher" wird nicht überflogen.** Er ist der Grund, warum die Übergabe so gebaut ist, wie sie ist. Greife **jeden Punkt einzeln** auf: Was lässt sich jetzt belegen, was bleibt offen? Fehlt der Abschnitt ganz, ist das selbst ein Befund und keine gute Nachricht: Sein Fehlen behauptet, dass nichts unsicher war, und das stimmt nach einem gekürzten Verlauf selten. Sag dann, dass die Datei keine Unsicherheit ausweist, statt das für Vollständigkeit zu nehmen.
 
+- **Verworfene Optionen werden gelesen, nicht übersprungen.** Nennt die Datei, was eine frühere Session versucht und beiseitegelegt hat, halte jeden Grund gegen den heutigen Stand: Beruht er auf einem Zustand, der sich seither geändert hat, trägt er nicht mehr, und die verworfene Option ist wieder eine Option. Sag das dann als Befund. Fehlt so ein Abschnitt, ist das **kein** Befund: Ältere Fassungen von `session-handoff` haben ihn nicht geschrieben.
+
 Benenne jede Abweichung zwischen Datei und Wirklichkeit, statt sie zu glätten. Findest du keine, sag auch das ausdrücklich.
 
 **Verweist die Datei auf eine Plandatei** — der Normalfall, wenn die Arbeit mitten in der Umsetzung abbrach —, lies den Plan und nenne ihn als Quelle. In den Plan-Modus wechselst du **nicht**; schlage `/cmd:plan-execute` als nächsten Schritt vor und überlass den Aufruf dem Nutzer. **Ist die Datei offensichtlich veraltet**, etwa weil der Commit-Stand weit zurückliegt oder genannte Dateien fehlen, leg das als Befund vor, statt sie stillschweigend zu übernehmen.
