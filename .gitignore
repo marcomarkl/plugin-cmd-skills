@@ -2,3 +2,4 @@
 *.bak
 .claude/settings.local.json
 plans/
+cmd/evals/results/

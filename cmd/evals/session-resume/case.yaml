@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: session-resume
+description: "Projekt mit Uebergabedatei und abweichendem git-Stand: prueft der Skill gegen die Wirklichkeit und greift Unsicher einzeln auf?"
+tags: [project, braucht-bash]
+context:
+  scaffold_script: fixture.sh

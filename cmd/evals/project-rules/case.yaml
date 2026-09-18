@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: project-rules
+tags: [project, messbar]
+context:
+  scaffold_script: fixture.sh
+description: "Haertet die CLAUDE.md eines Fixture-Projekts nach dem Skilltext. Gegenstueck zu project-rules-kompakt."

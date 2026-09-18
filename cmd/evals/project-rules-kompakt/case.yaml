@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: project-rules-kompakt
+tags: [project, messbar]
+context:
+  scaffold_script: fixture.sh
+description: "Dieselbe Aufgabe, aber mit einer kompakten allgemeinen Anweisung statt der Schrittkette. Strukturvergleich aus Entscheidung 22."

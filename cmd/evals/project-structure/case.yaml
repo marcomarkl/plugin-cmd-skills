@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: project-structure
+description: "Projekt mit Streudateien: sammelt der Skill sie mit Verlagerungs-Register und Bilanz ein und schreibt den Wegweiser?"
+tags: [project, braucht-bash]
+context:
+  scaffold_script: fixture.sh

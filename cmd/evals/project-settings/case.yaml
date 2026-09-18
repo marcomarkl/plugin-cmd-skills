@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: project-settings
+description: "Projekt mit fremden Settings und fremdem Hook: setzt der Skill den Kanon, ohne Fremdes zu verlieren?"
+tags: [project, messbar]
+context:
+  scaffold_script: fixture.sh

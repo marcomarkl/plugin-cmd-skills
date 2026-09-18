@@ -6,5 +6,6 @@
   "homepage": "https://github.com/marcomarkl/plugin-cmd-skills#readme",
   "repository": "https://github.com/marcomarkl/plugin-cmd-skills",
   "license": "MIT",
-  "keywords": ["planning", "workflow", "claude-md", "review", "interview", "settings", "permissions"]
+  "keywords": ["planning", "workflow", "claude-md", "review", "interview", "settings", "permissions"],
+  "experimental": { "evals": "evals" }
 }
