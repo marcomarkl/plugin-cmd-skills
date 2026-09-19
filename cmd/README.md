@@ -1,6 +1,6 @@
 # cmd — Planungs-Toolkit für Claude Code
 
-Zehn Skills rund um Klären, Planen, Reviewen, Umsetzen, Lotsen, Einrichten, Strukturieren, Lernen, Übergeben und Wiederaufnehmen. Der Plugin-Name `cmd` (aus `.claude-plugin/plugin.json`) bildet den Namespace, deshalb beginnt jeder Aufruf mit `/cmd:`.
+Zwölf Skills rund um Klären, Planen, Reviewen, Umsetzen, Lotsen, Einrichten, Prüfen, Härten, Kuratieren, Strukturieren, Lernen, Übergeben und Wiederaufnehmen. Der Plugin-Name `cmd` (aus `.claude-plugin/plugin.json`) bildet den Namespace, deshalb beginnt jeder Aufruf mit `/cmd:`.
 
 Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsnotizen (Stellschrauben, verworfene Ansätze) in [`DESIGN.md`](../DESIGN.md).
 
@@ -13,7 +13,7 @@ Installation und Überblick stehen im [Root-README](../README.md); die Entwurfsn
 | `/cmd:plan-grill` | Interviewt dich zu einem Vorhaben, löst die Entscheidungen einzeln in Abhängigkeits- und Tragweitenreihenfolge auf, protokolliert sie revidierbar und legt sie nach deiner Bestätigung als Plan an. | **Am Anfang**, wenn das Vorhaben noch unscharf ist. |
 | `/cmd:plan-review` | Reviewt den zuletzt erstellten Plan in rotierenden Blickwinkeln und arbeitet die belastbaren Befunde direkt ein. | Sobald ein Plan steht — von `plan-grill` oder `/plan` —, bevor du freigibst. |
 | `/cmd:plan-execute` | Setzt den freigegebenen Plan vollständig um und verifiziert jeden Schritt gegen ein beobachtbares Kriterium; hält bei einem Fund außerhalb des Plans oder einer Klassifikator-Blockade an und fragt nach. | **Nach** dem Verlassen des Plan-Modus. |
-| `/cmd:project-setup` | Erhebt vier Fakten am Projekt und gibt die geordnete Aufrufliste der fünf Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium. Richtet selbst nichts ein. | **Zuerst**, bevor du die drei anderen `project-`Skills fährst. |
+| `/cmd:project-setup` | Erhebt vier Fakten am Projekt und gibt die geordnete Aufrufliste der fünf Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium. Richtet selbst nichts ein. | **Zuerst**, bevor du die fünf einrichtenden `project-`Skills fährst. |
 | `/cmd:project-audit` | Prüft den projekteigenen Prompttext gegen die vier Prompting-Leitfäden — Verifikations-Scaffolding, wiederholte Selbstprüfung, Formatierungsverbote, Denk-Wiedergabe, Narrations-Unterdrückung — und legt die Befunde als Plan zur Entfernung vor. Schreibt an keinen Zielort. | Vor `project-rules`, und der Weg für ein Projekt, das früher schon gehärtet wurde. |
 | `/cmd:project-rules` | Härtet eine bestehende `CLAUDE.md`/`AGENTS.md` mit zehn Disziplin-Katalogen. Verdichtet selbst nicht — das ist der Lauf von `project-curate` danach. | Eigenständig, wenn die Projektregeln Pflege brauchen. |
 | `/cmd:project-curate` | Kuratiert die fertig gehärtete Datei ohne Bedeutungsverlust: Floskeln und Redundanz raus, Format nach Inhalt, Wichtiges nach oben, auslagerungsreife Blöcke markieren. Schwächt keine Regel und verschiebt nichts. | Direkt nach `project-rules`; verdichten geht erst, wenn aller Inhalt steht. |
@@ -58,10 +58,14 @@ project-setup  ⇢  project-settings  →  project-structure  →  project-audit
   nichts aus)        Auto-Memory rein)     Inhalt aus)          Prompttext)
 ```
 
-`project-setup` steht davor, ist aber **kein Glied**: Es erhebt vier Fakten am Projekt und gibt die Reihe als Liste aus, mit dem Argument je Aufruf, der Vorbedingung und dem Abnahmekriterium. Ausgeführt wird nichts, deshalb der gestrichelte Pfeil. Aufrufen musst du die drei weiterhin selbst, und genau das ist Absicht: Ihre Sperre `disable-model-invocation` hält Claude von ihnen fern, und sie aufzuheben, um eine Verkettung zu ermöglichen, öffnete ausgerechnet die schreibenden Skills fürs automatische Laden.
+`project-setup` steht davor, ist aber **kein Glied**: Es erhebt vier Fakten am Projekt und gibt die Reihe als Liste aus, mit dem Argument je Aufruf, der Vorbedingung und dem Abnahmekriterium. Ausgeführt wird nichts, deshalb der gestrichelte Pfeil. Aufrufen musst du sie weiterhin selbst, und genau das ist Absicht: Ihre Sperre `disable-model-invocation` hält Claude von ihnen fern, und sie aufzuheben, um eine Verkettung zu ermöglichen, öffnete ausgerechnet die schreibenden Skills fürs automatische Laden.
 
-- **settings vor rules**, weil `project-settings` vorhandene Auto-Memory-Einträge in die `CLAUDE.md` holt. Umgekehrt verdichtete `project-rules` einen Stand, dem der Import erst danach wieder Rohtext anhängt.
-- **structure vor rules**, weil `project-structure` Inhalt auslagert und den Wegweiser-Abschnitt `## Ablage` schreibt. `project-rules` härtet und verdichtet die Datei danach — auch diesen Abschnitt.
+Settings vor rules, weil `project-settings` vorhandene Auto-Memory-Einträge in die `CLAUDE.md` holt. Umgekehrt härtete `project-rules` einen Stand, dem der Import erst danach wieder Rohtext anhängt.
+Structure vor rules, weil `project-structure` Inhalt auslagert und den Wegweiser-Abschnitt `## Ablage` schreibt. `project-rules` härtet die Datei danach, auch diesen Abschnitt; verdichtet wird sie erst von `project-curate`.
+
+Audit vor rules, weil `project-rules` keine vorhandene Regel schwächen darf. Was ein früherer Lauf geschrieben hat, verbucht es als `bereits vorhanden`, und veralteter Text bliebe stehen. `project-audit` legt ihn vorher zur Entfernung vor.
+
+Curate nach rules ist keine vierte Abhängigkeit, sondern dieselbe von der anderen Seite: Verdichten geht erst, wenn aller Inhalt steht.
 - **Rückkopplung:** Findet `project-rules` auslagerungsreife Blöcke, verschiebt es sie nicht selbst, sondern markiert sie und empfiehlt einen Lauf von `project-structure`. Die Trennung ist Absicht: `project-rules` lebt von *einem* kohärenten Schreibvorgang an *einer* Datei, ein Umzug über viele Dateien braucht Rückweg und Verlustnachweis je Datei.
 
 Zu `session-learn` ist das Verhältnis komplementär: `project-settings` schaltet das Memory-System ab und leert es einmalig, `session-learn` hat es ohnehin nie genutzt.
@@ -82,7 +86,7 @@ Auto mode aktivieren (einmaliges Opt-in):
 
 ## Voraussetzung für die Skills mit `references/`
 
-Vier Skills laden Referenzdateien nach, sobald sie laufen: `plan-execute` (eine, nur bei einer Klassifikator-Blockade), `project-rules` (neun Kataloge plus die zwei Kanon-Dateien von `project-structure`), `project-settings` (eine) und `project-structure` (zwei). Diese zwölf Dateien liegen im Plugin-Verzeichnis, also außerhalb deines Projekts, im Normalfall unter `~/.claude/plugins/cache/`. **Lesen außerhalb des Arbeitsverzeichnisses braucht eine Freigabe.** Gemessen am 12. September 2026 gegen Claude Code 2.1.269, im Standardmodus, ohne Projekt-Settings: Interaktiv kommt je Datei ein Prompt, headless (`claude -p`) scheitert jeder Zugriff, und der Skill hält an, statt aus dem Gedächtnis zu arbeiten. `project-settings` setzt mit `Read(//**)` genau die Regel, die das deckt; sie wirkt aber erst nach dem Workspace-Trust-Dialog, also nicht im Lauf, der sie gerade schreibt. Rechne beim ersten Lauf im Projekt mit den Prompts, oder nimm sie über den Trust-Dialog vorweg. Im Dev-Loop mit `--plugin-dir` gilt dasselbe; dort hilft `--add-dir` auf das Plugin-Verzeichnis.
+Acht Skills laden Referenzdateien nach, sobald sie laufen: `plan-execute` (eine, nur bei einer Klassifikator-Blockade), `plan-grill` und `plan-review` (je ein Ausgabebeispiel), `project-rules` (zehn Kataloge, drei Arbeitsdateien plus die zwei Kanon-Dateien von `project-structure`), `project-audit` (zwei), `project-curate` (zwei, dazu situativ die Kataloge von `project-rules`), `project-settings` (eine) und `project-structure` (drei). Diese 27 Dateien liegen im Plugin-Verzeichnis, also außerhalb deines Projekts, im Normalfall unter `~/.claude/plugins/cache/`. **Lesen außerhalb des Arbeitsverzeichnisses braucht eine Freigabe.** Gemessen am 12. September 2026 gegen Claude Code 2.1.269, im Standardmodus, ohne Projekt-Settings: Interaktiv kommt je Datei ein Prompt, headless (`claude -p`) scheitert jeder Zugriff, und der Skill hält an, statt aus dem Gedächtnis zu arbeiten. `project-settings` setzt mit `Read(//**)` genau die Regel, die das deckt; sie wirkt aber erst nach dem Workspace-Trust-Dialog, also nicht im Lauf, der sie gerade schreibt. Rechne beim ersten Lauf im Projekt mit den Prompts, oder nimm sie über den Trust-Dialog vorweg. Im Dev-Loop mit `--plugin-dir` gilt dasselbe; dort hilft `--add-dir` auf das Plugin-Verzeichnis.
 
 ## Wenn dein Projekt schon einmal gehärtet wurde
 
@@ -115,7 +119,7 @@ Zwei Dinge holt ein neuer `project-rules`-Lauf **nicht** nach. Beide sind erwart
 - **Der Abschnitt „Unsicher" ist der Punkt des Skills**, nicht Beiwerk. Der Skill läuft genau dann, wenn sein eigener Verlauf schon gekürzt ist — er verdichtet also ein Bild, das er nur teilweise sieht. Was er nicht belegen kann, landet dort samt Quelle und Prüfweg, statt weggelassen oder glattgeschrieben zu werden. Ein fehlender Abschnitt behauptet, es sei nichts unsicher gewesen.
 - **`session-resume` löscht auf eine einzelne Ja-Nein-Frage hin** — darin unterscheidet er sich von `project-settings`, das ebenfalls entfernt, aber eine an fester Marke erkannte Altlast im Rahmen seiner Gesamtvorschau. Hier geht es um genau eine Datei, die Übergabe, die der Skill selbst als solche erkannt hat, und nur nach deiner ausdrücklichen Bestätigung. Er nennt vorher den Rückweg je nach git-Lage; ohne Antwort bleibt die Datei liegen und steht als offener Punkt im Bericht. Danach arbeitet er nicht weiter: Die Übergabe ist angenommen, nicht abgearbeitet.
 - **`session-resume` prüft, statt zu glauben.** Er hält die Datei gegen den beobachteten Projektstand, benennt Abweichungen und greift jeden Punkt aus „Unsicher" einzeln auf. Fehlt dieser Abschnitt, ist auch das ein Befund — sein Fehlen behauptet, es sei nichts unsicher gewesen.
-- **Ein Skill je Session, besonders bei der `project-*`-Kette.** Installiert kosten die Skills nichts: Ein Sessionstart mit dem Plugin und einer ohne unterscheiden sich um 0 Tokens. Teuer ist nicht der Skilltext, sondern was ein Lauf an Arbeit auslöst, und beides bleibt bis zum Sessionende im Fenster. Gemessen an einer realen Sitzung: ein `plan-grill`-Lauf rund 77.000 Tokens, davon 2.500 Skilltext; über drei Skill-Aufrufe hinweg stammten 83 Prozent der Belastung aus Tool-Aufrufen und ihren Ergebnissen und 5 Prozent aus den Skilltexten. Wer die vier `project-*`-Schritte hintereinander in derselben Sitzung fährt, trägt sie alle gleichzeitig. Nimm einen Schritt je Session, dann kostet dich nur der, den du gerade brauchst. Die Messungen dahinter stehen in [`DESIGN.md`](../DESIGN.md) unter „Kontextlast der Skills".
+- **Ein Skill je Session, besonders bei der `project-*`-Kette.** Installiert kosten die Skills nichts: Ein Sessionstart mit dem Plugin und einer ohne unterscheiden sich um 0 Tokens. Teuer ist nicht der Skilltext, sondern was ein Lauf an Arbeit auslöst, und beides bleibt bis zum Sessionende im Fenster. Gemessen an einer realen Sitzung: ein `plan-grill`-Lauf rund 77.000 Tokens, davon 2.500 Skilltext; über drei Skill-Aufrufe hinweg stammten 83 Prozent der Belastung aus Tool-Aufrufen und ihren Ergebnissen und 5 Prozent aus den Skilltexten. Wer die fünf Kettenglieder hintereinander in derselben Sitzung fährt, trägt sie alle gleichzeitig. Nimm einen Schritt je Session, dann kostet dich nur der, den du gerade brauchst. Die Messungen dahinter stehen in [`DESIGN.md`](../DESIGN.md) unter „Kontextlast der Skills".
 
 ## Struktur
 
@@ -127,8 +131,12 @@ cmd/
     ├── plan-execute/
     │   ├── SKILL.md
     │   └── references/auto-mode.md         # bedarfsgeladen bei Klassifikator-Blockade
-    ├── plan-grill/SKILL.md
-    ├── plan-review/SKILL.md
+    ├── plan-grill/
+    │   ├── SKILL.md
+    │   └── references/beispiel.md           # Schlussnotiz als Vorbild
+    ├── plan-review/
+    │   ├── SKILL.md
+    │   └── references/beispiel.md           # Schlussnotiz als Vorbild
     ├── project-audit/
     │   ├── SKILL.md
     │   └── references/                     # Befundklassen mit Originalbelegen, Beispiel
