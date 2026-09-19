@@ -6,6 +6,8 @@ Das ist ein **persönliches Toolkit, öffentlich geteilt**: gebaut für meine ei
 
 > **Sprache:** Die Skills sind **deutschsprachige Prompts**. Sie steuern Claude auf Deutsch und erwarten deutsche Antworten. Wer eine englische Fassung braucht, muss die `SKILL.md`-Dateien übersetzen.
 
+> **Modell:** Das Plugin ist für **Claude Opus 5** optimiert und läuft **mit Einschränkungen auf Fable 5.1 und Fable 5**. Die Einschränkungen liegen an den vier Punkten, an denen die Prompting-Leitfäden sich widersprechen und Opus 5 entschieden hat: Verifikationsanweisungen sind entfernt, obwohl Fable sie für lange Läufe will; die Fortschritts-Kadenz dämpft, wo Fable eher zu wenig schreibt; der Delegations-Maßstab begrenzt, wo Fable häufig delegieren soll; und die Bitte um Kürze kann bei einem dichteren Modell übersteuern. Für Sonnet, Haiku und ältere Modelle liegt **keine Messung** vor, deshalb auch keine Empfehlung. Die Einzelheiten stehen in [`cmd/README.md`](cmd/README.md) unter „Für welches Modell das gebaut ist“.
+
 ## Installation
 
 ```bash
@@ -38,22 +40,22 @@ claude plugin marketplace remove marco-markl   # Marketplace abmelden
 
 Alle werden mit dem Namespace-Präfix aufgerufen und laden **nur auf deinen Aufruf hin**, nie automatisch.
 
-| Skill | Kurz | Wann |
+| Aufruf | Kurz | Wann |
 |---|---|---|
-| `/cmd:plan-grill` | Interviewt dich zum Vorhaben, löst die Entscheidungen einzeln auf und legt sie als Plan an | am Anfang, wenn das Vorhaben unscharf ist |
-| `/cmd:plan-review` | Reviewt den Plan in rotierenden Blickwinkeln und arbeitet Befunde ein | sobald ein Plan steht |
-| `/cmd:plan-execute` | Setzt den freigegebenen Plan um, jeden Schritt gegen ein beobachtbares Kriterium verifiziert | nach dem Plan-Modus |
+| `/cmd:plan-grill [vorhaben]` | Interviewt dich zum Vorhaben, löst die Entscheidungen einzeln auf und legt sie als Plan an | am Anfang, wenn das Vorhaben unscharf ist |
+| `/cmd:plan-review [fokus]` | Reviewt den Plan in rotierenden Blickwinkeln und arbeitet Befunde ein | sobald ein Plan steht |
+| `/cmd:plan-execute [hinweis]` | Setzt den freigegebenen Plan um, jeden Schritt gegen ein beobachtbares Kriterium verifiziert | nach dem Plan-Modus |
 | `/cmd:project-setup` | Gibt die geordnete Aufrufliste der fünf Einrichtungs-Skills aus, je Schritt mit Argument, Vorbedingung und Abnahmekriterium; richtet selbst nichts ein | vor der Einrichtung eines Projekts |
-| `/cmd:project-audit` | Prüft den projekteigenen Prompttext gegen die Prompting-Leitfäden und legt veraltetes Über-Prompting als Plan zur Entfernung vor | vor `project-rules`, und für jedes Projekt, das früher schon gehärtet wurde |
-| `/cmd:project-rules` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit zehn Disziplin-Katalogen | eigenständig |
-| `/cmd:project-curate` | Kuratiert die gehärtete Datei ohne Bedeutungsverlust: Floskeln und Redundanz raus, Format nach Inhalt, auslagerungsreife Blöcke markiert | direkt nach `project-rules` |
+| `/cmd:project-audit [fokus|pfad]` | Prüft den projekteigenen Prompttext gegen die Prompting-Leitfäden und legt veraltetes Über-Prompting als Plan zur Entfernung vor | vor `project-rules`, und für jedes Projekt, das früher schon gehärtet wurde |
+| `/cmd:project-rules [pfad]` | Härtet eine `CLAUDE.md`/`AGENTS.md` mit zehn Disziplin-Katalogen | eigenständig |
+| `/cmd:project-curate [pfad]` | Kuratiert die gehärtete Datei ohne Bedeutungsverlust: Floskeln und Redundanz raus, Format nach Inhalt, auslagerungsreife Blöcke markiert | direkt nach `project-rules` |
 | `/cmd:project-settings` | Setzt die `.claude/settings.json` auf einen festen Kanon, samt Zeitanker-Hook | beim Einrichten eines Projekts |
-| `/cmd:project-structure` | Bringt die Ablage auf einen belegten Kanon und schlägt projekteigene Skills, Subagents und Regeln vor | wenn die `CLAUDE.md` zuwächst |
-| `/cmd:session-learn` | Reflektiert die Session und macht Learnings zu einem Plan | am Sessionende |
-| `/cmd:session-handoff` | Verdichtet den Arbeitsstand in eine kurze `HANDOFF.md` fürs nächste Fenster | wenn der Kontext knapp wird |
-| `/cmd:session-resume` | Nimmt die Übergabedatei auf, prüft sie gegen den Projektstand und räumt sie nach Bestätigung weg | im neuen Fenster danach |
+| `/cmd:project-structure [fokus|pfad]` | Bringt die Ablage auf einen belegten Kanon und schlägt projekteigene Skills, Subagents und Regeln vor | wenn die `CLAUDE.md` zuwächst |
+| `/cmd:session-learn [fokus]` | Reflektiert die Session und macht Learnings zu einem Plan | am Sessionende |
+| `/cmd:session-handoff [fokus]` | Verdichtet den Arbeitsstand in eine kurze `HANDOFF.md` fürs nächste Fenster | wenn der Kontext knapp wird |
+| `/cmd:session-resume [pfad]` | Nimmt die Übergabedatei auf, prüft sie gegen den Projektstand und räumt sie nach Bestätigung weg | im neuen Fenster danach |
 
-Details, Pipeline und Voraussetzungen: **[`cmd/README.md`](cmd/README.md)**.
+Die vollständige Referenz je Skill, mit allen Aufrufvarianten, Vorbedingungen, Freigaben und Randfällen, steht in **[`cmd/README.md`](cmd/README.md)** unter „Referenz je Skill“; dort auch die Pipeline und die Voraussetzungen.
 
 ## Sicherheitshinweis
 
@@ -78,7 +80,7 @@ Seit 0.21.0 setzt derselbe Skill zusätzlich einen **Hook**, und das ist eine an
 
 | Datei | Inhalt |
 |---|---|
-| [`cmd/README.md`](cmd/README.md) | Nutzung der Skills, Pipeline, Voraussetzungen |
+| [`cmd/README.md`](cmd/README.md) | Referenz je Skill (Aufruf, Argument, Freigabe, Randfälle), Pipeline, Voraussetzungen |
 | [`DESIGN.md`](DESIGN.md) | Entwurfsnotizen: Stellschrauben, geprüfte und verworfene Ansätze |
 | [`CLAUDE.md`](CLAUDE.md) | Arbeitsregeln für die Weiterentwicklung in diesem Repo |
 | [`CHANGELOG.md`](CHANGELOG.md) | Versionshistorie |
