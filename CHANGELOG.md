@@ -2,6 +2,19 @@
 
 Versionen des `cmd`-Plugins. Quelle der Wahrheit für die Versionsnummer ist `cmd/.claude-plugin/plugin.json`.
 
+## 0.24.1
+
+Nur Dokumentation, kein Skill und kein Manifest-Verhalten geändert. Anlass war der Befund, dass beide READMEs die Befehle nicht mehr korrekt wiedergaben: Keine Tabelle führte das Argument, obwohl zehn der zwölf Skills eines nehmen.
+
+- **`cmd/README.md` trägt eine Referenz je Skill** — zwölf Abschnitte mit je sieben Angaben: Aufruf mit allen Varianten, Argument, Vorbedingung, was der Skill anfasst, Freigabeverhalten, Ergebnis, Randfälle. Die 23-Punkte-Liste „Gut zu wissen" ist darin aufgelöst; was mehr als einen Skill betrifft, steht im eigenen Abschnitt „Ein Skill je Session". Das Feld „Aufruf" nennt auch die Ziele, die niemand vermutet, etwa `project-rules` auf die nutzerweite `~/.claude/CLAUDE.md`.
+- **Ein Abschnitt zur Modelleignung**, in beiden Dateien mit verschiedener Tiefe: für Opus 5 optimiert, mit Einschränkungen auf Fable 5.1 und Fable 5 an genau den vier Punkten, an denen die Leitfäden sich widersprechen. Für Sonnet, Haiku und ältere Modelle liegt **keine Messung** vor, deshalb auch keine Empfehlung.
+- **Neun Stellen, die der Umbau auf 0.24.0 im Fließtext liegen ließ:** Skillzahl, Kettenlänge an zwei Stellen, das entfallene Verdichten in `project-rules`, die dritte Reihenfolge-Abhängigkeit *Audit vor rules*, die Dateizahlen im `references/`-Abschnitt und zwei Zeilen des Verzeichnisbaums.
+- **Zwei Markdown-Fehler und vier falsche Zahlen.** Ein Pipe in `[fokus|pfad]` brach vier Tabellenzeilen; zwei Reihenfolge-Begründungen standen ohne Leerzeile untereinander und verschmolzen zu einem Absatz. Beide Kopfzeilen zählten Tätigkeiten, die nicht zu zwölf Skills passten, und nennen jetzt die drei Familien mit nachzählbarer Aufteilung. Sechs Skills führen ein Ausgabebeispiel, nicht fünf, und die Aufschlüsselung der 27 Referenzdateien gab `project-rules` drei Arbeitsdateien statt sechs.
+- **Zwei sachlich falsche Vorbedingungen.** Bei `project-rules` war sie aus `project-setup` abgeschrieben, bei `project-curate` behauptete sie eine Sperre, die der Rückfallweg im Body widerlegt. Beide sind Reihenfolge-Hinweise, keine Sperren.
+- **Beide Einstiegstabellen folgen der Kettenreihenfolge** — `settings`, `structure`, `audit`, `rules`, `curate` wie in der Pipeline-Grafik, statt der historisch gewachsenen Ordnung.
+- **Geschrieben nach einem externen Stilmaßstab** gegen KI-Formatmuster. Gemessen sank in `cmd/README.md` das Schema „Bullet plus fettes Schlagwort plus Doppelpunkt" von 31 Fundstellen; die neu geschriebenen Abschnitte tragen es nicht.
+- **Die Versionsnummer steigt allein deshalb, damit der Plugin-Cache die neue README bekommt.** Bei gleicher Nummer meldet `claude plugin update` „already at the latest version", und der Cache behält den alten Stand — beobachtet am 19. September 2026, nachdem `marketplace update` den Klon längst erneuert hatte.
+
 ## 0.24.0
 
 Anlass ist der erste Abgleich des Plugins mit den vier offiziellen Prompting-Leitfäden (Best Practices, Opus 5, Fable 5.1, Fable 5), am 18. September 2026 als Roh-Markdown geholt und vollständig gelesen. Leitmodell ist Opus 5, weil es der Claude-Code-Default ist; es entscheidet die vier Punkte, an denen die Leitfäden sich widersprechen. Fünf Etappen, eine Version. Erstmals ist die Wirkung **gemessen**: Das Plugin hat eine Eval-Suite.
