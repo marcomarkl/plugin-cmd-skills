@@ -5,6 +5,7 @@
       "WebSearch",
       "WebFetch(domain:*)",
       "Bash(git *)",
+      "Bash(date:*)",
       "Read(//**)"
     ],
     "ask": [
@@ -45,6 +46,17 @@
           {
             "type": "command",
             "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in */cmd/skills/*|cmd/skills/*) echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Ausgelieferter Plugin-Inhalt unter cmd/skills/ wurde geaendert. Pruefe, ob die Version in cmd/.claude-plugin/plugin.json angehoben werden muss.\"}}';; esac"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "date '+Current system time: %Y-%m-%d %H:%M:%S %Z' # cmd:project-settings:zeitanker",
+            "timeout": 5
           }
         ]
       }
